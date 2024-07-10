@@ -1,0 +1,8 @@
+/assets
+.env
+/backend/node_modules
+/backend/package-lock.json
+/frontend/package-lock.json
+/frontend/node_modules
+.vscode
+ecosytem.config.js
