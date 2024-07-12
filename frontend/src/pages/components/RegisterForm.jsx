@@ -22,7 +22,7 @@ const formSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -77,6 +77,20 @@ export default function LoginForm() {
               <FormControl>
                 <Input placeholder="password" {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="matchPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder="password" {...field} />
+              </FormControl>
+              <FormDescription>Ensure passwords match</FormDescription>
               <FormMessage />
             </FormItem>
           )}

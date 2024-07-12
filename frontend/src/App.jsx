@@ -4,7 +4,7 @@ import Hero from './pages/Hero.jsx'
 import Shop from './pages/Shop.jsx'
 import About from './pages/About.jsx'
 import Cart from './pages/Cart.jsx'
-import Login from './pages/Login.jsx'
+import Login from './pages/LoginRegister.jsx'
 const App = () => {
   return (
     <Routes>
