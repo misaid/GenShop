@@ -1,5 +1,4 @@
 import axios from "axios";
-// form imports
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,43 +13,66 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-// Tab imports 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-const formSchema = z.object({
-  name: z.string().min(1, "Username is required"),
-  // TODO: hard to crack password with special characters
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
 
+/**
+* Define a schema for the form.
+* @property {string} name - the name of the user
+* @property {string} password - the password of the user
+* @property {string} matchPassword - the password of the user
+**/
+
+const formSchema = z.object({
+  name: z.string().min(1, "Username is required").max(20, "Username must be less than 20 characters)"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  matchPassword: z.string().min(8, "Password must be at least 8 characters")
+})
+  .refine((data) => data.matchPassword === data.password, {
+    message: "Passwords must match",
+    path: ["matchPassword"]
+  });
+
+/**
+* Creates and returns the register form component.
+* */
 export default function RegisterForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-        username: "", password:""
-      },
+      username: "", password: ""
+    },
   });
+
+  /**
+  * Define an axios instance.
+  * @property {string} baseURL - the base URL for the axios instance
+  **/
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
 
-
-
-
-
-  // 2. Define a submit handler.
+  /**
+      * Define a submit handler. 
+      * @param {Object} values - values from the form
+      * @returns {void}
+  **/
   async function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be validated.
-    console.log(values.name);
-    console.log(  import.meta.env.VITE_APP_API_URL);
+    console.log(values.password == values.matchPassword);
+    if (values.password == "dogdog123dogdog") {
+      setError("name", { type: "server", message: "Username is already taken" });
+    }
     try {
-    const response = await axiosInstance.post('/login',
-      {username: values.name,
-        password: values.password},{withCredentials: true})
-    console.log(response);
+      const response = await axiosInstance.post('/login',
+        {
+          username: values.name,
+          password: values.password,
+          matchPassword: values.matchPassword
+        }, { withCredentials: true })
+      console.log(response);
     } catch (error) {
       console.log(error);
-    }}
+    }
+
+  }
 
   return (
     <Form {...form}>
@@ -75,7 +97,7 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input type="password" placeholder="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,9 +110,8 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input type="password" placeholder="password" {...field} />
               </FormControl>
-              <FormDescription>Ensure passwords match</FormDescription>
               <FormMessage />
             </FormItem>
           )}

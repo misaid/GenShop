@@ -26,8 +26,8 @@ export default function LoginForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-        username: "", password:""
-      },
+      username: "", password: ""
+    },
   });
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
@@ -42,15 +42,18 @@ export default function LoginForm() {
     // Do something with the form values.
     // ✅ This will be validated.
     console.log(values.name);
-    console.log(  import.meta.env.VITE_APP_API_URL);
+    console.log(import.meta.env.VITE_APP_API_URL);
     try {
-    const response = await axiosInstance.post('/login',
-      {username: values.name,
-        password: values.password},{withCredentials: true})
-    console.log(response);
+      const response = await axiosInstance.post('/login',
+        {
+          username: values.name,
+          password: values.password
+        }, { withCredentials: true })
+      console.log(response);
     } catch (error) {
       console.log(error);
-    }}
+    }
+  }
 
   return (
     <Form {...form}>
@@ -75,7 +78,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input type="password" placeholder="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

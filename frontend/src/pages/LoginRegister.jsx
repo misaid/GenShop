@@ -10,10 +10,10 @@ const Login = () => {
       <Navbar />
       <div className="flex">
         <div className="flex-1 w-1/2 h-screen bg-gradient-to-r from-lime-400 to-green-600">
-          <h2 className="text-3xl text-white font-bold pt-20 pl-10">
+          <h2 className="text-3xl text-black font-bold pt-20 pl-10">
             Login or Register for [E-commerce Placeholder Name]
           </h2>
-          <p className="text-white text-lg pl-10 mt-5">
+          <p className="text-black text-lg pl-10 mt-5">
             Welcome to [E-commerce Placeholder Name], the best place to buy
             fruits online. Login or register to get started.
           </p>
