@@ -1,4 +1,5 @@
 import axios from "axios";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 // form imports
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,15 +33,9 @@ export default function LoginForm() {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
+  const navigate = useNavigate();
 
-
-
-
-
-  // 2. Define a submit handler.
   async function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be validated.
     console.log(values.name);
     console.log(import.meta.env.VITE_APP_API_URL);
     try {
@@ -50,6 +45,7 @@ export default function LoginForm() {
           password: values.password
         }, { withCredentials: true })
       console.log(response);
+      navigate('/shop');
     } catch (error) {
       console.log(error);
     }

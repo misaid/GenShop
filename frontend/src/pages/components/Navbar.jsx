@@ -20,6 +20,9 @@ const Navbar = () => {
           <h2>About</h2>
         </Link>
       </div>
+      <Link to="/login" className="flex items-center mr-4">
+        <h2>Login</h2>
+      </Link>
       <Link to="/cart" className="flex items-center mr-4">
         <div className="flex items-center mr-4">
           <img

@@ -24,9 +24,9 @@ const userSchema = mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
-    },
+    }
   ],
 });
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("EcoUser", userSchema);
 export default User;

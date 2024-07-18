@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 
 /**
 * Define a schema for the form.
@@ -41,6 +42,7 @@ export default function RegisterForm() {
       username: "", password: ""
     },
   });
+  const navigate = useNavigate();
 
   /**
   * Define an axios instance.
@@ -56,20 +58,21 @@ export default function RegisterForm() {
       * @returns {void}
   **/
   async function onSubmit(values) {
-    console.log(values.password == values.matchPassword);
+    //console.log(values.password == values.matchPassword);
     if (values.password == "dogdog123dogdog") {
       setError("name", { type: "server", message: "Username is already taken" });
     }
     try {
-      const response = await axiosInstance.post('/login',
+      const response = await axiosInstance.post('/register',
         {
           username: values.name,
           password: values.password,
-          matchPassword: values.matchPassword
+          //matchPassword: values.matchPassword
         }, { withCredentials: true })
       console.log(response);
+      navigate('/shop');
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data);
     }
 
   }
