@@ -1,5 +1,6 @@
 import axios from "axios";
 import Navbar from "./components/Navbar";
+import { useState } from "react";
 //zod 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 
 const Generate = () => {
+  const [completion, setCompletion] = useState([]);
+  const [imageURL, setImageURL] = useState([]);
   const FormSchema = z.object({
     prompt: z.string().min(2, {
       message: "Prompt must be at least 2 characters.",
@@ -35,7 +38,10 @@ const Generate = () => {
         {
           prompt: values.prompt,
         }, { withCredentials: true })
-      console.log(response);
+      //console.log(response);
+      setCompletion(response.data.item);
+      setImageURL(response.data.image);
+      console.log(response.data.item);
       //navigate('/shop');
     } catch (error) {
       console.log(error);
@@ -46,7 +52,7 @@ const Generate = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center ">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -66,6 +72,8 @@ const Generate = () => {
           </form>
         </Form>
       </div>
+      <h2 className="bg-red-100">{completion}</h2>
+      <img src={`data:image/jpeg;base64,${imageURL}`} />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-
+import OpenAI from 'openai';
 // models
 import User from './models/user.js';
 import Cart from './models/cart.js';
@@ -15,10 +15,12 @@ import Order from './models/order.js';
 import Product from './models/product.js';
 
 dotenv.config();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const mongoDBURL = process.env.mongoDBURL;
 const secretKey = process.env.secretKey;
 const DOMAIN = process.env.domain || 'http://localhost:5001';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const openai = new OpenAI(OPENAI_API_KEY);
 
 var limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -103,8 +105,41 @@ app.post("/logout", async (request, response) => {
 });
 
 app.post("/generate", async (request, response) => {
-  console.log(request.body.prompt);
-  return response.status(200).send("Generated");
+  //console.log(request.body.prompt);
+  try {
+    const promptInstructions = "You are an assistant that does nothing but respond to the prompt with a json with variables price (float), description, stock(int), and name for a potential product. With no additional description or context";
+    const chatContent = promptInstructions + request.body.prompt;
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "system", content: chatContent }],
+      model: "gpt-3.5-turbo",
+    });
+    //convert varibles to json
+    const variables = JSON.parse(completion.choices[0].message.content);
+    const name = variables.name;
+    const price = variables.price;
+    const description = variables.description;
+    const stock = variables.stock;
+    console.log(variables);
+    // create an image from variable name
+    const imageInstruction = "You are an assistant that does nothing but respond to the prompt with an image of the product based on the name the image must only contain a single item and be a product image with a white background this is the product name: ";
+    const imagePrompt = imageInstruction + name;
+    const imageCompletion = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: imagePrompt,
+      n: 1,
+      size: "1024x1024",
+      response_format: 'b64_json',
+    });
+    const image_url = imageCompletion.data[0].b64_json;
+    //create product
+    const new_product = { name: name, price: price, image: image_url, countInStock: stock, description: description };
+    const product = await Product.create(new_product);
+    return response.status(200).send({ "item": completion.choices[0].message.content, "image": image_url });
+  }
+  catch (error) {
+    console.log(error);
+    return response.status(400).send("Error in generating response");
+  };
 });
 
 
