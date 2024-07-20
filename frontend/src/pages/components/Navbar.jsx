@@ -19,6 +19,9 @@ const Navbar = () => {
         <Link to="/about" className=" text-black text-2xl p-5 mx-3">
           <h2>About</h2>
         </Link>
+        <Link to="/generate" className=" text-black text-2xl p-5 mx-3">
+          <h2>Generate</h2>
+        </Link>
       </div>
       <Link to="/login" className="flex items-center mr-4">
         <h2>Login</h2>

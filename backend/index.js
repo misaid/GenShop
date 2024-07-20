@@ -116,7 +116,6 @@ app.post("/generate", async (request, response) => {
       model: "gpt-4o-mini",
       response_format: { type: "json_object" },
     });
-    console.log(completion.choices[0].message.content);
     //convert varibles to json
     const variables = JSON.parse(completion.choices[0].message.content);
     const name = variables.name;
@@ -151,6 +150,17 @@ app.post("/generate", async (request, response) => {
   } catch (error) {
     console.log(error);
     return response.status(400).send("Error in generating response");
+  }
+});
+
+app.get("/products", async (request, response) => {
+  try {
+    //fetch only one for testing
+    const products = await Product.find();
+    return response.status(200).send(products);
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send("Error in fetching products");
   }
 });
 

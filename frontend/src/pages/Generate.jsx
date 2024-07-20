@@ -1,7 +1,7 @@
 import axios from "axios";
 import Navbar from "./components/Navbar";
 import { useState } from "react";
-//zod 
+//zod
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,7 +26,7 @@ const Generate = () => {
     prompt: z.string().min(2, {
       message: "Prompt must be at least 2 characters.",
     }),
-  })
+  });
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -34,10 +34,13 @@ const Generate = () => {
 
   const onSubmit = async (values) => {
     try {
-      const response = await axiosInstance.post('/generate',
+      const response = await axiosInstance.post(
+        "/generate",
         {
           prompt: values.prompt,
-        }, { withCredentials: true })
+        },
+        { withCredentials: true },
+      );
       //console.log(response);
       setCompletion(response.data.item);
       setImageURL(response.data.image);
@@ -47,7 +50,7 @@ const Generate = () => {
       console.log(error);
     }
   };
-  const form = useForm({ resolver: zodResolver(FormSchema), });
+  const form = useForm({ resolver: zodResolver(FormSchema) });
 
   return (
     <div>
