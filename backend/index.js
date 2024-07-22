@@ -13,6 +13,7 @@ import Cart from "./models/cart.js";
 import Comment from "./models/comment.js";
 import Order from "./models/order.js";
 import Product from "./models/product.js";
+import Category from "./models/category.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5001;
@@ -109,7 +110,7 @@ app.post("/generate", async (request, response) => {
   //console.log(request.body.prompt);
   try {
     const promptInstructions =
-      "You are an assistant that does nothing but respond to the prompt with a json object with variables price (float), description, stock(int), and name for a potential product. With no additional description or context";
+      "You are an assistant that does nothing but respond to the prompt with a json object with variables price (float), description, stock(int),categories(string array capitalization like a title) and name for a potential product. With no additional description or context";
     const chatContent = promptInstructions + request.body.prompt;
     const completion = await openai.chat.completions.create({
       messages: [{ role: "system", content: chatContent }],
@@ -122,6 +123,7 @@ app.post("/generate", async (request, response) => {
     const price = variables.price;
     const description = variables.description;
     const stock = variables.stock;
+    const categories = variables.categories;
     console.log(variables);
     // create an image from variable name
     const imageInstruction =
@@ -136,6 +138,8 @@ app.post("/generate", async (request, response) => {
     });
     const image_url = imageCompletion.data[0].b64_json;
     //create product
+    const categories_db = await Category.find({}, "categoryName");
+    console.log(categories);
     const new_product = {
       name: name,
       price: price,
@@ -144,6 +148,23 @@ app.post("/generate", async (request, response) => {
       description: description,
     };
     const product = await Product.create(new_product);
+    // create category if it does not exist and add product to that cateogry
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories_db.find(
+        (category) => category.categoryName === categories[i],
+      );
+      //TODO: this is broken because for some reason we cannot push to category.products
+      if (category) {
+        console.log(category);
+        category.products.push(product._id);
+        await category.save();
+      } else {
+        const new_category = await Category.create({
+          categoryName: categories[i],
+          products: [product._id],
+        });
+      }
+    }
     return response
       .status(200)
       .send({ item: completion.choices[0].message.content, image: image_url });
