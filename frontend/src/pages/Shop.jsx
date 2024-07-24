@@ -22,6 +22,7 @@ const Shop = () => {
   const page = searchParams.get("page") || 1;
   const totalPages = 321;
   const [currentPage, setCurrentPage] = useState(page);
+  const [nextPage, setNextPage] = useState(currentPage + 1);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -64,14 +65,14 @@ const Shop = () => {
               <PaginationPrevious href="#" />
             </PaginationItem>
           )}
+          {/* <PaginationItem> */}
+          {/*   <PaginationPrevious href="#" /> */}
+          {/* </PaginationItem> */}
           <PaginationItem>
-            <PaginationPrevious href="#" />
+            <PaginationLink href="?page={currentPage}" >{currentPage}</PaginationLink>
           </PaginationItem>
           <PaginationItem>
-            <PaginationLink href="/page=" >{currentPage}</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">{currentPage + 1}</PaginationLink>
+            <PaginationLink href="?page={nextPage}">{currentPage + 1}</PaginationLink>
           </PaginationItem>
           <PaginationItem>
             <PaginationEllipsis />
@@ -79,9 +80,9 @@ const Shop = () => {
           <PaginationItem>
             <PaginationLink href="#">321</PaginationLink>
           </PaginationItem>
-          {currentPage == totalPages && (
+          {currentPage <= totalPages && (
             <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext href="?page={nextPage}" />
             </PaginationItem>)}
         </PaginationContent>
       </Pagination>
