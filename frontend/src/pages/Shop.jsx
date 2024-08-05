@@ -22,6 +22,7 @@ const Shop = () => {
   const page = parseInt(searchParams.get("page")) || 1;
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(page);
+  const [validPage, setValidPage] = useState(true);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -31,7 +32,9 @@ const Shop = () => {
       const response = await axiosInstance.get("/products" + `?page=${currentPage}`);
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
+      setValidPage(true);
     } catch (error) {
+      setValidPage(false);
       console.log(error);
     }
   };
@@ -39,72 +42,84 @@ const Shop = () => {
   useEffect(() => {
     fetchProducts();
   }, [currentPage]);
+
   return (
     <div>
-      <Navbar />
-      <div className="flex flex-1 items-center justify-center">
-        <div className="grid grid-cols-2 gap-4">
-          {products.map((product) => (
-            <div key={product.id} className="col-span-1">
-              <Product
-                name={product.name}
-                rating={product.rating}
-                stock={product.countInStock}
-                price={product.price}
-                imageURL={product.image}
-              />
-            </div>
-          ))}
+      {!validPage ? (
+        <div><Navbar />
+          <div>Invalid Page</div>
         </div>
-      </div>
-      <div></div>
-      <Pagination>
-        <PaginationContent>
-          {currentPage > 1 && (
-            <PaginationItem>
-              <PaginationPrevious href={`?page=${currentPage - 1}`} />
-            </PaginationItem>
-          )}
+      ) : (
+        <>
+          <Navbar />
+          <div className="flex flex-1 items-center justify-center">
+            <div className="grid grid-cols-2 gap-4">
+              {products.map((product) => (
+                <div key={product.id} className="col-span-1">
+                  <Product
+                    name={product.name}
+                    rating={product.rating}
+                    stock={product.countInStock}
+                    price={product.price}
+                    imageURL={product.image}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          <Pagination>
+            <PaginationContent>
+              {currentPage > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious href={`?page=${currentPage - 1}`} />
+                </PaginationItem>
+              )}
 
-          {currentPage - 1 > 0 && (
-            <PaginationItem>
-              <PaginationLink href={`?page=${currentPage - 1}`}>
-                {currentPage - 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
+              {currentPage - 1 > 0 && (
+                <PaginationItem>
+                  <PaginationLink href={`?page=${currentPage - 1}`}>
+                    {currentPage - 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
 
-          <PaginationItem>
-            <PaginationLink href={`?page=${currentPage}`}>
-              {currentPage}
-            </PaginationLink>
-          </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href={`?page=${currentPage}`}>
+                  {currentPage}
+                </PaginationLink>
+              </PaginationItem>
 
-          {currentPage + 1 <= totalPages && (
-            <PaginationItem>
-              <PaginationLink href={`?page=${currentPage + 1}`}>
-                {currentPage + 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
+              {currentPage + 1 <= totalPages && (
+                <PaginationItem>
+                  <PaginationLink href={`?page=${currentPage + 1}`}>
+                    {currentPage + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
 
-          {currentPage + 2 <= totalPages && (
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>)}
+              {currentPage + 2 <= totalPages && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
 
-          {currentPage + 2 <= totalPages && (
-            <PaginationItem>
-              <PaginationLink href={`?page=${totalPages}`}>{totalPages}</PaginationLink>
-            </PaginationItem>)}
+              {currentPage + 2 <= totalPages && (
+                <PaginationItem>
+                  <PaginationLink href={`?page=${totalPages}`}>
+                    {totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
 
-          {currentPage < totalPages && (
-            <PaginationItem>
-              <PaginationNext href={`?page=${currentPage + 1}`} />
-            </PaginationItem>
-          )}
-        </PaginationContent>
-      </Pagination>
+              {currentPage < totalPages && (
+                <PaginationItem>
+                  <PaginationNext href={`?page=${currentPage + 1}`} />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
+        </>
+      )}
     </div>
   );
 };

@@ -178,13 +178,18 @@ app.get("/products", async (request, response) => {
   try {
     const pageid = request.query.page;
     console.log(pageid);
-    //fetch only one for testing
-    // const products = await Product.find().limit(1);
-    // const products = await Product.find();
+    // not the most ideal way to calculate total pages
+    // could use a running total in the database
+    // but for my purposes this is fine
+    const totalProducts = await Product.countDocuments();
+    // Checking if the page is valid
+    if ((pageid - 1) * 10 > Math.ceil(totalProducts)) {
+      console.error("Invalid page number");
+      return response.status(400).send("Invalid page number");
+    }
     const products = await Product.find()
       .skip((pageid - 1) * 10)
       .limit(10);
-    const totalProducts = await Product.countDocuments();
     const totalPages = Math.ceil(totalProducts / 10);
     return response.status(200).json({ products, totalPages });
   } catch (error) {
