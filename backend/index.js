@@ -180,7 +180,6 @@ app.get("/products", async (request, response) => {
     console.log(pageid);
     // not the most ideal way to calculate total pages
     // could use a running total in the database
-    // but for my purposes this is fine
     const totalProducts = await Product.countDocuments();
     // Checking if the page is valid
     if ((pageid - 1) * 10 > Math.ceil(totalProducts)) {
