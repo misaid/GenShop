@@ -176,9 +176,17 @@ app.post("/generate", async (request, response) => {
 
 app.get("/products", async (request, response) => {
   try {
+    const pageid = request.query.page;
+    console.log(pageid);
     //fetch only one for testing
-    const products = await Product.find();
-    return response.status(200).send(products);
+    // const products = await Product.find().limit(1);
+    // const products = await Product.find();
+    const products = await Product.find()
+      .skip((pageid - 1) * 10)
+      .limit(10);
+    const totalProducts = await Product.countDocuments();
+    const totalPages = Math.ceil(totalProducts / 10);
+    return response.status(200).json({ products, totalPages });
   } catch (error) {
     console.log(error);
     return response.status(400).send("Error in fetching products");
@@ -188,7 +196,7 @@ app.get("/products", async (request, response) => {
 mongoose
   .connect(mongoDBURL)
   .then(() => {
-    console.log("Time is " + new Date() + "\nApp is connected to database");
+    console.log("\n\n\n\n\n\n\n\n\n\n" + "Time is " + new Date() + "\nApp is connected to database");
     app.listen(PORT, () => {
       console.log(`App is listening to port: ${PORT}`);
     });

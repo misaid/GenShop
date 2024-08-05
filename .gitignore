@@ -6,3 +6,4 @@
 /frontend/node_modules
 .vscode
 ecosytem.config.js
+.prettierrc.json

@@ -2,7 +2,7 @@ import Navbar from "./components/Navbar";
 import Product from "./components/Product";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 //pagination
 import {
   Pagination,
@@ -12,25 +12,25 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from "@/components/ui/pagination";
 //
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const location = useLocation();
   // const history = useHistory();
   const searchParams = new URLSearchParams(location.search);
-  const page = searchParams.get("page") || 1;
-  const totalPages = 321;
+  const page = parseInt(searchParams.get("page")) || 1;
+  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(page);
-  const [nextPage, setNextPage] = useState(currentPage + 1);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
   const fetchProducts = async () => {
     try {
       console.log("fetching data for page", currentPage);
-      const response = await axiosInstance.get("/products");
-      setProducts(response.data);
+      const response = await axiosInstance.get("/products" + `?page=${currentPage}`);
+      setProducts(response.data.products);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.log(error);
     }
@@ -62,28 +62,47 @@ const Shop = () => {
         <PaginationContent>
           {currentPage > 1 && (
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious href={`?page=${currentPage - 1}`} />
             </PaginationItem>
           )}
-          {/* <PaginationItem> */}
-          {/*   <PaginationPrevious href="#" /> */}
-          {/* </PaginationItem> */}
-          <PaginationItem>
-            <PaginationLink href="?page={currentPage}" >{currentPage}</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="?page={nextPage}">{currentPage + 1}</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">321</PaginationLink>
-          </PaginationItem>
-          {currentPage <= totalPages && (
+
+          {currentPage - 1 > 0 && (
             <PaginationItem>
-              <PaginationNext href="?page={nextPage}" />
+              <PaginationLink href={`?page=${currentPage - 1}`}>
+                {currentPage - 1}
+              </PaginationLink>
+            </PaginationItem>
+          )}
+
+          <PaginationItem>
+            <PaginationLink href={`?page=${currentPage}`}>
+              {currentPage}
+            </PaginationLink>
+          </PaginationItem>
+
+          {currentPage + 1 <= totalPages && (
+            <PaginationItem>
+              <PaginationLink href={`?page=${currentPage + 1}`}>
+                {currentPage + 1}
+              </PaginationLink>
+            </PaginationItem>
+          )}
+
+          {currentPage + 2 <= totalPages && (
+            <PaginationItem>
+              <PaginationEllipsis />
             </PaginationItem>)}
+
+          {currentPage + 2 <= totalPages && (
+            <PaginationItem>
+              <PaginationLink href={`?page=${totalPages}`}>{totalPages}</PaginationLink>
+            </PaginationItem>)}
+
+          {currentPage < totalPages && (
+            <PaginationItem>
+              <PaginationNext href={`?page=${currentPage + 1}`} />
+            </PaginationItem>
+          )}
         </PaginationContent>
       </Pagination>
     </div>
