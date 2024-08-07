@@ -39,8 +39,13 @@ app.get("/", (request, response) => {
   return response.status(234).send("MSAID");
 });
 
-// TODO: we tried our best to make it so that it is case insensitive but it is not working
-// low priority fix
+// TODO: make username case insensitive
+/**
+* Register a user
+* @param {string} username
+* @param {string} password
+* @return {string} token
+*/
 app.post("/register", async (request, response) => {
   //console.log(request.body);
   const { username, password } = request.body;
@@ -72,7 +77,12 @@ app.post("/register", async (request, response) => {
     return response.status(409).send("Username already exists");
   }
 });
-
+/**
+* login user
+* @param {string} username
+* @param {string} password
+* @return {jsonwebtoken} token
+*/
 app.post("/login", async (request, response) => {
   try {
     if (!request.body.username || !request.body.password) {
@@ -89,7 +99,6 @@ app.post("/login", async (request, response) => {
       return response.status(400).send("Invalid username or password");
     }
     const token = jwt.sign({ userId: user._id }, secretKey);
-    console.log(username, password);
     response.cookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -101,16 +110,25 @@ app.post("/login", async (request, response) => {
   }
 });
 
+/**
+ * Log out the user
+ */
 app.post("/logout", async (request, response) => {
   response.clearCookie("token");
   return response.status(200).send("User logged out");
 });
 
+/**
+ * Genereate an item based on the users prompt
+* @param {string} prompt
+* @return {json} item
+* @return {string} image
+ */
 app.post("/generate", async (request, response) => {
   //console.log(request.body.prompt);
   try {
     const promptInstructions =
-      "You are an assistant that does nothing but respond to the prompt with a json object with variables price (float), description, stock(int),categories(string array capitalization like a title) and name for a potential product. With no additional description or context";
+      "You are an assistant that does nothing but respond to the prompt with a json object with variables price (float), description (100 words), stock(int), categories(string array capitalization like a title) and name for a potential product. With no additional description or context";
     const chatContent = promptInstructions + request.body.prompt;
     const completion = await openai.chat.completions.create({
       messages: [{ role: "system", content: chatContent }],
@@ -174,6 +192,12 @@ app.post("/generate", async (request, response) => {
   }
 });
 
+/**
+  * Get products depending on the page
+  * @param {int} page
+  * @return {json} products
+  * @return {int } totalPages
+  */
 app.get("/products", async (request, response) => {
   try {
     const pageid = request.query.page;
@@ -196,7 +220,17 @@ app.get("/products", async (request, response) => {
     return response.status(400).send("Error in fetching products");
   }
 });
-
+app.get("/product/:id", async (request, response) => {
+  try {
+    const productId = request.params.id;
+    const product = await Product.findById(productId);
+    console.log(product._id);
+    return response.status(200).json(product);
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send("Error in fetching product");
+  }
+});
 mongoose
   .connect(mongoDBURL)
   .then(() => {

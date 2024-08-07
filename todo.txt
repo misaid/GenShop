@@ -1,6 +1,7 @@
 Coding:
 [] Cut out unnecessary information while pulling products on shop page
 [] Create a product page
+  [] Setup stars system
   [] Users can comment and rate this produt
 [] Setup genres and sub genres in the backend
 [] Create a side bar for the shop page
@@ -18,4 +19,5 @@ UI:
 [] fix the home page
 [] fix the shop page
 [] fix the about page
-
+To Be Fixed:
+[] Store images on website instead of supplying base64 for proper caching

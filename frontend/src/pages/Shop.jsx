@@ -2,7 +2,7 @@ import Navbar from "./components/Navbar";
 import Product from "./components/Product";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 //pagination
 import {
   Pagination,
@@ -17,6 +17,7 @@ import {
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
   // const history = useHistory();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get("page")) || 1;
@@ -38,6 +39,11 @@ const Shop = () => {
       console.log(error);
     }
   };
+  const productClicked = (productId) => () => {
+    console.log("product clicked", productId);
+    // history.push(`/product/${productId}`);
+    navigate(`/product/${productId}`);
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -55,7 +61,7 @@ const Shop = () => {
           <div className="flex flex-1 items-center justify-center">
             <div className="grid grid-cols-2 gap-4">
               {products.map((product) => (
-                <div key={product.id} className="col-span-1">
+                <div key={product._id} className="col-span-1" onClick={productClicked(product._id)}>
                   <Product
                     name={product.name}
                     rating={product.rating}

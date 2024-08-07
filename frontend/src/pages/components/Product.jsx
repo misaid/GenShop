@@ -1,4 +1,3 @@
-import React from "react";
 import { NumericFormat } from "react-number-format";
 
 const Product = ({ name, rating, stock, price, imageURL }) => {
@@ -11,6 +10,7 @@ const Product = ({ name, rating, stock, price, imageURL }) => {
               className="max-h-[270px] max-w-[300px] rounded-xl "
               src={`data:image/jpeg;base64,${imageURL}`}
               alt="product"
+              loading="lazy"
             />
           </div>
         </div>

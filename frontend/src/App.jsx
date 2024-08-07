@@ -6,6 +6,7 @@ import About from './pages/About.jsx'
 import Cart from './pages/Cart.jsx'
 import Login from './pages/LoginRegister.jsx'
 import Generate from './pages/Generate.jsx'
+import ProductPage from './pages/ProductPage.jsx'
 const App = () => {
   return (
     <Routes>
@@ -16,7 +17,7 @@ const App = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/checkout' element={<div>Checkout</div>} />
       <Route path='/generate' element={<Generate />} />
-      <Route path='/p/:id' element={<div>Product</div>} />
+      <Route path='/product/:id' element={<ProductPage />} />
     </Routes>
   )
 }
