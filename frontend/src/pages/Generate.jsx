@@ -42,7 +42,7 @@ const Generate = () => {
         { withCredentials: true },
       );
       //console.log(response);
-      setCompletion(response.data.item);
+      setCompletion(response.data.item.description);
       setImageURL(response.data.image);
       console.log(response.data.item);
       //navigate('/shop');

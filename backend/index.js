@@ -13,7 +13,8 @@ import Cart from "./models/cart.js";
 import Comment from "./models/comment.js";
 import Order from "./models/order.js";
 import Product from "./models/product.js";
-import Category from "./models/category.js";
+// import Category from "./models/department.js";
+import Department from "./models/department.js"
 
 dotenv.config();
 const PORT = process.env.PORT || 5001;
@@ -126,9 +127,23 @@ app.post("/logout", async (request, response) => {
  */
 app.post("/generate", async (request, response) => {
   //console.log(request.body.prompt);
+
   try {
-    const promptInstructions =
-      "You are an assistant that does nothing but respond to the prompt with a json object with variables price (float), description (100 words), stock(int), categories(string array capitalization like a title) and name for a potential product. With no additional description or context";
+    // const promptInstructions =
+    //   "You are an assistant that does nothing but respond to the prompt with a json object with variables price (float), description (100 words), stock(int), categories(string array with subarrays capitalization like a title) in format [department:[major categories:[subcategories]], and name(string) for a potential product. With no additional description or context";
+    const promptInstructions = `
+    You are an assistant tasked with generating a JSON object that contains the following fields for a potential product:
+
+    - price (float): The cost of the product.
+    - description (string, 100 words): A concise summary of the product.
+    - stock (integer): The number of units available.
+    - department: The department that the product belongs to. Title capitalization. Department name cannot exist in categories.
+    - categories (array): The categories that the product belongs to. Title capitalization.
+    - name (string): The name of the product.
+
+    Your response should be strictly in JSON format, with no additional text or explanation.
+    `;
+
     const chatContent = promptInstructions + request.body.prompt;
     const completion = await openai.chat.completions.create({
       messages: [{ role: "system", content: chatContent }],
@@ -142,7 +157,8 @@ app.post("/generate", async (request, response) => {
     const description = variables.description;
     const stock = variables.stock;
     const categories = variables.categories;
-    console.log(variables);
+    const department = variables.department;
+    // console.log(variables);
     // create an image from variable name
     const imageInstruction =
       "You are an assistant that does nothing but respond to the prompt with an image of the product based on the name the image must only contain a single item and be a product image with a white background this is the product name: ";
@@ -156,36 +172,43 @@ app.post("/generate", async (request, response) => {
     });
     const image_url = imageCompletion.data[0].b64_json;
     //create product
-    const categories_db = await Category.find({}, "categoryName");
-    console.log(categories);
+    // console.log(categories);
     const new_product = {
       name: name,
       price: price,
       image: image_url,
       countInStock: stock,
       description: description,
+      department: department,
     };
     const product = await Product.create(new_product);
-    // create category if it does not exist and add product to that cateogry
-    for (let i = 0; i < categories.length; i++) {
-      const category = categories_db.find(
-        (category) => category.categoryName === categories[i],
-      );
-      //TODO: this is broken because for some reason we cannot push to category.products
+
+    let departmentDoc = await Department.findOneAndUpdate(
+      { departmentName: department },
+      { $addToSet: { products: product._id } },
+      { new: true, upsert: true } // Ensure the department is created if it doesn't exist
+    ).exec();
+
+    for (const categoryName of categories) {
+      let category = departmentDoc.categories.find(cat => cat.categoryName === categoryName);
+
       if (category) {
-        console.log(category);
-        category.products.push(product._id);
-        await category.save();
+        await Department.updateOne(
+          { _id: departmentDoc._id, "categories.categoryName": categoryName },
+          { $addToSet: { "categories.$.products": product._id } }
+        );
       } else {
-        const new_category = await Category.create({
-          categoryName: categories[i],
-          products: [product._id],
-        });
+        await Department.updateOne(
+          { _id: departmentDoc._id },
+          {
+            $addToSet: { categories: { categoryName, products: [product._id] } }
+          }
+        );
       }
     }
-    return response
-      .status(200)
-      .send({ item: completion.choices[0].message.content, image: image_url });
+    await departmentDoc.save();
+
+    return response.status(200).send({ item: variables, image: image_url });
   } catch (error) {
     console.log(error);
     return response.status(400).send("Error in generating response");
@@ -201,7 +224,7 @@ app.post("/generate", async (request, response) => {
 app.get("/products", async (request, response) => {
   try {
     const pageid = request.query.page;
-    console.log(pageid);
+    // console.log(pageid);
     // not the most ideal way to calculate total pages
     // could use a running total in the database
     const totalProducts = await Product.countDocuments();
@@ -220,21 +243,27 @@ app.get("/products", async (request, response) => {
     return response.status(400).send("Error in fetching products");
   }
 });
+/**
+  * Get products
+  * @return {json} products
+ */
 app.get("/product/:id", async (request, response) => {
   try {
     const productId = request.params.id;
     const product = await Product.findById(productId);
-    console.log(product._id);
+    // console.log(product._id);
     return response.status(200).json(product);
   } catch (error) {
     console.log(error);
     return response.status(400).send("Error in fetching product");
   }
 });
+
 mongoose
   .connect(mongoDBURL)
   .then(() => {
-    console.log("\n\n\n\n\n\n\n\n\n\n" + "Time is " + new Date() + "\nApp is connected to database");
+    console.clear();
+    console.log("\n***************************************************\n" + "Time is " + new Date() + "\nApp is connected to database");
     app.listen(PORT, () => {
       console.log(`App is listening to port: ${PORT}`);
     });

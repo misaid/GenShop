@@ -1,9 +1,20 @@
+Today:
+[] migrate image hosting to amazon s3
+[] setup product page
+[x] fix generes
+[] setup fetching cart from the backend
+[] create either a dropdown or a full page cart item
+[] create user My account page
+  [] might have to change the current login flow/schema
+[] create order history page
+
+
 Coding:
 [] Cut out unnecessary information while pulling products on shop page
 [] Create a product page
   [] Setup stars system
   [] Users can comment and rate this produt
-[] Setup genres and sub genres in the backend
+[x] Setup genres and sub genres in the backend
 [] Create a side bar for the shop page
 [] Setup product page
 [] Setup fetching cart from the backend
