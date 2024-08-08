@@ -7,15 +7,16 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import OpenAI from "openai";
+import AWS from "aws-sdk";
+import { v4 as uuidv4 } from 'uuid';
 // models
 import User from "./models/user.js";
 import Cart from "./models/cart.js";
 import Comment from "./models/comment.js";
 import Order from "./models/order.js";
 import Product from "./models/product.js";
-// import Category from "./models/department.js";
 import Department from "./models/department.js"
-
+// env variables
 dotenv.config();
 const PORT = process.env.PORT || 5001;
 const mongoDBURL = process.env.mongoDBURL;
@@ -23,6 +24,12 @@ const secretKey = process.env.secretKey;
 const DOMAIN = process.env.domain || "http://localhost:5001";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const openai = new OpenAI(OPENAI_API_KEY);
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
 
 var limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -150,16 +157,12 @@ app.post("/generate", async (request, response) => {
       model: "gpt-4o-mini",
       response_format: { type: "json_object" },
     });
-    //convert varibles to json
+
+    // Convert varibles to json
     const variables = JSON.parse(completion.choices[0].message.content);
-    const name = variables.name;
-    const price = variables.price;
-    const description = variables.description;
-    const stock = variables.stock;
-    const categories = variables.categories;
-    const department = variables.department;
-    // console.log(variables);
-    // create an image from variable name
+    const { name, price, description, stock, categories, department } = variables;
+
+    // Create an image from variable name
     const imageInstruction =
       "You are an assistant that does nothing but respond to the prompt with an image of the product based on the name the image must only contain a single item and be a product image with a white background this is the product name: ";
     const imagePrompt = imageInstruction + name;
@@ -170,9 +173,27 @@ app.post("/generate", async (request, response) => {
       size: "1024x1024",
       response_format: "b64_json",
     });
-    const image_url = imageCompletion.data[0].b64_json;
-    //create product
-    // console.log(categories);
+    const imageB64 = imageCompletion.data[0].b64_json;
+
+    const imageBuffer = Buffer.from(imageB64, 'base64');
+    const fileName = `${uuidv4()}.png`;
+    const params = {
+      Bucket: 'moprojects',
+      Key: `Eprj/${fileName}`,
+      Body: imageBuffer,
+      ContentEncoding: 'base64',
+      ContentType: 'image/png',
+      CacheControl: 'max-age=31536000',
+    };
+
+    // Upload the image to S3
+    const uploadResult = await s3.putObject(params).promise();
+    console.log('Successfully uploaded image to S3:', uploadResult);
+
+    // S3 image URL
+    const image_url = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
+
+    // Create Product
     const new_product = {
       name: name,
       price: price,
@@ -183,6 +204,7 @@ app.post("/generate", async (request, response) => {
     };
     const product = await Product.create(new_product);
 
+    // If department exists add product to department and check if sub categoiries exits and if they do append product to it.
     let departmentDoc = await Department.findOneAndUpdate(
       { departmentName: department },
       { $addToSet: { products: product._id } },

@@ -8,7 +8,8 @@ const Product = ({ name, rating, stock, price, imageURL }) => {
           <div className="">
             <img
               className="max-h-[270px] max-w-[300px] rounded-xl "
-              src={`data:image/jpeg;base64,${imageURL}`}
+              src={imageURL}
+              // src={`data:image/jpeg;base64,${imageURL}`}
               alt="product"
               loading="lazy"
             />

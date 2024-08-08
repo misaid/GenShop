@@ -76,7 +76,7 @@ const Generate = () => {
         </Form>
       </div>
       <h2 className="bg-red-100">{completion}</h2>
-      <img src={`data:image/jpeg;base64,${imageURL}`} />
+      <img src={imageURL} />
     </div>
   );
 };
