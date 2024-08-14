@@ -1,7 +1,5 @@
 Today:
-[] migrate image hosting to amazon s3
-[] setup product page
-[x] fix generes
+[*] setup product page
 [] setup fetching cart from the backend
 [] create either a dropdown or a full page cart item
 [] create user My account page
@@ -32,3 +30,6 @@ UI:
 [] fix the about page
 To Be Fixed:
 [] Store images on website instead of supplying base64 for proper caching
+
+Might add:
+[] Wishlist

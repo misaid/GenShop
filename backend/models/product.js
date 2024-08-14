@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema(
   {
@@ -26,14 +26,14 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    categories: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "categorySchema" },
-    ],
+    categories: {
+      type: Array,
+    },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-const Product = mongoose.model("productSchema", productSchema);
+const Product = mongoose.model('productSchema', productSchema);
 export default Product;

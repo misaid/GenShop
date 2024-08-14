@@ -1,8 +1,8 @@
-import Navbar from "./components/Navbar";
-import Product from "./components/Product";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import Navbar from './components/Navbar';
+import Product from './components/Product';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 //pagination
 import {
   Pagination,
@@ -12,7 +12,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 //
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -20,7 +20,7 @@ const Shop = () => {
   const navigate = useNavigate();
   // const history = useHistory();
   const searchParams = new URLSearchParams(location.search);
-  const page = parseInt(searchParams.get("page")) || 1;
+  const page = parseInt(searchParams.get('page')) || 1;
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(page);
   const [validPage, setValidPage] = useState(true);
@@ -29,8 +29,10 @@ const Shop = () => {
   });
   const fetchProducts = async () => {
     try {
-      console.log("fetching data for page", currentPage);
-      const response = await axiosInstance.get("/products" + `?page=${currentPage}`);
+      console.log('fetching data for page', currentPage);
+      const response = await axiosInstance.get(
+        '/products' + `?page=${currentPage}`
+      );
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
       setValidPage(true);
@@ -39,8 +41,8 @@ const Shop = () => {
       console.log(error);
     }
   };
-  const productClicked = (productId) => () => {
-    console.log("product clicked", productId);
+  const productClicked = productId => () => {
+    console.log('product clicked', productId);
     // history.push(`/product/${productId}`);
     navigate(`/product/${productId}`);
   };
@@ -52,7 +54,8 @@ const Shop = () => {
   return (
     <div>
       {!validPage ? (
-        <div><Navbar />
+        <div>
+          <Navbar />
           <div>Invalid Page</div>
         </div>
       ) : (
@@ -60,8 +63,12 @@ const Shop = () => {
           <Navbar />
           <div className="flex flex-1 items-center justify-center">
             <div className="grid grid-cols-2 gap-4">
-              {products.map((product) => (
-                <div key={product._id} className="col-span-1" onClick={productClicked(product._id)}>
+              {products.map(product => (
+                <div
+                  key={product._id}
+                  className="col-span-1"
+                  onClick={productClicked(product._id)}
+                >
                   <Product
                     name={product.name}
                     rating={product.rating}

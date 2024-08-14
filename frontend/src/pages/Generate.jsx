@@ -1,12 +1,12 @@
-import axios from "axios";
-import Navbar from "./components/Navbar";
-import { useState } from "react";
+import axios from 'axios';
+import Navbar from './components/Navbar';
+import { useState } from 'react';
 //zod
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 //form
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -15,16 +15,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
 
 const Generate = () => {
   const [completion, setCompletion] = useState([]);
   const [imageURL, setImageURL] = useState([]);
   const FormSchema = z.object({
     prompt: z.string().min(2, {
-      message: "Prompt must be at least 2 characters.",
+      message: 'Prompt must be at least 2 characters.',
     }),
   });
   const axiosInstance = axios.create({
@@ -32,14 +32,14 @@ const Generate = () => {
   });
   const navigate = useNavigate();
 
-  const onSubmit = async (values) => {
+  const onSubmit = async values => {
     try {
       const response = await axiosInstance.post(
-        "/generate",
+        '/generate',
         {
           prompt: values.prompt,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       );
       //console.log(response);
       setCompletion(response.data.item.description);

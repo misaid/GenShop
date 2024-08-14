@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const userSchema = mongoose.Schema(
   {
@@ -13,25 +13,25 @@ const userSchema = mongoose.Schema(
     },
     cartid: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Cart",
+      ref: 'Cart',
     },
     commentids: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: 'Comment',
       },
     ],
     orderids: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Order",
+        ref: 'Order',
       },
     ],
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-const User = mongoose.model("EcoUser", userSchema);
+const User = mongoose.model('EcoUser', userSchema);
 export default User;

@@ -1,31 +1,34 @@
-import jsonwebtoken, { decode } from "jsonwebtoken";
+import jsonwebtoken, { decode } from 'jsonwebtoken';
 
 // const jsonwebtoken = require('jsonwebtoken');
 
 /**
- * 
- * @param {Object} req the request object 
- * @param {Object} res the response object
- * @param {*} next 
- * @returns 
+ *
+ * @param {Object} request the request object
+ * @param {Object} response the response object
+ * @param {*} next
+ * @returns
  */
-const verifyJWT = (req, res, next) => {
-    // console.log(req.cookies)
-    try{
-    const jwt = req.cookies.jwt;
-    
+const verifyJWT = (request, response, next) => {
+  // console.log(req.cookies)
+  try {
+    const jwt = request.cookies.jwt;
+
     if (!jwt) {
-        return res.status(403).send("A token is required for authentication");
+      return response
+        .status(403)
+        .send('A token is required for authentication');
     }
     try {
-        const decoded = jsonwebtoken.verify(jwt, process.env.secretKey);
-        req.user = decoded;
+      const decoded = jsonwebtoken.verify(jwt, process.env.secretKey);
+      request.user = decoded;
     } catch (error) {
-        return res.status(401).send("Invalid Token");
+      return response.status(401).send('Invalid Token');
     }
-    return next();} catch (error) {
-        console.log(error)
-    }
-}
+    return next();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default verifyJWT;
