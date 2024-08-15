@@ -1,6 +1,5 @@
-Today:
-[*] setup product page
-[x] setup fetching cart from the backend
+In progess:
+[85%] setup product page
 [] create either a dropdown or a full page cart item
 [] create user My account page
   [] might have to change the current login flow/schema
@@ -25,3 +24,5 @@ To Be Fixed:
 
 Might add:
 [] Wishlist
+[] Zoom in on hover over photo
+[] Default lower res photo in image gen

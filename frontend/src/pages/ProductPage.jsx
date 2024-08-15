@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { StaticStar } from './components/StaticStar';
 import Product from './components/Product';
 const ProductPage = () => {
   const { id } = useParams();
@@ -66,16 +67,25 @@ const ProductPage = () => {
   return (
     <div>
       <Navbar />
-      <div>
-        <div className="bg-red-200">
-          <img src={product.image} alt={product.name} className="h-[500px]" />
-          {product.countInStock}
+      <div className="flex flex-row bg-slate-100 mx-10 rounded-xl">
+        <div className="m-10 flex flex-col ">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-[500px] rounded-xl"
+          />
+          <h3 className="font-light mt-1 text-sm">
+            Stock: {product.countInStock}
+          </h3>
         </div>
-        <div>
-          <h2 className="bg-blue-200">{product.description}</h2>
-          <form onSubmit={handleSubmit}>
+        <div className="flex flex-col max-w-[500px] justify-center ml-24 space-y-3">
+          <h2 className="text-4xl font-bold ">{product.name}</h2>
+          <StaticStar urate={4} />
+          <p className="text-l">{product.description}</p>
+          <form onSubmit={handleSubmit} className="flex items-center space-x-2">
+            <h3>Qtw: </h3>
             <Select value={selectedValue} onValueChange={handleValueChange}>
-              <SelectTrigger className="w-[80px]">
+              <SelectTrigger className="w-[60px]">
                 <SelectValue placeholder={selectedValue} />
               </SelectTrigger>
               <SelectContent>
@@ -89,7 +99,7 @@ const ProductPage = () => {
                 })}
               </SelectContent>
             </Select>
-            <Button type="submit">Buy Now</Button>
+            <Button type="submit">Cart</Button>
           </form>
         </div>
       </div>
