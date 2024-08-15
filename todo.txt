@@ -1,28 +1,20 @@
 Today:
 [*] setup product page
-[] setup fetching cart from the backend
+[x] setup fetching cart from the backend
 [] create either a dropdown or a full page cart item
 [] create user My account page
   [] might have to change the current login flow/schema
 [] create order history page
 
-
 Coding:
 [] Cut out unnecessary information while pulling products on shop page
 [] Create a product page
   [] Setup stars system
-  [] Users can comment and rate this produt
-[x] Setup genres and sub genres in the backend
+  [] Users can comment and rate this product
 [] Create a side bar for the shop page
-[] Setup product page
-[] Setup fetching cart from the backend
-[] Create either a dropdown or a full page cart item
 [] Create checkout page
 [] Setup receiving order from in the backend 
 [] Create order status page
-[] Create user My account page
-  [] Might have to change the current login flow/schema
-[] Create order history page
 UI:
 [] fix the navbar
 [] fix the home page
