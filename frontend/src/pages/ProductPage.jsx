@@ -12,12 +12,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { StaticStar } from './components/StaticStar';
+import { Skeleton } from '@/components/ui/skeleton';
 import Product from './components/Product';
 const ProductPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState({});
   const [selectedValue, setSelectedValue] = useState('1'); // Default value is "1"
   const [stock, setStock] = useState('');
+  const [imageLoading, setImageloading] = useState(false);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -69,7 +71,16 @@ const ProductPage = () => {
       <Navbar />
       <div className="flex flex-row bg-slate-100 mx-48 space-x-24 rounded-xl">
         <div className="min-h-[300px] min-w-[300px] max-h-[500px] max-w-[500px] m-10 flex flex-col ">
-          <img src={product.image} alt={product.name} className=" rounded-xl" />
+          {!imageLoading && (
+            <Skeleton className="h-[1024px] w-[1024px] rounded-xl" />
+          )}
+          <img
+            src={product.image}
+            alt={product.name}
+            onLoad={() => setImageloading(true)}
+            stye={imageLoading ? {} : { display: 'none' }}
+            className=" rounded-xl"
+          />
           <h3 className="font-light mt-1 text-sm">
             Stock: {product.countInStock}
           </h3>

@@ -1,16 +1,24 @@
 import { NumericFormat } from 'react-number-format';
 import StaticStar from './StaticStar';
+import { Skeleton } from '@/components/ui/skeleton';
+import React, { useState } from 'react';
 const Product = ({ name, rating, stock, price, imageURL }) => {
+  const [imageLoading, setImageloading] = useState(false);
   return (
     <div className="h-[450px] w-[275px] border border-b-gray rounded-xl overflow-hidden">
       <div className="mx-3">
         <div className="flex flex-col items-center ">
           <div className="">
+            {!imageLoading && (
+              <Skeleton className="h-[270px] w-[300px] rounded-t-xl" />
+            )}
             <img
               className="max-h-[270px] max-w-[300px] rounded-t-xl"
               src={imageURL}
               // src={`data:image/jpeg;base64,${imageURL}`}
               alt="product"
+              onLoad={() => setImageloading(true)}
+              style={imageLoading ? {} : { display: 'none' }}
               loading="lazy"
             />
           </div>
