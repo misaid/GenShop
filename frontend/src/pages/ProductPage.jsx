@@ -67,20 +67,16 @@ const ProductPage = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex flex-row bg-slate-100 mx-10 rounded-xl">
-        <div className="m-10 flex flex-col ">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="h-[500px] rounded-xl"
-          />
+      <div className="flex flex-row bg-slate-100 mx-48 space-x-24 rounded-xl">
+        <div className="min-h-[300px] min-w-[300px] max-h-[500px] max-w-[500px] m-10 flex flex-col ">
+          <img src={product.image} alt={product.name} className=" rounded-xl" />
           <h3 className="font-light mt-1 text-sm">
             Stock: {product.countInStock}
           </h3>
         </div>
-        <div className="flex flex-col max-w-[500px] justify-center ml-24 space-y-3">
+        <div className="flex flex-col max-w-[600px] justify-center space-y-3">
           <h2 className="text-4xl font-bold ">{product.name}</h2>
-          <StaticStar urate={4} />
+          <StaticStar urate={product.rating} size={20} />
           <p className="text-l">{product.description}</p>
           <form onSubmit={handleSubmit} className="flex items-center space-x-2">
             <h3>Qtw: </h3>

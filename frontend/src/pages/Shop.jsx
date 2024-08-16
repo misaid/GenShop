@@ -61,8 +61,13 @@ const Shop = () => {
       ) : (
         <>
           <Navbar />
-          <div className="flex flex-1 items-center justify-center">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-1 h-full space-x-24">
+            <div className="bg-sky-200 w-[500px] h-[800px]">
+              <div>
+                <h1>Categories!</h1>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {products.map(product => (
                 <div
                   key={product._id}

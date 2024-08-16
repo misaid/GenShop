@@ -15,7 +15,7 @@ import Cart from './models/cart.js';
 import Comment from './models/comment.js';
 import Order from './models/order.js';
 import Product from './models/product.js';
-import Department from './models/department.js';
+import { Category, Department } from './models/department.js';
 import verifyJWT from './middleware/verifyJWT.js';
 // env variables
 dotenv.config();
@@ -165,7 +165,9 @@ app.post('/generate', async (request, response) => {
     const { name, price, description, stock, categories, department } =
       variables;
 
+    //if test comment from here
     // Create an image from variable name
+    console.log('Image of:', name, 'Generating');
     const imageInstruction =
       'You are an assistant that does nothing but respond to the prompt with an image of the product based on the name the image must only contain a single item and be a product image with a white background this is the product name: ';
     const imagePrompt = imageInstruction + name;
@@ -177,8 +179,7 @@ app.post('/generate', async (request, response) => {
       response_format: 'b64_json',
     });
     const imageB64 = imageCompletion.data[0].b64_json;
-
-    console.log('Image of:', name, '\nGenerated');
+    console.log('Image generated');
 
     const imageBuffer = Buffer.from(imageB64, 'base64');
     const fileName = `${uuidv4()}.png`;
@@ -193,10 +194,15 @@ app.post('/generate', async (request, response) => {
 
     // Upload the image to S3
     const uploadResult = await s3.putObject(params).promise();
-    // console.log('Successfully uploaded image to S3:', uploadResult);
+    console.log('Successfully uploaded image to S3:', uploadResult);
+    //to here
 
     // S3 image URL
     const image_url = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
+
+    // if testing unccomment this
+    // const image_url =
+    //   'https://moprojects.s3.us-east-2.amazonaws.com/Eprj/arch-black-4k.png';
 
     // Create Product
     const new_product = {
@@ -214,31 +220,25 @@ app.post('/generate', async (request, response) => {
     let departmentDoc = await Department.findOneAndUpdate(
       { departmentName: department },
       { $addToSet: { products: product._id } },
-      { new: true, upsert: true } // Ensure the department is created if it doesn't exist
+      { new: true, upsert: true }
     ).exec();
 
+    // For every cateogry in the categories array, add the product to the category and add the category to the department
     for (const categoryName of categories) {
-      let category = departmentDoc.categories.find(
-        cat => cat.categoryName === categoryName
-      );
+      let category = await Category.findOneAndUpdate(
+        { categoryName: categoryName },
+        {
+          $addToSet: { products: product._id },
+          $set: { department: departmentDoc._id },
+        },
+        { new: true, upsert: true }
+      ).exec();
 
-      if (category) {
-        await Department.updateOne(
-          { _id: departmentDoc._id, 'categories.categoryName': categoryName },
-          { $addToSet: { 'categories.$.products': product._id } }
-        );
-      } else {
-        await Department.updateOne(
-          { _id: departmentDoc._id },
-          {
-            $addToSet: {
-              categories: { categoryName, products: [product._id] },
-            },
-          }
-        );
-      }
+      await Department.updateOne(
+        { _id: departmentDoc._id },
+        { $addToSet: { categories: category._id } }
+      );
     }
-    await departmentDoc.save();
 
     console.log('Product created:', product._id);
     return response.status(200).send({ item: variables, image: image_url });
@@ -260,16 +260,17 @@ app.get('/products', async (request, response) => {
     // console.log(pageid);
     // not the most ideal way to calculate total pages
     // could use a running total in the database
+    const ipr = 12; // items per page
     const totalProducts = await Product.countDocuments();
     // Checking if the page is valid
-    if ((pageid - 1) * 10 > Math.ceil(totalProducts)) {
+    if ((pageid - 1) * ipr > Math.ceil(totalProducts)) {
       console.error('Invalid page number');
       return response.status(400).send('Invalid page number');
     }
     const products = await Product.find()
-      .skip((pageid - 1) * 10)
-      .limit(10);
-    const totalPages = Math.ceil(totalProducts / 10);
+      .skip((pageid - 1) * ipr)
+      .limit(ipr);
+    const totalPages = Math.ceil(totalProducts / ipr);
     return response.status(200).json({ products, totalPages });
   } catch (error) {
     console.log(error);

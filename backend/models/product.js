@@ -29,6 +29,10 @@ const productSchema = new mongoose.Schema(
     categories: {
       type: Array,
     },
+    rating: {
+      type: Number,
+      required: false,
+    },
   },
   {
     timestamps: true,
