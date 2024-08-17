@@ -1,11 +1,47 @@
-import React from 'react'
-import Navbar from './components/Navbar'
+import React from 'react';
+import Navbar from './components/Navbar';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import CartItem from './components/CartItem';
 const Cart = () => {
-  return (
-    <div>
-    <Navbar/>
-    Cart</div>
-  )
-}
+  const axiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_APP_API_URL,
+  });
+  const [cart, setCart] = useState([]);
 
-export default Cart
+  const fetchCart = async () => {
+    try {
+      const response = await axiosInstance.get('/cart', {
+        withCredentials: true,
+      });
+      setCart(response.data.cartItem);
+      console.log('Cart:', response.data.cartItem);
+    } catch (error) {
+      console.error(
+        'Error fetching cart:',
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+  useEffect(() => {
+    fetchCart();
+  }, []);
+  return (
+    <div className="">
+      <Navbar />
+      <div className="h-scren w-screen flex flex-col items-center justify-center">
+        <div className="flex-col">
+          {cart.map(item => (
+            <CartItem
+              key={item.productId}
+              productid={item.productId}
+              quantity={item.quantity}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Cart;

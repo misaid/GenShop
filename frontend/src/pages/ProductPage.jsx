@@ -72,7 +72,7 @@ const ProductPage = () => {
       <div className="flex flex-row bg-slate-100 mx-48 space-x-24 rounded-xl">
         <div className="min-h-[300px] min-w-[300px] max-h-[500px] max-w-[500px] m-10 flex flex-col ">
           {!imageLoading && (
-            <Skeleton className="h-[1024px] w-[1024px] rounded-xl" />
+            <Skeleton className="h-[500px] w-[500px] rounded-xl" />
           )}
           <img
             src={product.image}

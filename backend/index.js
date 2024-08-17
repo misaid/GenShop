@@ -32,15 +32,15 @@ const s3 = new AWS.S3({
   region: process.env.AWS_REGION,
 });
 
-var limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 400, // max 100 requests per windowMs
-});
+// var limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   limit: 400, // max 100 requests per windowMs
+// });
 
 const app = express();
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(cookieParser());
-app.use(limiter);
+// app.use(limiter);
 app.use(express.json());
 
 app.get('/', (request, response) => {
@@ -303,12 +303,12 @@ app.get('/product/:id', async (request, response) => {
  */
 app.post('/cart', verifyJWT, async (request, response) => {
   try {
-    console.log(request.user);
     const userID = request.user.userId;
     const user = await User.findById(userID);
     const cartID = user.cartid;
 
     let { productId, quantity, flag } = request.body;
+    console.log(quantity);
     quantity = parseInt(quantity, 10);
 
     const cart = await Cart.findById(cartID);
@@ -337,6 +337,12 @@ app.post('/cart', verifyJWT, async (request, response) => {
     if (flag === 'set') {
       const cartItem = cart.cartItem.find(
         item => item.productId.toString() === productId
+      );
+      console.log(
+        'Setting item to cart from ' +
+          cartItem.quantity +
+          ' to jsx: ' +
+          quantity
       );
       if (cartItem) {
         cartItem.quantity = quantity;
@@ -371,7 +377,7 @@ app.post('/cart', verifyJWT, async (request, response) => {
  */
 app.get('/cart', verifyJWT, async (request, response) => {
   try {
-    console.log(request.user);
+    // console.log(request.user);
     const userID = request.user.userId;
     const user = await User.findById(userID);
     const cartID = user.cartid;
