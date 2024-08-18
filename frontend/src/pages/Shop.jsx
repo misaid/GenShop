@@ -59,84 +59,91 @@ const Shop = () => {
           <div>Invalid Page</div>
         </div>
       ) : (
-        <>
+        <div>
           <Navbar />
+
           <div className="flex flex-1 h-full space-x-24">
-            <div className="bg-sky-200 w-[500px] h-[800px]">
+            <div className="bg-sky-200 w-[300px] h-[800px]">
               <div>
                 <h1>Categories!</h1>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {products.map(product => (
-                <div
-                  key={product._id}
-                  className="col-span-1"
-                  onClick={productClicked(product._id)}
-                >
-                  <Product
-                    name={product.name}
-                    rating={product.rating}
-                    stock={product.countInStock}
-                    price={product.price}
-                    imageURL={product.image}
-                  />
-                </div>
-              ))}
+            <div className=" flex flex-col">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {products.map(product => (
+                  <div
+                    key={product._id}
+                    className="col-span-1"
+                    // onClick={productClicked(product._id)}
+                  >
+                    <Product
+                      product={product}
+                      name={product.name}
+                      rating={product.rating}
+                      stock={product.countInStock}
+                      price={product.price}
+                      imageURL={product.image}
+                      productId={product._id}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="my-8">
+                <Pagination>
+                  <PaginationContent>
+                    {currentPage > 1 && (
+                      <PaginationItem>
+                        <PaginationPrevious href={`?page=${currentPage - 1}`} />
+                      </PaginationItem>
+                    )}
+
+                    {currentPage - 1 > 0 && (
+                      <PaginationItem>
+                        <PaginationLink href={`?page=${currentPage - 1}`}>
+                          {currentPage - 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    )}
+
+                    <PaginationItem>
+                      <PaginationLink href={`?page=${currentPage}`}>
+                        {currentPage}
+                      </PaginationLink>
+                    </PaginationItem>
+
+                    {currentPage + 1 <= totalPages && (
+                      <PaginationItem>
+                        <PaginationLink href={`?page=${currentPage + 1}`}>
+                          {currentPage + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    )}
+
+                    {currentPage + 2 <= totalPages && (
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )}
+
+                    {currentPage + 2 <= totalPages && (
+                      <PaginationItem>
+                        <PaginationLink href={`?page=${totalPages}`}>
+                          {totalPages}
+                        </PaginationLink>
+                      </PaginationItem>
+                    )}
+
+                    {currentPage < totalPages && (
+                      <PaginationItem>
+                        <PaginationNext href={`?page=${currentPage + 1}`} />
+                      </PaginationItem>
+                    )}
+                  </PaginationContent>
+                </Pagination>
+              </div>
             </div>
           </div>
-          <Pagination>
-            <PaginationContent>
-              {currentPage > 1 && (
-                <PaginationItem>
-                  <PaginationPrevious href={`?page=${currentPage - 1}`} />
-                </PaginationItem>
-              )}
-
-              {currentPage - 1 > 0 && (
-                <PaginationItem>
-                  <PaginationLink href={`?page=${currentPage - 1}`}>
-                    {currentPage - 1}
-                  </PaginationLink>
-                </PaginationItem>
-              )}
-
-              <PaginationItem>
-                <PaginationLink href={`?page=${currentPage}`}>
-                  {currentPage}
-                </PaginationLink>
-              </PaginationItem>
-
-              {currentPage + 1 <= totalPages && (
-                <PaginationItem>
-                  <PaginationLink href={`?page=${currentPage + 1}`}>
-                    {currentPage + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              )}
-
-              {currentPage + 2 <= totalPages && (
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-              )}
-
-              {currentPage + 2 <= totalPages && (
-                <PaginationItem>
-                  <PaginationLink href={`?page=${totalPages}`}>
-                    {totalPages}
-                  </PaginationLink>
-                </PaginationItem>
-              )}
-
-              {currentPage < totalPages && (
-                <PaginationItem>
-                  <PaginationNext href={`?page=${currentPage + 1}`} />
-                </PaginationItem>
-              )}
-            </PaginationContent>
-          </Pagination>
-        </>
+        </div>
       )}
     </div>
   );

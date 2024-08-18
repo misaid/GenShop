@@ -23,6 +23,10 @@ const Cart = () => {
       );
     }
   };
+  const handleCartChange = () => {
+    console.log('Cart changed');
+    fetchCart();
+  };
   useEffect(() => {
     fetchCart();
   }, []);
@@ -36,6 +40,7 @@ const Cart = () => {
               key={item.productId}
               productid={item.productId}
               quantity={item.quantity}
+              onChange={handleCartChange}
             />
           ))}
         </div>

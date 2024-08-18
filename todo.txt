@@ -1,6 +1,7 @@
 In progess:
+[] Tosters!
 [85%] setup product page
-[] create either a dropdown or a full page cart item
+[50%] create either a dropdown or a full page cart item
 [] create user My account page
   [] might have to change the current login flow/schema
 [] create order history page

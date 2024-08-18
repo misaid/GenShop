@@ -1,3 +1,4 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import axios from 'axios';
 import Navbar from './components/Navbar';
 import { useState } from 'react';
@@ -18,10 +19,11 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
+import Product from './components/Product';
 
 const Generate = () => {
-  const [completion, setCompletion] = useState([]);
-  const [imageURL, setImageURL] = useState([]);
+  const [product, setProduct] = useState([]);
+  const [key, setKey] = useState(0);
   const FormSchema = z.object({
     prompt: z.string().min(2, {
       message: 'Prompt must be at least 2 characters.',
@@ -42,8 +44,8 @@ const Generate = () => {
         { withCredentials: true }
       );
       //console.log(response);
-      setCompletion(response.data.item.description);
-      setImageURL(response.data.image);
+      setProduct(response.data.product);
+      setKey(key + 1);
       console.log(response.data.item);
       //navigate('/shop');
     } catch (error) {
@@ -55,9 +57,10 @@ const Generate = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex justify-center items-center ">
+      <div className="flex flex-col justify-center items-center space-y-8 ">
+        <Product product={product} key={key} />
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <FormField
               control={form.control}
               name="prompt"
@@ -75,8 +78,6 @@ const Generate = () => {
           </form>
         </Form>
       </div>
-      <h2 className="bg-red-100">{completion}</h2>
-      <img src={imageURL} />
     </div>
   );
 };

@@ -79,6 +79,7 @@ app.post('/register', async (request, response) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
     return response.status(201).send('User created');
   } catch (error) {
@@ -112,6 +113,7 @@ app.post('/login', async (request, response) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
     return response.status(200).send('User logged in');
   } catch (error) {
@@ -241,7 +243,9 @@ app.post('/generate', async (request, response) => {
     }
 
     console.log('Product created:', product._id);
-    return response.status(200).send({ item: variables, image: image_url });
+    return response
+      .status(200)
+      .send({ item: variables, image: image_url, product: product });
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in generating response');
@@ -308,7 +312,6 @@ app.post('/cart', verifyJWT, async (request, response) => {
     const cartID = user.cartid;
 
     let { productId, quantity, flag } = request.body;
-    console.log(quantity);
     quantity = parseInt(quantity, 10);
 
     const cart = await Cart.findById(cartID);
@@ -350,7 +353,8 @@ app.post('/cart', verifyJWT, async (request, response) => {
         return response.status(400).send('Item not in cart');
       }
     }
-    if (flag === 'remove') {
+    if (flag === 'delete') {
+      console.log('Deleting item from cart');
       const cartItem = cart.cartItem.find(
         item => item.productId.toString() === productId
       );
@@ -364,7 +368,8 @@ app.post('/cart', verifyJWT, async (request, response) => {
     }
 
     await cart.save();
-    return response.status(200);
+    console.log('cat changed');
+    return response.status(200).send('cart has been changed');
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in adding item to cart');

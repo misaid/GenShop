@@ -1,3 +1,4 @@
+import { NumericFormat } from 'react-number-format';
 import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -69,7 +70,7 @@ const ProductPage = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex flex-row bg-slate-100 mx-48 space-x-24 rounded-xl">
+      <div className="flex flex-row bg-slate-50 mx-48 space-x-24 rounded-xl p-5 ">
         <div className="min-h-[300px] min-w-[300px] max-h-[500px] max-w-[500px] m-10 flex flex-col ">
           {!imageLoading && (
             <Skeleton className="h-[500px] w-[500px] rounded-xl" />
@@ -86,9 +87,21 @@ const ProductPage = () => {
           </h3>
         </div>
         <div className="flex flex-col max-w-[600px] justify-center space-y-3">
-          <h2 className="text-4xl font-bold ">{product.name}</h2>
-          <StaticStar urate={product.rating} size={20} />
-          <p className="text-l">{product.description}</p>
+          <div>
+            <h2 className="text-4xl font-bold ">{product.name}</h2>
+            <StaticStar urate={product.rating} size={20} />
+            <h2 className="font-bold text-2xl">
+              <NumericFormat
+                value={product.price}
+                displayType={'text'}
+                thousandSeparator=","
+                prefix={'$'}
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            </h2>
+          </div>
+          <p className="text-l leading-normal">{product.description}</p>
           <form onSubmit={handleSubmit} className="flex items-center space-x-2">
             <h3>Qtw: </h3>
             <Select value={selectedValue} onValueChange={handleValueChange}>

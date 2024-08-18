@@ -1,3 +1,4 @@
+import { NumericFormat } from 'react-number-format';
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from 'axios';
@@ -9,8 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
-const CartItem = ({ productid, quantity }) => {
+const CartItem = ({ productid, quantity, onChange }) => {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -18,9 +21,10 @@ const CartItem = ({ productid, quantity }) => {
   const [imageLoading, setImageLoading] = useState(false);
   const [selectedValue, setSelectedValue] = useState(String(quantity)); // Default value is "1"
   const [stock, setStock] = useState('');
+  const navigate = useNavigate();
 
   const fetchProduct = async () => {
-    console.log('Fetching product:', productid);
+    // console.log('Fetching product:', productid);
     try {
       const response = await axiosInstance.get(`/product/${productid}`);
       setProduct(response.data);
@@ -66,13 +70,37 @@ const CartItem = ({ productid, quantity }) => {
     event.preventDefault(); // Prevent the default form submission behavior
     console.log('Selected value:', selectedValue);
   };
+  const handleClick = async () => {
+    try {
+      console.log('Deleting product:', productid);
+      await axiosInstance.post(
+        `/cart`,
+        {
+          flag: 'delete',
+          productId: productid,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log('Product deleted:', productid);
+      if (typeof onChange === 'function') {
+        onChange(); // This should trigger handleCartChange in Cart.jsx
+        console.log('onChange was called successfully');
+      } else {
+        console.error('onChange is not a function');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     fetchProduct();
   }, []);
 
   return (
-    <div className="flex flex-row w-[600px] h-[200px] bg-slate-300">
+    <div className="flex flex-row w-[600px] h-[200px] bg-slate-300 items-center p-5 my-3 border border-black rounded-xl space-x-3">
       <div>
         {!imageLoading && <Skeleton className="h-[150px] w-[150px]" />}
         <div className="max-w-[150px] max-h-[150px]">
@@ -81,12 +109,22 @@ const CartItem = ({ productid, quantity }) => {
             alt={product.name}
             onLoad={() => setImageLoading(true)}
             style={imageLoading ? {} : { display: 'none' }}
+            className="rounded"
           />
         </div>
       </div>
       <div>
-        <h1>{quantity}</h1>
-        {product.name}
+        <h2 className="text-xl">{product.name}</h2>
+        <h2 className="font-bold text-l">
+          <NumericFormat
+            value={product.price}
+            displayType={'text'}
+            thousandSeparator=","
+            prefix={'$'}
+            decimalScale={2}
+            fixedDecimalScale
+          />
+        </h2>
       </div>
       <div>
         <form onSubmit={handleSubmit} className="flex items-center space-x-2">
@@ -108,6 +146,9 @@ const CartItem = ({ productid, quantity }) => {
           </Select>
         </form>
       </div>
+      <Button variant="destructive" onClick={handleClick}>
+        Delete
+      </Button>
     </div>
   );
 };
