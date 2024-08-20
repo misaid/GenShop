@@ -293,13 +293,6 @@ app.post('/products', async (request, response) => {
     } else {
       console.log('Department:', department);
       console.log('Category:', category);
-      // Department should be a string, and categoryies is an array of string names
-      // Find unique depratment
-      // if category is empty, find all products that are referenced in the department.
-      // Find all matching categories names that have reference to the department
-      // Find all products that match between all the categories
-      // Final check ensure the products are in the department
-      // calculate toatal pages and return all matching products.
       const departmentDoc = await Department.findOne({
         departmentName: department,
       });
@@ -324,10 +317,39 @@ app.post('/products', async (request, response) => {
         const totalPages = Math.ceil(totalProducts / ipr);
         return response.status(200).json({ products, totalPages });
       } else {
-        console.log(departmentDoc.categories);
-        const products = [];
-        const totalPages = 6;
-        return response.status(200).send({ products, totalPages });
+        // Obtain all cateogries from department
+        const categoryDocs = await Category.find({
+          _id: { $in: departmentDoc.categories },
+          categoryName: { $in: category },
+        });
+
+        // Obtain all product ids
+        const allProductIds = categoryDocs.flatMap(
+          category => category.products
+        );
+
+        const totalProducts = await Product.countDocuments({
+          _id: { $in: allProductIds },
+        });
+
+        if ((pageid - 1) * ipr >= totalProducts) {
+          console.error('Invalid page number');
+          return response.status(400).send('Invalid page number');
+        }
+
+        // Find all products that are in the categories from the department
+        const productsInCategories = await Product.find({
+          _id: { $in: allProductIds },
+        })
+          .sort({ createdAt: -1 }) // sort by newest
+          .skip((pageid - 1) * ipr)
+          .limit(ipr);
+
+        const totalPages = Math.ceil(totalProducts / ipr);
+
+        return response
+          .status(200)
+          .send({ products: productsInCategories, totalPages });
       }
     }
   } catch (error) {
