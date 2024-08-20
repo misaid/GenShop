@@ -50,8 +50,7 @@ const Product = ({
           withCredentials: true,
         }
       );
-      console.log('Added to cart');
-      toast.success('1 ' + name + ' Added to cart');
+      toast.success('1 ' + name + ' added to cart');
     } catch (error) {
       console.error(
         'Error adding to cart:',
@@ -112,19 +111,23 @@ const Product = ({
               />
             )}
           </h2>
-          <h3
-            className="font-semibold text-l mb-3 hover:text-slate-600 hover:cursor-pointer inline-block"
-            onClick={() => productClicked()}
-          >
-            {!name ? <Skeleton className="w-1/2 h-6  rounded-xl mb-2" /> : name}
-          </h3>
-          <div className="text-s font-thin">
-            {!countInStock ? (
-              <Skeleton className="w-1/4 h-4  rounded-xl" />
-            ) : (
-              `Stock left: ${countInStock}`
-            )}
-          </div>
+
+          {!name ? (
+            <Skeleton className="w-1/2 h-6 rounded-xl mb-2 " />
+          ) : (
+            <h3
+              className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block w-full overflow-hidden"
+              onClick={() => productClicked()}
+            >
+              {name}
+            </h3>
+          )}
+
+          {!countInStock ? (
+            <Skeleton className="w-1/4 h-4  rounded-xl" />
+          ) : (
+            <h4 className="text-xs font-thin">Stock left: {countInStock}</h4>
+          )}
         </div>
         {!name ? (
           <div className="flex justify-center items-center  w-full my-2 hover:cursor-pointer select-none">

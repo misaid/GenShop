@@ -21,6 +21,7 @@ const departmentSchema = new mongoose.Schema(
     departmentName: {
       type: String,
       required: true,
+      unique: true,
     },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],

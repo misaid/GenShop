@@ -16,22 +16,39 @@ import {
 //
 const Shop = () => {
   const [products, setProducts] = useState([]);
+  // const [department, setDepartment] = useState('');
+  // const [genres, setGenres] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
-  // const history = useHistory();
+
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page')) || 1;
+  const departmentParam = searchParams.get('department') || '';
+  const categoryParam = searchParams.get('category') || '';
+  const departmentArray = departmentParam ? departmentParam.split(',') : [];
+  const categoryArray = categoryParam ? categoryParam.split(',') : [];
+
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(page);
   const [validPage, setValidPage] = useState(true);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
+
   const fetchProducts = async () => {
     try {
+      console.log(departmentArray);
+      console.log(categoryArray);
       console.log('fetching data for page', currentPage);
-      const response = await axiosInstance.get(
-        '/products' + `?page=${currentPage}`
+      const response = await axiosInstance.post(
+        `/products?page=${currentPage}`,
+        {
+          department: departmentArray,
+          category: categoryArray,
+        },
+        {
+          withCredentials: true,
+        }
       );
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
@@ -49,7 +66,8 @@ const Shop = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage]);
+    setCurrentPage(page);
+  }, [location]);
 
   return (
     <div>
@@ -60,7 +78,7 @@ const Shop = () => {
         </div>
       ) : (
         <div>
-          <Navbar />
+          <Navbar onChange={fetchProducts} />
 
           <div className="flex flex-1 h-full space-x-24">
             <div className="bg-sky-200 w-[300px] h-[800px]">

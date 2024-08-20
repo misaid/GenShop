@@ -47,6 +47,13 @@ app.get('/', (request, response) => {
   console.log(request);
   return response.status(234).send('MSAID');
 });
+app.get('/verifyjwt', verifyJWT, (request, response) => {
+  try {
+    return response.status(200).json(request.user);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 // TODO: make username case insensitive
 /**
@@ -147,7 +154,7 @@ app.post('/generate', async (request, response) => {
     - price (float): The cost of the product.
     - description (string, 100 words): A concise summary of the product.
     - stock (integer): The number of units available.
-    - department: The department that the product belongs to. Title capitalization. Department name cannot exist in categories.
+    - department: The department that the product belongs to. Department name cannot exist in categories. Department name must be one of "Electronics", "Clothing and Accessories", "Home and Garden", "Health and Beauty", "Toys and Games", "Sports and Outdoors", "Automotive", "Office Supplies", "Books and Media", "Crafts and Hobbies".
     - categories (array): The categories that the product belongs to. Title capitalization.
     - name (string): The name of the product.
 
@@ -225,7 +232,8 @@ app.post('/generate', async (request, response) => {
       { new: true, upsert: true }
     ).exec();
 
-    // For every cateogry in the categories array, add the product to the category and add the category to the department
+    //TODO: For every cateogry in the categories array, add the product to the category and add the category to the department
+    // if it is not new check if department matches else create a new category and add the product to it.
     for (const categoryName of categories) {
       let category = await Category.findOneAndUpdate(
         { categoryName: categoryName },
@@ -258,24 +266,70 @@ app.post('/generate', async (request, response) => {
  * @return {json} products
  * @return {int } totalPages
  */
-app.get('/products', async (request, response) => {
+app.post('/products', async (request, response) => {
   try {
     const pageid = request.query.page;
-    // console.log(pageid);
-    // not the most ideal way to calculate total pages
-    // could use a running total in the database
-    const ipr = 12; // items per page
-    const totalProducts = await Product.countDocuments();
-    // Checking if the page is valid
-    if ((pageid - 1) * ipr > Math.ceil(totalProducts)) {
-      console.error('Invalid page number');
-      return response.status(400).send('Invalid page number');
+    const category = request.body.category;
+    const department = request.body.department;
+
+    const ipr = 12;
+    if (department.length > 1) {
+      return response.status(400).send('Only one department allowed');
     }
-    const products = await Product.find()
-      .skip((pageid - 1) * ipr)
-      .limit(ipr);
-    const totalPages = Math.ceil(totalProducts / ipr);
-    return response.status(200).json({ products, totalPages });
+
+    if (category.length == 0 && department.length == 0) {
+      const totalProducts = await Product.countDocuments();
+      // Checking if the page is valid
+      if ((pageid - 1) * ipr > Math.ceil(totalProducts)) {
+        console.error('Invalid page number');
+        return response.status(400).send('Invalid page number');
+      }
+      const products = await Product.find()
+        .sort({ createdAt: -1 }) // sort by newest
+        .skip((pageid - 1) * ipr)
+        .limit(ipr);
+      const totalPages = Math.ceil(totalProducts / ipr);
+      return response.status(200).json({ products, totalPages });
+    } else {
+      console.log('Department:', department);
+      console.log('Category:', category);
+      // Department should be a string, and categoryies is an array of string names
+      // Find unique depratment
+      // if category is empty, find all products that are referenced in the department.
+      // Find all matching categories names that have reference to the department
+      // Find all products that match between all the categories
+      // Final check ensure the products are in the department
+      // calculate toatal pages and return all matching products.
+      const departmentDoc = await Department.findOne({
+        departmentName: department,
+      });
+      const productsInDepartment = await Product.find({
+        _id: { $in: departmentDoc.products },
+      });
+      // Department and no categories
+      if (category.length < 1) {
+        const totalProducts = productsInDepartment.length;
+
+        const products = await Product.find({
+          _id: { $in: departmentDoc.products },
+        })
+          .sort({ createdAt: -1 }) // sort by newest
+          .skip((pageid - 1) * ipr)
+          .limit(ipr);
+
+        if ((pageid - 1) * ipr > Math.ceil(totalProducts)) {
+          console.error('Invalid page number');
+          return response.status(400).send('Invalid page number');
+        }
+        const totalPages = Math.ceil(totalProducts / ipr);
+        return response.status(200).json({ products, totalPages });
+      } else {
+        console.log(departmentDoc.categories);
+        const products = [];
+        const totalPages = 6;
+        return response.status(200).send({ products, totalPages });
+      }
+    }
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in fetching products');
@@ -329,7 +383,6 @@ app.post('/cart', verifyJWT, async (request, response) => {
           return response.status(400).send('Not enough stock');
         }
       } else {
-        console.log('Adding item to cart');
         if (quantity <= stock) {
           cart.cartItem.push({ productId, quantity });
         } else {
@@ -341,12 +394,6 @@ app.post('/cart', verifyJWT, async (request, response) => {
       const cartItem = cart.cartItem.find(
         item => item.productId.toString() === productId
       );
-      console.log(
-        'Setting item to cart from ' +
-          cartItem.quantity +
-          ' to jsx: ' +
-          quantity
-      );
       if (cartItem) {
         cartItem.quantity = quantity;
       } else {
@@ -354,7 +401,6 @@ app.post('/cart', verifyJWT, async (request, response) => {
       }
     }
     if (flag === 'delete') {
-      console.log('Deleting item from cart');
       const cartItem = cart.cartItem.find(
         item => item.productId.toString() === productId
       );
@@ -368,7 +414,6 @@ app.post('/cart', verifyJWT, async (request, response) => {
     }
 
     await cart.save();
-    console.log('cat changed');
     return response.status(200).send('cart has been changed');
   } catch (error) {
     console.log(error);

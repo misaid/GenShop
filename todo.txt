@@ -1,29 +1,25 @@
 In progess:
-[] Tosters!
-[85%] setup product page
-[50%] create either a dropdown or a full page cart item
-[] create user My account page
-  [] might have to change the current login flow/schema
-[] create order history page
+[x] setup fetching products by department
+[] setup fetching products by categories 
+[] Create a side bar for the shop page
+[] Fixed h and w in cart page
 
 Coding:
-[] Cut out unnecessary information while pulling products on shop page
-[] Create a product page
-  [] Setup stars system
-  [] Users can comment and rate this product
-[] Create a side bar for the shop page
 [] Create checkout page
 [] Setup receiving order from in the backend 
 [] Create order status page
+[] create user My account page
+  [] might have to change the current login flow/schema
+[] Users can comment and rate this product
+[] create order history page
+
 UI:
-[] fix the navbar
-[] fix the home page
-[] fix the shop page
-[] fix the about page
-To Be Fixed:
-[] Store images on website instead of supplying base64 for proper caching
+[] polish the ui
+[] overflow elipses product names
+[] animations when generating shake card/ bar hovers in
 
 Might add:
 [] Wishlist
 [] Zoom in on hover over photo
-[] Default lower res photo in image gen
+[] Mobile support
+[+1] Default lower res photo in image gen

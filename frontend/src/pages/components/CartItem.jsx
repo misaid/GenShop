@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 const CartItem = ({ productid, quantity, onChange }) => {
   const axiosInstance = axios.create({
@@ -24,7 +26,6 @@ const CartItem = ({ productid, quantity, onChange }) => {
   const navigate = useNavigate();
 
   const fetchProduct = async () => {
-    // console.log('Fetching product:', productid);
     try {
       const response = await axiosInstance.get(`/product/${productid}`);
       setProduct(response.data);
@@ -37,15 +38,36 @@ const CartItem = ({ productid, quantity, onChange }) => {
     }
   };
 
+  const addToCart = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `/cart`,
+        {
+          flag: 'add',
+          productId: productid,
+          quantity: quantity,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log('Added to cart');
+      onChange();
+    } catch (error) {
+      console.error(
+        'Error adding to cart:',
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   const handleValueChange = value => {
     setSelectedValue(value); // Update state with the new value
-    console.log(selectedValue);
     sendToCart(value);
   };
 
   const sendToCart = async value => {
     try {
-      console.log('Sending to cart:', productid, value);
       await axiosInstance.post(
         `/cart`,
         {
@@ -57,7 +79,6 @@ const CartItem = ({ productid, quantity, onChange }) => {
           withCredentials: true,
         }
       );
-      console.log('Selected value:', selectedValue);
     } catch (error) {
       console.error(
         'Error adding to cart:',
@@ -68,11 +89,9 @@ const CartItem = ({ productid, quantity, onChange }) => {
 
   const handleSubmit = async event => {
     event.preventDefault(); // Prevent the default form submission behavior
-    console.log('Selected value:', selectedValue);
   };
   const handleClick = async () => {
     try {
-      console.log('Deleting product:', productid);
       await axiosInstance.post(
         `/cart`,
         {
@@ -83,13 +102,13 @@ const CartItem = ({ productid, quantity, onChange }) => {
           withCredentials: true,
         }
       );
-      console.log('Product deleted:', productid);
-      if (typeof onChange === 'function') {
-        onChange(); // This should trigger handleCartChange in Cart.jsx
-        console.log('onChange was called successfully');
-      } else {
-        console.error('onChange is not a function');
-      }
+      toast.success(quantity + ' ' + product.name + ' deleted from cart', {
+        action: {
+          label: 'Undo',
+          onClick: () => addToCart(),
+        },
+      });
+      onChange(); // This should trigger handleCartChange in Cart.jsx
     } catch (error) {
       console.log(error);
     }
@@ -101,6 +120,14 @@ const CartItem = ({ productid, quantity, onChange }) => {
 
   return (
     <div className="flex flex-row w-[600px] h-[200px] bg-slate-300 items-center p-5 my-3 border border-black rounded-xl space-x-3">
+      <Toaster
+        toastOptions={{
+          style: {
+            background: 'red',
+          },
+          className: 'class',
+        }}
+      />
       <div>
         {!imageLoading && <Skeleton className="h-[150px] w-[150px]" />}
         <div className="max-w-[150px] max-h-[150px]">
