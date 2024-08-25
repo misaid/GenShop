@@ -236,7 +236,7 @@ app.post('/generate', async (request, response) => {
     // if it is not new check if department matches else create a new category and add the product to it.
     for (const categoryName of categories) {
       let category = await Category.findOneAndUpdate(
-        { categoryName: categoryName },
+        { categoryName: categoryName, department: departmentDoc._id },
         {
           $addToSet: { products: product._id },
           $set: { department: departmentDoc._id },
@@ -328,6 +328,8 @@ app.post('/products', async (request, response) => {
           category => category.products
         );
 
+        //TODO: makes reference to any cateogry not just the specific one must change
+        console.log(categoryDocs.length);
         const totalProducts = await Product.countDocuments({
           _id: { $in: allProductIds },
         });

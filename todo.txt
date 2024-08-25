@@ -19,6 +19,7 @@ UI:
 [] animations when generating shake card/ bar hovers in
 
 Might add:
+[] auto animate
 [] Wishlist
 [] Zoom in on hover over photo
 [] Mobile support
