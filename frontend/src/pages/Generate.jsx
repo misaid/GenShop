@@ -1,4 +1,5 @@
-import { Skeleton } from '@/components/ui/skeleton';
+import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 import axios from 'axios';
 import Navbar from './components/Navbar';
 import { useState, useRef } from 'react';
@@ -69,6 +70,12 @@ const Generate = () => {
 
   const onSubmit = async values => {
     try {
+      if (loading) {
+        toast.error(
+          'Please wait for the current product to finish generating.'
+        );
+        return;
+      }
       setLoading(true);
       progressInterval();
       const response = await axiosInstance.post(
@@ -84,7 +91,7 @@ const Generate = () => {
       setProduct(response.data.product);
       setKey(key + 1);
       console.log(response.data.item);
-      //navigate('/shop');
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -94,6 +101,7 @@ const Generate = () => {
   return (
     <div>
       <Navbar />
+      <Toaster richColors />
       <div className="flex flex-col justify-center items-center space-y-8 ">
         <Product product={product} key={key} />
         {!loading ? <></> : <Progress value={progress} className="w-64" />}

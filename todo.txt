@@ -24,4 +24,3 @@ Might add:
 [] Wishlist
 [] Zoom in on hover over photo
 [] Mobile support
-[+1] Default lower res photo in image gen

@@ -61,7 +61,7 @@ const Product = ({
 
   return (
     <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] border border-b-gray rounded-xl overflow-hidden">
-      <Toaster />
+      <Toaster richColors />
 
       <div className="mx-3 flex flex-col">
         <div className="flex flex-col items-center">
