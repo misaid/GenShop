@@ -19,6 +19,7 @@ UI:
 [] animations when generating shake card/ bar hovers in
 
 Might add:
+[] make it so that only component rerenders not whole page
 [] auto animate
 [] Wishlist
 [] Zoom in on hover over photo

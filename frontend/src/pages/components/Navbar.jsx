@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Navbar = ({ onChange }) => {
+const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const axiosInstance = axios.create({

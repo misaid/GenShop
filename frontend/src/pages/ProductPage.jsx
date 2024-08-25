@@ -1,3 +1,5 @@
+import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 import { NumericFormat } from 'react-number-format';
 import React from 'react';
 import axios from 'axios';
@@ -43,7 +45,7 @@ const ProductPage = () => {
           withCredentials: true,
         }
       );
-      console.log('Selected value:', selectedValue);
+      toast.success(selectedValue + ' ' + product.name + ' added to cart');
     } catch (error) {
       console.error(
         'Error adding to cart:',
@@ -70,6 +72,7 @@ const ProductPage = () => {
   return (
     <div>
       <Navbar />
+      <Toaster />
       <div className="flex flex-row bg-slate-50 mx-48 space-x-24 rounded-xl p-5 ">
         <div className="min-h-[300px] min-w-[300px] max-h-[500px] max-w-[500px] m-10 flex flex-col ">
           {!imageLoading && (
