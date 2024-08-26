@@ -17,7 +17,6 @@ const Navbar = () => {
 
   const handleClick = Department => {
     setSearchParams({ department: Department });
-    console.log('Department:', Department);
   };
   const fetchUser = async () => {
     try {

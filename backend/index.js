@@ -266,8 +266,8 @@ app.post('/generate', async (request, response) => {
  */
 app.post('/products', async (request, response) => {
   try {
-    console.log('one request');
-    const pageid = request.query.page;
+    // console.log('one request');
+    const pageid = request.body.page;
     const category = request.body.category;
     const department = request.body.department;
     const sortType = request.body.sortType;
@@ -483,6 +483,31 @@ app.get('/cart', verifyJWT, async (request, response) => {
   }
 });
 
+app.get('/categories/:id', async (request, response) => {
+  try {
+    const department = request.params.id;
+    console.log(department);
+    const departmentDoc = await Department.findOne({
+      departmentName: department,
+    });
+    console.log(departmentDoc);
+    const categoryDocs = await Category.find({
+      _id: { $in: departmentDoc.categories },
+    });
+    // extract categoryName and len products
+    const categoryInfo = categoryDocs.map(category => {
+      return {
+        categoryName: category.categoryName,
+        len: category.products.length,
+      };
+    });
+
+    return response.status(200).json(categoryInfo);
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in fetching categories');
+  }
+});
 mongoose
   .connect(mongoDBURL)
   .then(() => {

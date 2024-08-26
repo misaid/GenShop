@@ -76,7 +76,6 @@ const Product = ({ product }) => {
                 alt="product"
                 onLoad={() => setImageLoading(true)}
                 style={imageLoading ? {} : { display: 'none' }}
-                loading="lazy"
                 onClick={() => productClicked()}
               />
             </div>

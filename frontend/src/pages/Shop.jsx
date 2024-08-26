@@ -42,6 +42,8 @@ const Shop = () => {
   const departmentArray = departmentParam ? departmentParam.split(',') : [];
   const categoryArray = categoryParam ? categoryParam.split(',') : [];
 
+  const start = 12 * (currentPage - 1) + 1;
+  const end = Math.min(totalProducts, 12 * currentPage);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -64,8 +66,9 @@ const Shop = () => {
   const fetchProducts = async () => {
     try {
       const response = await axiosInstance.post(
-        `/products?page=${currentPage}`,
+        `/products`,
         {
+          page: currentPage,
           department: departmentArray,
           category: categoryArray,
           sortType: sortbyParam,
@@ -94,9 +97,7 @@ const Shop = () => {
       <div className="w-full h-7 bg-green-100 flex items-center border-b border-gray-300 mb-5">
         <div className="ml-3 w-48 flex">
           <h3 className="text-sm font-light">
-            {12 * (currentPage - 1) + 1}-
-            {Math.min(totalProducts, 12 * currentPage)} of {totalProducts}{' '}
-            products
+            {start}-{end} of {totalProducts} products
           </h3>
         </div>
         <div className=" h-7 flex items-center justify-end w-full mr-3">
@@ -133,7 +134,11 @@ const Shop = () => {
           </div>
         ) : (
           <div className="flex flex-1 h-full space-x-24">
-            <Categories />
+            {departmentParam ? (
+              <Categories />
+            ) : (
+              <div className=" w-[300px] h-[800px]"></div>
+            )}
             <div className=" flex flex-col">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {products.map(product => (
