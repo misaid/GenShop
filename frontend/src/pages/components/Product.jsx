@@ -16,15 +16,7 @@ import axios from 'axios';
  * @param {string} productId - Product id
  * @returns {JSX.Element}
  *  */
-const Product = ({
-  // name,
-  // rating,
-  // stock,
-  // price,
-  // imageURL,
-  // productId,
-  product,
-}) => {
+const Product = ({ product }) => {
   const { name, rating, countInStock, price, image, _id } = product;
   const [imageLoading, setImageLoading] = useState(false);
   const navigate = useNavigate();

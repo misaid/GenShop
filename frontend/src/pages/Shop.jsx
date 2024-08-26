@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Categories from './components/Categories';
+import { useSearchParams } from 'react-router-dom';
 //pagination
 import {
   Pagination,
@@ -26,30 +27,40 @@ import {
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [validPage, setValidPage] = useState(true);
 
-  const searchParams = new URLSearchParams(location.search);
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const page = parseInt(searchParams.get('page')) || 1;
   const departmentParam = searchParams.get('department') || '';
   const categoryParam = searchParams.get('category') || '';
+  const sortbyParam = searchParams.get('sortby') || 'new';
   const departmentArray = departmentParam ? departmentParam.split(',') : [];
   const categoryArray = categoryParam ? categoryParam.split(',') : [];
 
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(page);
-  const [validPage, setValidPage] = useState(true);
-  const [selectedValue, setSelectedValue] = useState('1'); // Default value is "1"
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
 
-  // send sortby and desc or asc to backend
   const handleValueChange = value => {
-    setSelectedValue(value); // Update state with the new value
+    // Should no remember the page
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('sortby', value);
+    newParams.delete('page');
+    setSearchParams(newParams);
     console.log('Value:', value);
   };
+
+  const handlePageChange = page => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', page);
+    setSearchParams(newParams);
+  };
+
   const fetchProducts = async () => {
     try {
       const response = await axiosInstance.post(
@@ -75,7 +86,7 @@ const Shop = () => {
   useEffect(() => {
     fetchProducts();
     setCurrentPage(page);
-  }, [currentPage, page]);
+  }, [currentPage, page, departmentParam, categoryParam]);
   return (
     <div>
       <Navbar />
@@ -89,24 +100,24 @@ const Shop = () => {
         </div>
         <div className=" h-7 flex items-center justify-end w-full mr-3">
           <div>
-            <Select value={selectedValue} onValueChange={handleValueChange}>
+            <Select value={sortbyParam} onValueChange={handleValueChange}>
               <SelectTrigger className="w-36 h-5 text-[10px]">
-                <SelectValue placeholder="Select a fruit" />
+                <SelectValue placeholder="new" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem className="text-s" value="new">
                   Newest arrivals
                 </SelectItem>
-                <SelectItem className="text-s" value="ph">
+                <SelectItem className="text-s" value="priceDesc">
                   Price: High to Low
                 </SelectItem>
-                <SelectItem className="text-s" value="pl">
+                <SelectItem className="text-s" value="priceAsc">
                   Price: Low to High
                 </SelectItem>
-                <SelectItem className="text-s" value="rh">
+                <SelectItem className="text-s" value="ratingDesc">
                   Rating: High to Low
                 </SelectItem>
-                <SelectItem className="text-s" value="rl">
+                <SelectItem className="text-s" value="ratingAsc">
                   Rating: Low to High
                 </SelectItem>
               </SelectContent>
@@ -144,31 +155,37 @@ const Shop = () => {
                   <PaginationContent>
                     {currentPage > 1 && (
                       <PaginationItem>
-                        <Link to={`?page=${currentPage - 1}`}>
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                        >
                           <PaginationPrevious />
-                        </Link>
+                        </button>
                       </PaginationItem>
                     )}
 
                     {currentPage - 1 > 0 && (
                       <PaginationItem>
-                        <Link to={`?page=${currentPage - 1}`}>
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                        >
                           <PaginationLink>{currentPage - 1}</PaginationLink>
-                        </Link>
+                        </button>
                       </PaginationItem>
                     )}
 
                     <PaginationItem>
-                      <Link to={`?page=${currentPage}`}>
+                      <button onClick={() => handlePageChange(currentPage)}>
                         <PaginationLink isActive>{currentPage}</PaginationLink>
-                      </Link>
+                      </button>
                     </PaginationItem>
 
                     {currentPage + 1 <= totalPages && (
                       <PaginationItem>
-                        <Link to={`?page=${currentPage + 1}`}>
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                        >
                           <PaginationLink>{currentPage + 1}</PaginationLink>
-                        </Link>
+                        </button>
                       </PaginationItem>
                     )}
 
@@ -180,17 +197,19 @@ const Shop = () => {
 
                     {currentPage + 2 <= totalPages && (
                       <PaginationItem>
-                        <Link to={`?page=${totalPages}`}>
+                        <button onClick={() => handlePageChange(totalPages)}>
                           <PaginationLink>{totalPages}</PaginationLink>
-                        </Link>
+                        </button>
                       </PaginationItem>
                     )}
 
                     {currentPage < totalPages && (
                       <PaginationItem>
-                        <Link to={`?page=${currentPage + 1}`}>
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                        >
                           <PaginationNext />
-                        </Link>
+                        </button>
                       </PaginationItem>
                     )}
                   </PaginationContent>

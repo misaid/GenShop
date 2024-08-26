@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -12,9 +13,10 @@ const Navbar = () => {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
+  const [SearchParams, setSearchParams] = useSearchParams();
+
   const handleClick = Department => {
-    navigate('/shop?&department=' + Department);
-    // onChange();
+    setSearchParams({ department: Department });
     console.log('Department:', Department);
   };
   const fetchUser = async () => {
