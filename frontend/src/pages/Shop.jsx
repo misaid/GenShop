@@ -75,7 +75,7 @@ const Shop = () => {
   useEffect(() => {
     fetchProducts();
     setCurrentPage(page);
-  }, [currentPage, departmentArray, categoryArray]);
+  }, [currentPage, page]);
   return (
     <div>
       <Navbar />
