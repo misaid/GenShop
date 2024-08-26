@@ -37,7 +37,7 @@ const Navbar = () => {
   // });
   return (
     <div>
-      <div className="mb-10 lg:mb-0 h-16 bg-green-300 flex items-center w-full">
+      <div className=" lg:mb-0 h-16 bg-green-300 flex items-center w-full">
         <div className="flex items-center ml-4">
           <img src={pearLogo} alt="logo" className="h-10 w-10" />
         </div>
@@ -74,7 +74,7 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="hidden lg:block">
-        <div className="flex items-center border-b-2 border-slate-200  bg-green-200 h-10 w-full mb-10 justify-evenly">
+        <div className="flex items-center border-b-2 border-slate-200  bg-green-200 h-10 w-full  justify-evenly">
           <h3
             className="text-l p-4 hover:cursor-pointer"
             onClick={() => handleClick('Electronics')}

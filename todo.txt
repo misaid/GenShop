@@ -1,5 +1,6 @@
 In progess:
-[x] setup fetching products by department
+[] Somehow we keep sending request to the main page
+[] setup sorting
 [] setup fetching products by categories 
 [] Create a side bar for the shop page
 [] Fixed h and w in cart page

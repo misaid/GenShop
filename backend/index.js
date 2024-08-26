@@ -266,6 +266,7 @@ app.post('/generate', async (request, response) => {
  */
 app.post('/products', async (request, response) => {
   try {
+    console.log('one request');
     const pageid = request.query.page;
     const category = request.body.category;
     const department = request.body.department;
@@ -287,7 +288,7 @@ app.post('/products', async (request, response) => {
         .skip((pageid - 1) * ipr)
         .limit(ipr);
       const totalPages = Math.ceil(totalProducts / ipr);
-      return response.status(200).json({ products, totalPages });
+      return response.status(200).json({ products, totalPages, totalProducts });
     } else {
       console.log('Department:', department);
       console.log('Category:', category);
@@ -313,7 +314,9 @@ app.post('/products', async (request, response) => {
           return response.status(400).send('Invalid page number');
         }
         const totalPages = Math.ceil(totalProducts / ipr);
-        return response.status(200).json({ products, totalPages });
+        return response
+          .status(200)
+          .json({ products, totalPages, totalProducts });
       } else {
         // Obtain all cateogries from department
         const categoryDocs = await Category.find({
@@ -348,7 +351,7 @@ app.post('/products', async (request, response) => {
 
         return response
           .status(200)
-          .send({ products: productsInCategories, totalPages });
+          .send({ products: productsInCategories, totalPages, totalProducts });
       }
     }
   } catch (error) {
