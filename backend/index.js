@@ -270,6 +270,26 @@ app.post('/products', async (request, response) => {
     const pageid = request.query.page;
     const category = request.body.category;
     const department = request.body.department;
+    const sortType = request.body.sortType;
+
+    let sortCondition = {};
+    switch (sortType) {
+      case 'priceDesc':
+        sortCondition = { price: -1 };
+        break;
+      case 'priceAsc':
+        sortCondition = { price: 1 };
+        break;
+      case 'ratingDesc':
+        sortCondition = { rating: -1 };
+        break;
+      case 'ratingAsc':
+        sortCondition = { rating: 1 };
+        break;
+      case 'new':
+      default:
+        sortCondition = { createdAt: -1 };
+    }
 
     const ipr = 12;
     if (department.length > 1) {
@@ -284,7 +304,7 @@ app.post('/products', async (request, response) => {
         return response.status(400).send('Invalid page number');
       }
       const products = await Product.find()
-        .sort({ createdAt: -1 }) // sort by newest
+        .sort(sortCondition) // sort by newest
         .skip((pageid - 1) * ipr)
         .limit(ipr);
       const totalPages = Math.ceil(totalProducts / ipr);
@@ -305,7 +325,7 @@ app.post('/products', async (request, response) => {
         const products = await Product.find({
           _id: { $in: departmentDoc.products },
         })
-          .sort({ createdAt: -1 }) // sort by newest
+          .sort(sortCondition) // sort by newest
           .skip((pageid - 1) * ipr)
           .limit(ipr);
 
@@ -343,7 +363,7 @@ app.post('/products', async (request, response) => {
         const productsInCategories = await Product.find({
           _id: { $in: allProductIds },
         })
-          .sort({ createdAt: -1 }) // sort by newest
+          .sort(sortCondition) // sort by newest
           .skip((pageid - 1) * ipr)
           .limit(ipr);
 

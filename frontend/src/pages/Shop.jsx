@@ -68,6 +68,7 @@ const Shop = () => {
         {
           department: departmentArray,
           category: categoryArray,
+          sortType: sortbyParam,
         },
         {
           withCredentials: true,
@@ -86,7 +87,7 @@ const Shop = () => {
   useEffect(() => {
     fetchProducts();
     setCurrentPage(page);
-  }, [currentPage, page, departmentParam, categoryParam]);
+  }, [currentPage, page, departmentParam, categoryParam, sortbyParam]);
   return (
     <div>
       <Navbar />
