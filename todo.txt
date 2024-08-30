@@ -1,10 +1,9 @@
 In progess:
-[] setup sorting
-[] setup fetching products by categories 
+[] fix categories
 [] Create a side bar for the shop page
 [] Fixed h and w in cart page
 
-Coding:
+todo:
 [] Create checkout page
 [] Setup receiving order from in the backend 
 [] Create order status page
@@ -17,10 +16,10 @@ UI:
 [] polish the ui
 [] overflow elipses product names
 [] animations when generating shake card/ bar hovers in
+[] Mobile support
 
 Might add:
 [] make it so that only component rerenders not whole page
 [] auto animate
 [] Wishlist
 [] Zoom in on hover over photo
-[] Mobile support

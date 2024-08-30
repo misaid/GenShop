@@ -486,15 +486,15 @@ app.get('/cart', verifyJWT, async (request, response) => {
 app.get('/categories/:id', async (request, response) => {
   try {
     const department = request.params.id;
-    console.log(department);
+
     const departmentDoc = await Department.findOne({
       departmentName: department,
     });
-    console.log(departmentDoc);
+
     const categoryDocs = await Category.find({
       _id: { $in: departmentDoc.categories },
     });
-    // extract categoryName and len products
+
     const categoryInfo = categoryDocs.map(category => {
       return {
         categoryName: category.categoryName,
@@ -512,10 +512,18 @@ mongoose
   .connect(mongoDBURL)
   .then(() => {
     console.clear();
+    let date = new Date();
+    let hours = date.getHours() % 12;
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
     console.log(
-      '\n***************************************************\n' +
+      '\n*****************************************\n' +
         'Time is ' +
-        new Date() +
+        hours +
+        ':' +
+        minutes +
+        ':' +
+        seconds +
         '\nApp is connected to database'
     );
     app.listen(PORT, () => {

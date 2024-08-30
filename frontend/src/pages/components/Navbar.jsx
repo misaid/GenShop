@@ -16,7 +16,8 @@ const Navbar = () => {
   const [SearchParams, setSearchParams] = useSearchParams();
 
   const handleClick = Department => {
-    setSearchParams({ department: Department });
+    // setSearchParams({ department: Department });
+    navigate(`/shop?department=${Department}`);
   };
   const fetchUser = async () => {
     try {

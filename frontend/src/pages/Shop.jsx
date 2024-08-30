@@ -1,12 +1,12 @@
-import Navbar from './components/Navbar';
-import Product from './components/Product';
-import { Link } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Categories from './components/Categories';
+import { useNavigate } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
-//pagination
+//Page Components
+import Navbar from './components/Navbar';
+import Product from './components/Product';
+import Categories from './components/Categories';
+//Pagination Components
 import {
   Pagination,
   PaginationContent,
@@ -17,6 +17,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
+//Select Components
 import {
   Select,
   SelectContent,
@@ -58,6 +59,7 @@ const Shop = () => {
   };
 
   const handlePageChange = page => {
+    window.scrollTo(0, 0);
     const newParams = new URLSearchParams(searchParams);
     newParams.set('page', page);
     setSearchParams(newParams);
@@ -133,13 +135,14 @@ const Shop = () => {
             <div>Invalid Page</div>
           </div>
         ) : (
-          <div className="flex flex-1 h-full space-x-24">
+          <div className="flex flex-1 h-full">
             {departmentParam ? (
               <Categories />
             ) : (
               <div className=" w-[300px] h-[800px]"></div>
             )}
-            <div className=" flex flex-col">
+
+            <div className="ml-12 flex flex-col items-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1">

@@ -63,7 +63,7 @@ const Product = ({ product }) => {
         }}
       />
 
-      <div className="mx-3 flex flex-col">
+      <div className="flex flex-col">
         <div className="flex flex-col items-center">
           <div className="">
             {!imageLoading && (
