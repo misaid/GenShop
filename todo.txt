@@ -1,4 +1,6 @@
 In progess:
+[] possible bug in the way pages are handled with categories
+[] no longer wish to use centered positioning of products use margin
 [] placeholder departments in categories
 [] polish categories ui
 [] possible bug in loading bar

@@ -30,7 +30,6 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
   const [validPage, setValidPage] = useState(true);
 
   const navigate = useNavigate();
@@ -43,8 +42,8 @@ const Shop = () => {
   const departmentArray = departmentParam ? departmentParam.split(',') : [];
   const categoryArray = categoryParam ? categoryParam.split(',') : [];
 
-  const start = 12 * (currentPage - 1) + 1;
-  const end = Math.min(totalProducts, 12 * currentPage);
+  const start = 12 * (page - 1) + 1;
+  const end = Math.min(totalProducts, 12 * page);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -55,7 +54,6 @@ const Shop = () => {
     newParams.set('sortby', value);
     newParams.delete('page');
     setSearchParams(newParams);
-    console.log('Value:', value);
   };
 
   const handlePageChange = page => {
@@ -70,7 +68,7 @@ const Shop = () => {
       const response = await axiosInstance.post(
         `/products`,
         {
-          page: currentPage,
+          page: page,
           department: departmentArray,
           category: categoryArray,
           sortType: sortbyParam,
@@ -79,10 +77,14 @@ const Shop = () => {
           withCredentials: true,
         }
       );
-      setProducts(response.data.products);
-      setTotalPages(response.data.totalPages);
-      setValidPage(true);
-      setTotalProducts(response.data.totalProducts);
+      console.log(response.status);
+      if (response.status === 200) {
+        setValidPage(true);
+        setProducts(response.data.products);
+        setTotalPages(response.data.totalPages);
+        setTotalProducts(response.data.totalProducts);
+        console.log(validPage);
+      }
     } catch (error) {
       setValidPage(false);
       console.log(error);
@@ -91,12 +93,11 @@ const Shop = () => {
 
   useEffect(() => {
     fetchProducts();
-    setCurrentPage(page);
-  }, [currentPage, page, departmentParam, categoryParam, sortbyParam]);
+  }, [page, departmentParam, categoryParam, sortbyParam]);
   return (
     <div>
       <Navbar />
-      <div className="w-full h-7 bg-green-100 flex items-center border-b border-gray-300 mb-5">
+      <div className="w-full h-7 bg-green-100 flex border-b border-gray-300 mb-5">
         <div className="ml-3 w-48 flex">
           <h3 className="text-sm font-light">
             {start}-{end} of {totalProducts} products
@@ -130,23 +131,25 @@ const Shop = () => {
         </div>
       </div>
       <div>
-        <div className="flex flex-1 h-full">
+        <div className="flex h-full w-full">
           {departmentParam ? (
             <Categories />
           ) : (
-            <div className=" w-[300px] h-[800px]"></div>
+            <div className=" w-[300px] h-[800px] ml-3"></div>
           )}
 
-          <div className="ml-12 flex flex-col items-center w-full">
+          <div className="ml-12 w-full">
             {!validPage ? (
-              <div className="flex items-center justify-center w-full h-[800px]">
-                <img
-                  className="max-w-[300px]"
-                  src="https://moprojects.s3.us-east-2.amazonaws.com/Eprj/404-error.svg"
-                />
+              <div className="flex justify-center items-center w-full h-[800px]">
+                <div>
+                  <img
+                    className="max-w-[300px]"
+                    src="https://moprojects.s3.us-east-2.amazonaws.com/Eprj/404-error.svg"
+                  />
+                </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1150px]">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1">
                     <Product
@@ -162,46 +165,46 @@ const Shop = () => {
                 ))}
               </div>
             )}
-            <div className="my-8">
+            <div className="my-8 w-full">
               <Pagination>
                 <PaginationContent>
-                  {currentPage > 1 && (
+                  {page > 1 && (
                     <PaginationItem>
-                      <button onClick={() => handlePageChange(currentPage - 1)}>
+                      <button onClick={() => handlePageChange(page - 1)}>
                         <PaginationPrevious />
                       </button>
                     </PaginationItem>
                   )}
 
-                  {currentPage - 1 > 0 && (
+                  {page - 1 > 0 && (
                     <PaginationItem>
-                      <button onClick={() => handlePageChange(currentPage - 1)}>
-                        <PaginationLink>{currentPage - 1}</PaginationLink>
+                      <button onClick={() => handlePageChange(page - 1)}>
+                        <PaginationLink>{page - 1}</PaginationLink>
                       </button>
                     </PaginationItem>
                   )}
 
                   <PaginationItem>
-                    <button onClick={() => handlePageChange(currentPage)}>
-                      <PaginationLink isActive>{currentPage}</PaginationLink>
+                    <button onClick={() => handlePageChange(page)}>
+                      <PaginationLink isActive>{page}</PaginationLink>
                     </button>
                   </PaginationItem>
 
-                  {currentPage + 1 <= totalPages && (
+                  {page + 1 <= totalPages && (
                     <PaginationItem>
-                      <button onClick={() => handlePageChange(currentPage + 1)}>
-                        <PaginationLink>{currentPage + 1}</PaginationLink>
+                      <button onClick={() => handlePageChange(page + 1)}>
+                        <PaginationLink>{page + 1}</PaginationLink>
                       </button>
                     </PaginationItem>
                   )}
 
-                  {currentPage + 2 <= totalPages && (
+                  {page + 2 <= totalPages && (
                     <PaginationItem>
                       <PaginationEllipsis />
                     </PaginationItem>
                   )}
 
-                  {currentPage + 2 <= totalPages && (
+                  {page + 2 <= totalPages && (
                     <PaginationItem>
                       <button onClick={() => handlePageChange(totalPages)}>
                         <PaginationLink>{totalPages}</PaginationLink>
@@ -209,9 +212,9 @@ const Shop = () => {
                     </PaginationItem>
                   )}
 
-                  {currentPage < totalPages && (
+                  {page < totalPages && (
                     <PaginationItem>
-                      <button onClick={() => handlePageChange(currentPage + 1)}>
+                      <button onClick={() => handlePageChange(page + 1)}>
                         <PaginationNext />
                       </button>
                     </PaginationItem>

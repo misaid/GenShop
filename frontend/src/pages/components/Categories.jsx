@@ -71,20 +71,23 @@ const Categories = () => {
   }, [departmentParam]);
 
   return (
-    <div className="bg-sky-200 w-[300px] h-[800px]">
-      <div className="p-4 space-y-4 max-h-[600px] max-w-[250px] overflow-y-scroll overflow-x-hidden">
+    <div className="border-black rounded border h-full w-[300px] ml-3">
+      <div className="max-h-[800px] w-full overflow-y-scroll overflow-x-hidden">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 w-full"
+          >
             <FormField
               control={form.control}
               name="categories"
               render={() => (
                 <FormItem>
-                  <div className="mb-4">
-                    <FormLabel className="text-3xl">Categories</FormLabel>
-                    <FormDescription>
-                      Select the categories you want to display.
-                    </FormDescription>
+                  <div className="mb-4 border-black border-b border-3 w-full">
+                    <div className="p-4">
+                      <FormLabel className="text-2xl">Categories</FormLabel>
+                      <FormDescription></FormDescription>
+                    </div>
                   </div>
                   {categories.map(category => (
                     <FormField
@@ -94,7 +97,7 @@ const Categories = () => {
                       render={({ field }) => (
                         <FormItem
                           key={category.categoryName}
-                          className="flex flex-row items-start space-x-3 space-y-0"
+                          className="flex flex-row items-start space-x-3 space-y-0 px-4"
                         >
                           <FormControl>
                             <Checkbox
@@ -127,7 +130,9 @@ const Categories = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <div className="px-4 pb-4">
+              <Button type="submit">Submit</Button>
+            </div>
           </form>
         </Form>
       </div>
