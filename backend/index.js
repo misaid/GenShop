@@ -338,22 +338,21 @@ app.post('/products', async (request, response) => {
           .status(200)
           .json({ products, totalPages, totalProducts });
       } else {
-        // Obtain all cateogries from department
+        // Obtain all matching cateogries from department
         const categoryDocs = await Category.find({
           _id: { $in: departmentDoc.categories },
           categoryName: { $in: category },
         });
 
         // Obtain all product ids
-        const allProductIds = categoryDocs.flatMap(
-          category => category.products
+        const allProductIds = categoryDocs.map(category => category.products);
+
+        // Find the intersection of all product IDs arrays
+        const commonProductIds = allProductIds.reduce((a, b) =>
+          a.filter(c => b.includes(c))
         );
 
-        console.log(categoryDocs.length);
-        const totalProducts = await Product.countDocuments({
-          _id: { $in: allProductIds },
-        });
-
+        const totalProducts = commonProductIds.length;
         if ((pageid - 1) * ipr >= totalProducts) {
           console.error('Invalid page number');
           return response.status(400).send('Invalid page number');
@@ -361,7 +360,7 @@ app.post('/products', async (request, response) => {
 
         // Find all products that are in the categories from the department
         const productsInCategories = await Product.find({
-          _id: { $in: allProductIds },
+          _id: { $in: commonProductIds },
         })
           .sort(sortCondition) // sort by newest
           .skip((pageid - 1) * ipr)

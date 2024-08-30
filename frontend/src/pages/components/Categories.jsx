@@ -52,19 +52,12 @@ const Categories = () => {
 
   //test
   const form = useForm();
-  function CheckboxReactHookFormMultiple() {
-    const { handleSubmit, register } = useForm({
-      resolver: zodResolver(FormSchema),
-      defaultValues: {
-        items: ['recents', 'home'],
-      },
-    });
-  }
 
   function onSubmit(data) {
     console.log(data.categories);
     window.scrollTo(0, 0);
     const newParams = new URLSearchParams(searchParams);
+    newParams.delete('page');
     newParams.set('category', data.categories.join(','));
     setSearchParams(newParams);
   }
@@ -79,7 +72,7 @@ const Categories = () => {
 
   return (
     <div className="bg-sky-200 w-[300px] h-[800px]">
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4 max-h-[600px] max-w-[250px] overflow-y-scroll overflow-x-hidden">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -88,7 +81,7 @@ const Categories = () => {
               render={() => (
                 <FormItem>
                   <div className="mb-4">
-                    <FormLabel className="text-base">Categories</FormLabel>
+                    <FormLabel className="text-3xl">Categories</FormLabel>
                     <FormDescription>
                       Select the categories you want to display.
                     </FormDescription>
@@ -123,7 +116,7 @@ const Categories = () => {
                               }}
                             />
                           </FormControl>
-                          <FormLabel className="font-normal">
+                          <FormLabel className="font-normal text-l">
                             {category.categoryName} ({category.len})
                           </FormLabel>
                         </FormItem>

@@ -1,10 +1,12 @@
 In progess:
-[] fix categories
-[] Create a side bar for the shop page
+[] placeholder departments in categories
+[] polish categories ui
+[] possible bug in loading bar
 [] Fixed h and w in cart page
+[] Make cart page lead to checkout
+[] Create checkout page
 
 todo:
-[] Create checkout page
 [] Setup receiving order from in the backend 
 [] Create order status page
 [] create user My account page

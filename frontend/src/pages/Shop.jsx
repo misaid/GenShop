@@ -130,19 +130,22 @@ const Shop = () => {
         </div>
       </div>
       <div>
-        {!validPage ? (
-          <div>
-            <div>Invalid Page</div>
-          </div>
-        ) : (
-          <div className="flex flex-1 h-full">
-            {departmentParam ? (
-              <Categories />
-            ) : (
-              <div className=" w-[300px] h-[800px]"></div>
-            )}
+        <div className="flex flex-1 h-full">
+          {departmentParam ? (
+            <Categories />
+          ) : (
+            <div className=" w-[300px] h-[800px]"></div>
+          )}
 
-            <div className="ml-12 flex flex-col items-center">
+          <div className="ml-12 flex flex-col items-center w-full">
+            {!validPage ? (
+              <div className="flex items-center justify-center w-full h-[800px]">
+                <img
+                  className="max-w-[300px]"
+                  src="https://moprojects.s3.us-east-2.amazonaws.com/Eprj/404-error.svg"
+                />
+              </div>
+            ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1">
@@ -158,75 +161,66 @@ const Shop = () => {
                   </div>
                 ))}
               </div>
-
-              <div className="my-8">
-                <Pagination>
-                  <PaginationContent>
-                    {currentPage > 1 && (
-                      <PaginationItem>
-                        <button
-                          onClick={() => handlePageChange(currentPage - 1)}
-                        >
-                          <PaginationPrevious />
-                        </button>
-                      </PaginationItem>
-                    )}
-
-                    {currentPage - 1 > 0 && (
-                      <PaginationItem>
-                        <button
-                          onClick={() => handlePageChange(currentPage - 1)}
-                        >
-                          <PaginationLink>{currentPage - 1}</PaginationLink>
-                        </button>
-                      </PaginationItem>
-                    )}
-
+            )}
+            <div className="my-8">
+              <Pagination>
+                <PaginationContent>
+                  {currentPage > 1 && (
                     <PaginationItem>
-                      <button onClick={() => handlePageChange(currentPage)}>
-                        <PaginationLink isActive>{currentPage}</PaginationLink>
+                      <button onClick={() => handlePageChange(currentPage - 1)}>
+                        <PaginationPrevious />
                       </button>
                     </PaginationItem>
+                  )}
 
-                    {currentPage + 1 <= totalPages && (
-                      <PaginationItem>
-                        <button
-                          onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                          <PaginationLink>{currentPage + 1}</PaginationLink>
-                        </button>
-                      </PaginationItem>
-                    )}
+                  {currentPage - 1 > 0 && (
+                    <PaginationItem>
+                      <button onClick={() => handlePageChange(currentPage - 1)}>
+                        <PaginationLink>{currentPage - 1}</PaginationLink>
+                      </button>
+                    </PaginationItem>
+                  )}
 
-                    {currentPage + 2 <= totalPages && (
-                      <PaginationItem>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    )}
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(currentPage)}>
+                      <PaginationLink isActive>{currentPage}</PaginationLink>
+                    </button>
+                  </PaginationItem>
 
-                    {currentPage + 2 <= totalPages && (
-                      <PaginationItem>
-                        <button onClick={() => handlePageChange(totalPages)}>
-                          <PaginationLink>{totalPages}</PaginationLink>
-                        </button>
-                      </PaginationItem>
-                    )}
+                  {currentPage + 1 <= totalPages && (
+                    <PaginationItem>
+                      <button onClick={() => handlePageChange(currentPage + 1)}>
+                        <PaginationLink>{currentPage + 1}</PaginationLink>
+                      </button>
+                    </PaginationItem>
+                  )}
 
-                    {currentPage < totalPages && (
-                      <PaginationItem>
-                        <button
-                          onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                          <PaginationNext />
-                        </button>
-                      </PaginationItem>
-                    )}
-                  </PaginationContent>
-                </Pagination>
-              </div>
+                  {currentPage + 2 <= totalPages && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+
+                  {currentPage + 2 <= totalPages && (
+                    <PaginationItem>
+                      <button onClick={() => handlePageChange(totalPages)}>
+                        <PaginationLink>{totalPages}</PaginationLink>
+                      </button>
+                    </PaginationItem>
+                  )}
+
+                  {currentPage < totalPages && (
+                    <PaginationItem>
+                      <button onClick={() => handlePageChange(currentPage + 1)}>
+                        <PaginationNext />
+                      </button>
+                    </PaginationItem>
+                  )}
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
