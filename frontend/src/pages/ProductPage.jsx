@@ -68,26 +68,31 @@ const ProductPage = () => {
   useEffect(() => {
     FetchProduct();
   }, [id]);
-  // <Product name={product.name} rating={product.rating} stock={product.countInStock} price={product.price} imageURL={product.image} />
+
   return (
     <div>
       <Navbar />
       <Toaster />
-      <div className="flex flex-row bg-slate-50 mx-48 space-x-24 rounded-xl p-5 ">
-        <div className="min-h-[300px] min-w-[300px] max-h-[500px] max-w-[500px] m-10 flex flex-col ">
+      <div className="mt-12 flex flex-row bg-slate-50 mx-48 space-x-24 rounded-xl p-5 ">
+        <div className="w-[300px] sm:w-[350px] md:w-[400px] lg:w-[450px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] m-10 flex flex-col relative">
           {!imageLoading && (
-            <Skeleton className="h-[500px] w-[500px] rounded-xl" />
+            <div className="w-full h-full rounded-xl">
+              <Skeleton className="w-full h-full rounded-xl" />
+              <h3 className="font-light mt-1 text-sm">&nbsp;</h3>
+            </div>
           )}
           <img
             src={product.image}
             alt={product.name}
             onLoad={() => setImageloading(true)}
-            stye={imageLoading ? {} : { display: 'none' }}
-            className=" rounded-xl"
+            style={imageLoading ? {} : { display: 'none' }} // Corrected 'stye' to 'style'
+            className="w-full h-full rounded-xl object-cover"
           />
-          <h3 className="font-light mt-1 text-sm">
-            Stock: {product.countInStock}
-          </h3>
+          {imageLoading && (
+            <h3 className="font-light mt-1 text-sm">
+              Stock: {product.countInStock}
+            </h3>
+          )}
         </div>
         <div className="flex flex-col max-w-[600px] justify-center space-y-3">
           <div>

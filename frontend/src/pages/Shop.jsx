@@ -6,6 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Product from './components/Product';
 import Categories from './components/Categories';
+import Department from './components/Department';
 //Pagination Components
 import {
   Pagination,
@@ -77,7 +78,7 @@ const Shop = () => {
           withCredentials: true,
         }
       );
-      console.log(response.status);
+
       if (response.status === 200) {
         setValidPage(true);
         setProducts(response.data.products);
@@ -97,12 +98,14 @@ const Shop = () => {
   return (
     <div>
       <Navbar />
+
       <div className="w-full h-7 bg-green-100 flex border-b border-gray-300 mb-5">
         <div className="ml-3 w-48 flex">
           <h3 className="text-sm font-light">
             {start}-{end} of {totalProducts} products
           </h3>
         </div>
+
         <div className=" h-7 flex items-center justify-end w-full mr-3">
           <div>
             <Select value={sortbyParam} onValueChange={handleValueChange}>
@@ -130,15 +133,12 @@ const Shop = () => {
           </div>
         </div>
       </div>
+
       <div>
         <div className="flex h-full w-full">
-          {departmentParam ? (
-            <Categories />
-          ) : (
-            <div className=" w-[300px] h-[800px] ml-3"></div>
-          )}
+          {departmentParam ? <Categories /> : <Department />}
 
-          <div className="ml-12 w-full">
+          <div className="ml-12">
             {!validPage ? (
               <div className="flex justify-center items-center w-full h-[800px]">
                 <div>
@@ -165,7 +165,7 @@ const Shop = () => {
                 ))}
               </div>
             )}
-            <div className="my-8 w-full">
+            <div className="my-8 ">
               <Pagination>
                 <PaginationContent>
                   {page > 1 && (

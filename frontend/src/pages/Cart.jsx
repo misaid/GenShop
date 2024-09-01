@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import CartItem from './components/CartItem';
+import { Button } from '@/components/ui/button';
 
 const Cart = () => {
   const axiosInstance = axios.create({
@@ -16,6 +17,7 @@ const Cart = () => {
         withCredentials: true,
       });
       setCart(response.data.cartItem);
+      console.log(response.data.cartItem);
     } catch (error) {
       console.error(
         'Error fetching cart:',
@@ -33,16 +35,25 @@ const Cart = () => {
   return (
     <div className="">
       <Navbar />
-      <div className="h-scren w-screen flex flex-col items-center justify-center">
-        <div className="flex-col">
+      <div className="mt-12 h-scren w-screen flex flex-row items-center justify-center">
+        <div className="flex-col max-h-[600px] overflow-y-scroll border border-black rounded-xl">
           {cart.map(item => (
-            <CartItem
-              key={item.productId}
-              productid={item.productId}
-              quantity={item.quantity}
-              onChange={handleCartChange}
-            />
+            <div className="border border-b border-black">
+              <CartItem
+                key={item.productId}
+                productid={item.productId}
+                quantity={item.quantity}
+                onChange={handleCartChange}
+              />
+            </div>
           ))}
+        </div>
+        <div className="flex justify-center mt-5 flex-col">
+          <h2 className="font-bold text-3xl">Checkout</h2>
+          <h3>Items: </h3>
+          <h3>Subtotal: </h3>
+          <h3>Shipping: </h3>
+          <h3>Total: </h3>
         </div>
       </div>
     </div>

@@ -19,12 +19,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-const FormSchema = z.object({
-  items: z.array(z.string()).refine(value => value.some(item => item), {
-    message: 'You have to select at least one item.',
-  }),
-});
-
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const axiosInstance = axios.create({
@@ -38,6 +32,7 @@ const Categories = () => {
   const sortbyParam = searchParams.get('sortby') || 'new';
   const departmentArray = departmentParam ? departmentParam.split(',') : [];
   const categoryArray = categoryParam ? categoryParam.split(',') : [];
+  const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
     try {
@@ -45,6 +40,7 @@ const Categories = () => {
         `/categories/${departmentParam}`
       );
       setCategories(response.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -70,9 +66,9 @@ const Categories = () => {
     }
   }, [departmentParam]);
 
-  return (
-    <div className="border-black rounded border h-full w-[300px] ml-3">
-      <div className="max-h-[800px] w-full overflow-y-scroll overflow-x-hidden">
+  return !loading ? (
+    <div className="sticky top-12 h-[800px] w-[300px]">
+      <div className="w-full overflow-y-scroll overflow-x-hidden">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -83,10 +79,15 @@ const Categories = () => {
               name="categories"
               render={() => (
                 <FormItem>
-                  <div className="mb-4 border-black border-b border-3 w-full">
+                  <div className="mb-4 border-grey-300 border-b border-3 w-full">
                     <div className="p-4">
-                      <FormLabel className="text-2xl">Categories</FormLabel>
-                      <FormDescription></FormDescription>
+                      <FormLabel className="text-2xl">
+                        {departmentParam}
+                      </FormLabel>
+                      <FormDescription>
+                        Select one or more categories to query from the list
+                        below.
+                      </FormDescription>
                     </div>
                   </div>
                   {categories.map(category => (
@@ -130,13 +131,15 @@ const Categories = () => {
                 </FormItem>
               )}
             />
-            <div className="px-4 pb-4">
+            <div className="p-4 border-grey-300 border-t border-3">
               <Button type="submit">Submit</Button>
             </div>
           </form>
         </Form>
       </div>
     </div>
+  ) : (
+    <div className="w-[300px] ml-3"></div>
   );
 };
 

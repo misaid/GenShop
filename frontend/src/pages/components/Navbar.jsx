@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
@@ -21,11 +22,11 @@ const Navbar = () => {
   };
   const fetchUser = async () => {
     try {
-      const response = await axiosInstance.get('/verifyjwt', {
+      const response = await axiosInstance.get('/user', {
         withCredentials: true,
       });
       setUser(response.data);
-      console.log('User:', response.data);
+      setLoading(false);
     } catch (error) {
       console.error(
         'Error fetching user:',
@@ -34,9 +35,9 @@ const Navbar = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchUser();
-  // });
+  useEffect(() => {
+    fetchUser();
+  });
   return (
     <div>
       <div className=" lg:mb-0 h-16 bg-green-300 flex items-center w-full">
@@ -58,7 +59,7 @@ const Navbar = () => {
           </Link>
         </div>
         {user ? (
-          <h2>user.name</h2>
+          <h2>{user}</h2>
         ) : (
           <Link to="/login" className="flex items-center mr-4">
             <h2>Login</h2>

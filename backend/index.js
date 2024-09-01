@@ -55,6 +55,15 @@ app.get('/verifyjwt', verifyJWT, (request, response) => {
   }
 });
 
+app.get('/user', verifyJWT, async (request, response) => {
+  try {
+    const user = await User.findById(request.user.userId);
+    return response.status(200).json(user.username);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // TODO: make username case insensitive
 /**
  * Register a user

@@ -1,8 +1,7 @@
 import { NumericFormat } from 'react-number-format';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -21,7 +20,7 @@ const CartItem = ({ productid, quantity, onChange }) => {
   });
   const [product, setProduct] = useState({});
   const [imageLoading, setImageLoading] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(String(quantity)); // Default value is "1"
+  const [selectedValue, setSelectedValue] = useState(String(quantity));
   const [stock, setStock] = useState('');
   const navigate = useNavigate();
 
@@ -40,7 +39,7 @@ const CartItem = ({ productid, quantity, onChange }) => {
 
   const addToCart = async () => {
     try {
-      const response = await axiosInstance.post(
+      await axiosInstance.post(
         `/cart`,
         {
           flag: 'add',
@@ -51,7 +50,6 @@ const CartItem = ({ productid, quantity, onChange }) => {
           withCredentials: true,
         }
       );
-      console.log('Added to cart');
       onChange();
     } catch (error) {
       console.error(
@@ -62,7 +60,7 @@ const CartItem = ({ productid, quantity, onChange }) => {
   };
 
   const handleValueChange = value => {
-    setSelectedValue(value); // Update state with the new value
+    setSelectedValue(value);
     sendToCart(value);
   };
 
@@ -81,15 +79,16 @@ const CartItem = ({ productid, quantity, onChange }) => {
       );
     } catch (error) {
       console.error(
-        'Error adding to cart:',
+        'Error updating cart:',
         error.response ? error.response.data : error.message
       );
     }
   };
 
-  const handleSubmit = async event => {
-    event.preventDefault(); // Prevent the default form submission behavior
+  const handleSubmit = event => {
+    event.preventDefault();
   };
+
   const handleClick = async () => {
     try {
       await axiosInstance.post(
@@ -102,13 +101,13 @@ const CartItem = ({ productid, quantity, onChange }) => {
           withCredentials: true,
         }
       );
-      toast.success(quantity + ' ' + product.name + ' deleted from cart', {
+      toast.success(`${quantity} ${product.name} deleted from cart`, {
         action: {
           label: 'Undo',
           onClick: () => addToCart(),
         },
       });
-      onChange(); // This should trigger handleCartChange in Cart.jsx
+      onChange();
     } catch (error) {
       console.log(error);
     }
@@ -119,50 +118,43 @@ const CartItem = ({ productid, quantity, onChange }) => {
   }, []);
 
   return (
-    <div className="flex flex-row w-[600px] h-[200px] bg-slate-300 items-center p-5 my-3 border border-black rounded-xl space-x-3">
-      <Toaster
-        toastOptions={{
-          style: {
-            background: 'red',
-          },
-          className: 'class',
-        }}
-      />
-      <div>
-        {!imageLoading && <Skeleton className="h-[150px] w-[150px]" />}
-        <div className="max-w-[150px] max-h-[150px]">
-          <img
-            src={product.image}
-            alt={product.name}
-            onLoad={() => setImageLoading(true)}
-            style={imageLoading ? {} : { display: 'none' }}
-            className="rounded"
-          />
+    <div className="flex flex-col md:flex-row w-full md:w-[600px] bg-slate-50 p-4 space-y-4 md:space-y-0 md:space-x-4 items-center">
+      <Toaster />
+      <div className="w-[150px] h-[150px] relative">
+        {!imageLoading && <Skeleton className="absolute inset-0" />}
+        <img
+          src={product.image}
+          alt={product.name}
+          onLoad={() => setImageLoading(true)}
+          style={imageLoading ? {} : { display: 'none' }}
+          className="rounded w-full h-full object-cover"
+        />
+      </div>
+      <div className="flex flex-col flex-grow justify-between space-y-2 md:space-y-0 md:space-x-2 md:flex-row items-center md:items-start text-center md:text-left">
+        <div className="flex flex-col">
+          <h2 className="text-xl font-medium truncate w-[200px] max-w-[200px]">
+            {product.name}
+          </h2>
+          <h3 className="text-lg font-semibold text-gray-700">
+            <NumericFormat
+              value={product.price}
+              displayType={'text'}
+              thousandSeparator=","
+              prefix={'$'}
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          </h3>
         </div>
-      </div>
-      <div>
-        <h2 className="text-xl">{product.name}</h2>
-        <h2 className="font-bold text-l">
-          <NumericFormat
-            value={product.price}
-            displayType={'text'}
-            thousandSeparator=","
-            prefix={'$'}
-            decimalScale={2}
-            fixedDecimalScale
-          />
-        </h2>
-      </div>
-      <div>
         <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-          <h3>Qtw: </h3>
+          <h3 className="font-medium">Qty:</h3>
           <Select value={selectedValue} onValueChange={handleValueChange}>
             <SelectTrigger className="w-[60px]">
               <SelectValue placeholder={selectedValue} />
             </SelectTrigger>
             <SelectContent>
               {[...Array(stock)].map((_, index) => {
-                const value = (index + 1).toString(); // Convert index to string to use as value
+                const value = (index + 1).toString();
                 return (
                   <SelectItem key={value} value={value}>
                     {value}
@@ -172,10 +164,10 @@ const CartItem = ({ productid, quantity, onChange }) => {
             </SelectContent>
           </Select>
         </form>
+        <Button variant="destructive" onClick={handleClick}>
+          Delete
+        </Button>
       </div>
-      <Button variant="destructive" onClick={handleClick}>
-        Delete
-      </Button>
     </div>
   );
 };

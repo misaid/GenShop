@@ -115,7 +115,7 @@ const Product = ({ product }) => {
             <Skeleton className="w-1/2 h-6 rounded-xl mb-2 " />
           ) : (
             <h3
-              className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block w-full overflow-hidden"
+              className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block truncate"
               onClick={() => productClicked()}
             >
               {name}

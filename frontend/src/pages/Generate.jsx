@@ -25,6 +25,7 @@ import Product from './components/Product';
 
 const Generate = () => {
   const [product, setProduct] = useState([]);
+  const [firstLoad, setFirstLoad] = useState(false);
   const [key, setKey] = useState(0);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -77,6 +78,7 @@ const Generate = () => {
         return;
       }
       setLoading(true);
+      setFirstLoad(true);
       progressInterval();
       const response = await axiosInstance.post(
         '/generate',
@@ -90,8 +92,8 @@ const Generate = () => {
       setProgress(progressRef.current);
       setProduct(response.data.product);
       setKey(key + 1);
-      console.log(response.data.item);
       setLoading(false);
+      console.log(response.data.item);
     } catch (error) {
       console.log(error);
     }
@@ -102,9 +104,16 @@ const Generate = () => {
     <div>
       <Navbar />
       <Toaster richColors />
-      <div className="flex flex-col justify-center items-center space-y-8 ">
-        <Product product={product} key={key} />
-        {!loading ? <></> : <Progress value={progress} className="w-64" />}
+
+      <div className="flex flex-col justify-center items-center mt-12">
+        <div className="mb-8">
+          <Product product={product} key={key} />
+        </div>
+        {!firstLoad ? (
+          <></>
+        ) : (
+          <Progress value={progress} className="w-64 animate-float-up mb-4" />
+        )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <FormField

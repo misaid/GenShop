@@ -1,12 +1,8 @@
 In progess:
-[] possible bug in the way pages are handled with categories
-[] no longer wish to use centered positioning of products use margin
-[] placeholder departments in categories
-[] polish categories ui
-[] possible bug in loading bar
-[] Fixed h and w in cart page
+[] combo either fetching cart and fetching items or pass the cost of price up, or pass the price in initial function call.
 [] Make cart page lead to checkout
 [] Create checkout page
+[] navbar flashes login or name
 
 todo:
 [] Setup receiving order from in the backend 
