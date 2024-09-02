@@ -3,6 +3,7 @@ In progess:
 [] Make cart page lead to checkout
 [] Create checkout page
 [] navbar flashes login or name
+[] search  box
 
 todo:
 [] Setup receiving order from in the backend 

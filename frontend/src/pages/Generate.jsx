@@ -1,7 +1,6 @@
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import axios from 'axios';
-import Navbar from './components/Navbar';
 import { useState, useRef } from 'react';
 //zod
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -102,7 +101,6 @@ const Generate = () => {
 
   return (
     <div>
-      <Navbar />
       <Toaster richColors />
 
       <div className="flex flex-col justify-center items-center mt-12">

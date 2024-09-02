@@ -1,6 +1,6 @@
 import React from 'react';
 import pearLogo from '../../assets/pearlogo.png';
-import Cart from '../../assets/cart.png';
+import Cart from '../../assets/shoppingcart.svg';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -37,7 +37,7 @@ const Navbar = () => {
 
   useEffect(() => {
     fetchUser();
-  });
+  }, []);
   return (
     <div>
       <div className=" lg:mb-0 h-16 bg-green-300 flex items-center w-full">
@@ -58,20 +58,24 @@ const Navbar = () => {
             <h2>Generate</h2>
           </Link>
         </div>
-        {user ? (
+        {loading ? (
+          <div className="flex items-center mr-4">
+            <h2> </h2>
+          </div>
+        ) : user ? (
           <h2>{user}</h2>
         ) : (
           <Link to="/login" className="flex items-center mr-4">
             <h2>Login</h2>
           </Link>
-        )}
+        )}{' '}
         <Link to="/cart" className="flex items-center mr-4">
           <div className="flex items-center mr-4">
             <img
               src={Cart}
               href="/cart"
               alt="Cart"
-              className="h-16 w-16 ml-4 hover:cursor-pointer"
+              className="h-10 w-10 ml-4 hover:cursor-pointer"
             />
           </div>
         </Link>

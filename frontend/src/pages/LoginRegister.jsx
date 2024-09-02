@@ -1,13 +1,11 @@
-import React from "react";
-import Navbar from "./components/Navbar";
-import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React from 'react';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Login = () => {
   return (
     <div>
-      <Navbar />
       <div className="flex">
         <div className="flex-1 w-1/2 h-screen bg-gradient-to-r from-lime-400 to-green-600">
           <h2 className="text-3xl text-black font-bold pt-20 pl-10">

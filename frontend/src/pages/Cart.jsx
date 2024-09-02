@@ -1,5 +1,4 @@
 import React from 'react';
-import Navbar from './components/Navbar';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import CartItem from './components/CartItem';
@@ -34,11 +33,10 @@ const Cart = () => {
   }, []);
   return (
     <div className="">
-      <Navbar />
-      <div className="mt-12 h-scren w-screen flex flex-row items-center justify-center">
-        <div className="flex-col max-h-[600px] overflow-y-scroll border border-black rounded-xl">
+      <div className="mt-12 h-scren w-screen flex flex-row justify-center">
+        <div className="flex-col max-h-[600px] overflow-y-scroll rounded-xl px-6 bg-slate-50 shadow-md ">
           {cart.map(item => (
-            <div className="border border-b border-black">
+            <div className="border-b border-grey-300">
               <CartItem
                 key={item.productId}
                 productid={item.productId}
@@ -48,12 +46,13 @@ const Cart = () => {
             </div>
           ))}
         </div>
-        <div className="flex justify-center mt-5 flex-col">
-          <h2 className="font-bold text-3xl">Checkout</h2>
-          <h3>Items: </h3>
-          <h3>Subtotal: </h3>
-          <h3>Shipping: </h3>
-          <h3>Total: </h3>
+        <div className="flex mx-5 bg-slate-50 h-32 w-80 flex-col p-6 rounded-xl shadow-md">
+          <h3>
+            Subtotal(num Items): <span className="font-bold">price</span>
+          </h3>
+          <div className="mt-5 bg-green-300 rounded-2xl p-2 hover:cursor-pointer max-w-[195px] flex justify-center items-center">
+            <h2>Proceed to Checkout</h2>
+          </div>
         </div>
       </div>
     </div>

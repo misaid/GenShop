@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 //Page Components
-import Navbar from './components/Navbar';
 import Product from './components/Product';
 import Categories from './components/Categories';
 import Department from './components/Department';
@@ -97,8 +96,6 @@ const Shop = () => {
   }, [page, departmentParam, categoryParam, sortbyParam]);
   return (
     <div>
-      <Navbar />
-
       <div className="w-full h-7 bg-green-100 flex border-b border-gray-300 mb-5">
         <div className="ml-3 w-48 flex">
           <h3 className="text-sm font-light">

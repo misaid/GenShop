@@ -5,7 +5,6 @@ import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Navbar from './components/Navbar';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -71,7 +70,6 @@ const ProductPage = () => {
 
   return (
     <div>
-      <Navbar />
       <Toaster />
       <div className="mt-12 flex flex-row bg-slate-50 mx-48 space-x-24 rounded-xl p-5 ">
         <div className="w-[300px] sm:w-[350px] md:w-[400px] lg:w-[450px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] m-10 flex flex-col relative">
