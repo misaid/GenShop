@@ -1,4 +1,6 @@
 In progess:
+[x] 404 is broken again 
+[] cart page form
 [] Make cart page lead to checkout
 [] Create checkout page
 [] swapping from department to category leads to a small jump
@@ -7,6 +9,7 @@ In progess:
 [] Create order status page
 
 todo:
+[] make sure all user built queries are using { $eq: id }
 [] create user My account page
   [] might have to change the current login flow/schema
 [] Users can comment and rate this product
@@ -15,9 +18,9 @@ UI:
 [] polish the ui
 [] overflow elipses product names
 [] animations when generating shake card/ bar hovers in
+Might add:
 [] Mobile support
 
-Might add:
 [] auto animate
 [] Wishlist
 [] Zoom in on hover over photo

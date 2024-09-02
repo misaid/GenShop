@@ -63,6 +63,10 @@ const Shop = () => {
     setSearchParams(newParams);
   };
 
+  function onSubmit(data) {
+    console.log(data);
+  }
+
   const fetchProducts = async () => {
     try {
       const response = await axiosInstance.post(
@@ -135,7 +139,7 @@ const Shop = () => {
         <div className="flex h-full w-full">
           {departmentParam ? <Categories /> : <Department />}
 
-          <div className="ml-12">
+          <div className="ml-12 w-full h-full">
             {!validPage ? (
               <div className="flex justify-center items-center w-full h-[800px]">
                 <div>

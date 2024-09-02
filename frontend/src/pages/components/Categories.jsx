@@ -21,17 +21,13 @@ import {
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const form = useForm();
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
-  const [searchParams, setSearchParams] = useSearchParams();
 
-  const page = parseInt(searchParams.get('page')) || 1;
   const departmentParam = searchParams.get('department') || '';
-  const categoryParam = searchParams.get('category') || '';
-  const sortbyParam = searchParams.get('sortby') || 'new';
-  const departmentArray = departmentParam ? departmentParam.split(',') : [];
-  const categoryArray = categoryParam ? categoryParam.split(',') : [];
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
@@ -46,9 +42,6 @@ const Categories = () => {
     }
   };
 
-  //test
-  const form = useForm();
-
   function onSubmit(data) {
     console.log(data.categories);
     window.scrollTo(0, 0);
@@ -58,7 +51,6 @@ const Categories = () => {
     setSearchParams(newParams);
   }
 
-  //
   useEffect(() => {
     if (departmentParam) {
       form.reset();
