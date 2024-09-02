@@ -10,32 +10,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 
-const CartItem = ({ productid, quantity, onChange }) => {
+const TestCartItem = ({ productid, quantity, onChange, product }) => {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
-  const [product, setProduct] = useState({});
   const [imageLoading, setImageLoading] = useState(false);
   const [selectedValue, setSelectedValue] = useState(String(quantity));
-  const [stock, setStock] = useState('');
-  const navigate = useNavigate();
-
-  const fetchProduct = async () => {
-    try {
-      const response = await axiosInstance.get(`/product/${productid}`);
-      setProduct(response.data);
-      setStock(Math.min(response.data.countInStock, 30));
-    } catch (error) {
-      console.error(
-        'Error fetching product:',
-        error.response ? error.response.data : error.message
-      );
-    }
-  };
 
   const addToCart = async () => {
     try {
@@ -43,7 +26,7 @@ const CartItem = ({ productid, quantity, onChange }) => {
         `/cart`,
         {
           flag: 'add',
-          productId: productid,
+          productId: product._id,
           quantity: quantity,
         },
         {
@@ -70,13 +53,14 @@ const CartItem = ({ productid, quantity, onChange }) => {
         `/cart`,
         {
           flag: 'set',
-          productId: productid,
+          productId: product._id,
           quantity: value,
         },
         {
           withCredentials: true,
         }
       );
+      onChange();
     } catch (error) {
       console.error(
         'Error updating cart:',
@@ -95,7 +79,7 @@ const CartItem = ({ productid, quantity, onChange }) => {
         `/cart`,
         {
           flag: 'delete',
-          productId: productid,
+          productId: product._id,
         },
         {
           withCredentials: true,
@@ -112,10 +96,6 @@ const CartItem = ({ productid, quantity, onChange }) => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchProduct();
-  }, []);
 
   return (
     <div className="flex flex-col md:flex-row w-full md:w-[600px] bg-slate-50 p-4 space-y-4 md:space-y-0 md:space-x-4 items-center">
@@ -153,7 +133,7 @@ const CartItem = ({ productid, quantity, onChange }) => {
               <SelectValue placeholder={selectedValue} />
             </SelectTrigger>
             <SelectContent>
-              {[...Array(stock)].map((_, index) => {
+              {[...Array(product.countInStock)].map((_, index) => {
                 const value = (index + 1).toString();
                 return (
                   <SelectItem key={value} value={value}>
@@ -172,4 +152,4 @@ const CartItem = ({ productid, quantity, onChange }) => {
   );
 };
 
-export default CartItem;
+export default TestCartItem;

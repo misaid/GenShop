@@ -7,7 +7,7 @@ const Department = () => {
     navigate(`/shop?department=${Department}`);
   };
   return (
-    <div className="sticky top-12 h-full w-[300px]">
+    <div className="sticky top-12 h-[800px] w-[300px]">
       <div className="max-h-[800px] w-full overflow-y-scroll overflow-x-hidden">
         <div className="flex flex-col w-full">
           <h2 className="text-2xl p-4 border-b border-black">Departments</h2>

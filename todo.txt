@@ -1,17 +1,15 @@
 In progess:
-[] combo either fetching cart and fetching items or pass the cost of price up, or pass the price in initial function call.
 [] Make cart page lead to checkout
 [] Create checkout page
-[] navbar flashes login or name
-[] search  box
-
-todo:
+[] swapping from department to category leads to a small jump
+[] search box
 [] Setup receiving order from in the backend 
 [] Create order status page
+
+todo:
 [] create user My account page
   [] might have to change the current login flow/schema
 [] Users can comment and rate this product
-[] create order history page
 
 UI:
 [] polish the ui
@@ -20,7 +18,6 @@ UI:
 [] Mobile support
 
 Might add:
-[] make it so that only component rerenders not whole page
 [] auto animate
 [] Wishlist
 [] Zoom in on hover over photo

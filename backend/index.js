@@ -47,6 +47,7 @@ app.get('/', (request, response) => {
   console.log(request);
   return response.status(234).send('MSAID');
 });
+
 app.get('/verifyjwt', verifyJWT, (request, response) => {
   try {
     return response.status(200).json(request.user);
@@ -55,6 +56,10 @@ app.get('/verifyjwt', verifyJWT, (request, response) => {
   }
 });
 
+/**
+ * get the user
+ * @return {string} username
+ */
 app.get('/user', verifyJWT, async (request, response) => {
   try {
     const user = await User.findById(request.user.userId);
@@ -103,6 +108,7 @@ app.post('/register', async (request, response) => {
     return response.status(409).send('Username already exists');
   }
 });
+
 /**
  * login user
  * @param {string} username
@@ -150,6 +156,7 @@ app.post('/logout', async (request, response) => {
  * @param {string} prompt
  * @return {json} item
  * @return {string} image
+ * @return {json} product
  */
 app.post('/generate', async (request, response) => {
   //console.log(request.body.prompt);
@@ -268,10 +275,14 @@ app.post('/generate', async (request, response) => {
 });
 
 /**
- * Get products depending on the page
- * @param {int} page
- * @return {json} products
- * @return {int } totalPages
+ * Get products depending on the parameters
+ * @param {int} page - The page number for pagination
+ * @param {string} category - The category of the products
+ * @param {string} department - The department of the products
+ * @param {string} sortType - The type of sorting applied
+ * @return {json} products - The products retrieved
+ * @return {int} totalPages - The total number of pages
+ * @return {int} len - The number of products in each category
  */
 app.post('/products', async (request, response) => {
   try {
@@ -480,17 +491,41 @@ app.post('/cart', verifyJWT, async (request, response) => {
 app.get('/cart', verifyJWT, async (request, response) => {
   try {
     // console.log(request.user);
+    // find user
     const userID = request.user.userId;
     const user = await User.findById(userID);
+    //find users cart
     const cartID = user.cartid;
     const cart = await Cart.findById(cartID);
-    return response.status(200).json(cart);
+    // find all products in cart
+    const cartItems = cart.cartItem;
+
+    const products = await Product.find({
+      _id: { $in: cartItems.map(item => item.productId) },
+    });
+    // fore each matching product cart item add the quantity from cart to object
+    const cartInfo = products.map(product => {
+      const cartItem = cartItems.find(
+        item => item.productId.toString() === product._id.toString()
+      );
+      return {
+        product: product,
+        quantity: cartItem.quantity,
+      };
+    });
+    console.log(cartInfo);
+    return response.status(200).json({ cart: cart, cartInfo: cartInfo });
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in fetching cart');
   }
 });
 
+/**
+ * get the categories for the category component
+ * @return {json} categories - The categories of the products
+ * @return {int} len - The number of products in each category
+ */
 app.get('/categories/:id', async (request, response) => {
   try {
     const department = request.params.id;
@@ -516,6 +551,7 @@ app.get('/categories/:id', async (request, response) => {
     return response.status(400).send('Error in fetching categories');
   }
 });
+
 mongoose
   .connect(mongoDBURL)
   .then(() => {
