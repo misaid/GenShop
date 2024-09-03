@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 import OpenAI from 'openai';
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
+import stripe from 'stripe';
 // models
 import User from './models/user.js';
 import Cart from './models/cart.js';
@@ -25,6 +26,7 @@ const secretKey = process.env.secretKey;
 const DOMAIN = process.env.domain || 'http://localhost:5001';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const openai = new OpenAI(OPENAI_API_KEY);
+const stripekey = process.env.STRIPE_SECRET_KEY;
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -36,7 +38,7 @@ const s3 = new AWS.S3({
 //   windowMs: 15 * 60 * 1000, // 15 minutes
 //   limit: 400, // max 100 requests per windowMs
 // });
-
+const stripeapi = new stripe(stripekey);
 const app = express();
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(cookieParser());
@@ -294,8 +296,8 @@ app.post('/products', async (request, response) => {
     const item = request.body.item;
 
     const ipr = 12;
-    console.log('change');
-    console.log('item: ', item);
+    // console.log('change');
+    // console.log('item: ', item);
     let sortCondition = {};
     switch (sortType) {
       case 'priceDesc':
@@ -361,8 +363,8 @@ app.post('/products', async (request, response) => {
       const totalPages = Math.ceil(totalProducts / ipr);
       return response.status(200).json({ products, totalPages, totalProducts });
     } else {
-      console.log('Department:', department);
-      console.log('Category:', category);
+      // console.log('Department:', department);
+      // console.log('Category:', category);
       const departmentDoc = await Department.findOne({
         departmentName: department,
       });
@@ -438,7 +440,7 @@ app.get('/product/:id', async (request, response) => {
   try {
     const productId = request.params.id;
     const product = await Product.findById(productId);
-    // console.log(product._id);
+    // capionsole.log(product._id);
     return response.status(200).json(product);
   } catch (error) {
     console.log(error);
@@ -544,7 +546,6 @@ app.get('/cart', verifyJWT, async (request, response) => {
         quantity: cartItem.quantity,
       };
     });
-    console.log(cartInfo);
     return response.status(200).json({ cart: cart, cartInfo: cartInfo });
   } catch (error) {
     console.log(error);
@@ -580,6 +581,49 @@ app.get('/categories/:id', async (request, response) => {
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in fetching categories');
+  }
+});
+
+/**
+ * Checkout the users cart items using stripe
+ * @param {json} items
+ * @return {json} session
+ */
+app.post('/checkout', verifyJWT, async (request, response) => {
+  try {
+    const items = request.body.items;
+
+    const line_items = await Promise.all(
+      items.map(async item => {
+        const product = await Product.findById(item.productId);
+
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: product.name,
+              images: [product.image],
+            },
+            unit_amount: Math.round(item.price * 100),
+          },
+          quantity: item.quantity,
+        };
+      })
+    );
+
+    const session = await stripeapi.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: line_items,
+      mode: 'payment',
+      success_url: `http://localhost:5173/hero`,
+      cancel_url: `http://localhost:5173/home`,
+    });
+
+    console.log('this ran ', session);
+    return response.status(200).json(session);
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in checkout');
   }
 });
 

@@ -20,6 +20,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+//stripe
+import { loadStripe } from '@stripe/stripe-js';
 
 const FormSchema = z.object({
   items: z.array(
@@ -35,11 +37,12 @@ const Cart = () => {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
+
+  const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
   const [cartInfo, setCartInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [subtotal, setSubtotal] = useState(0);
   const [numItems, setNumItems] = useState(0);
-  const [items, setItems] = useState([]);
   const [firstLoad, setFirstLoad] = useState(true);
 
   const form = useForm({
@@ -131,6 +134,25 @@ const Cart = () => {
   const handleCartChange = () => {
     console.log('Cart changed');
     fetchCart();
+  };
+
+  const makePayment = async () => {
+    try {
+      const stripe = await loadStripe(stripePublicKey);
+      const session = await axiosInstance.post(
+        '/checkout',
+        { items: getValues('items') },
+        { withCredentials: true }
+      );
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.data.id,
+      });
+      if (result.error) {
+        console.log(result.error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -244,11 +266,12 @@ const Cart = () => {
               />
             </h3>
           </div>
-          <Link to="/checkout">
-            <div className="mt-5 bg-green-300 rounded-2xl p-2 hover:cursor-pointer max-w-[195px] flex justify-center items-center">
-              <h2>Proceed to Checkout</h2>
-            </div>
-          </Link>
+          <div
+            onClick={makePayment}
+            className="mt-5 bg-green-300 rounded-2xl p-2 hover:cursor-pointer max-w-[195px] flex justify-center items-center"
+          >
+            <h2>Proceed to Checkout</h2>
+          </div>
         </div>
       </div>
     )

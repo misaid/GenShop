@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BiSearchAlt } from 'react-icons/bi';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -68,7 +69,10 @@ const Navbar = () => {
             <h2> </h2>
           </div>
         ) : user ? (
-          <h2>{user}</h2>
+          <div className="flex space-x-2 items-center mr-4">
+            <Skeleton className="w-8 h-8 rounded-full animate-none" />
+            <h2>{user}</h2>
+          </div>
         ) : (
           <Link to="/login" className="flex items-center mr-4">
             <h2>Login</h2>
