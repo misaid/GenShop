@@ -42,14 +42,14 @@ const Categories = () => {
     }
   };
 
-  function onSubmit(data) {
+  const onSubmit = data => {
     console.log(data.categories);
     window.scrollTo(0, 0);
     const newParams = new URLSearchParams(searchParams);
     newParams.delete('page');
     newParams.set('category', data.categories.join(','));
     setSearchParams(newParams);
-  }
+  };
 
   useEffect(() => {
     if (departmentParam) {
@@ -131,7 +131,7 @@ const Categories = () => {
       </div>
     </div>
   ) : (
-    <div className="w-[300px] ml-3"></div>
+    <div className="w-[300px]"></div>
   );
 };
 

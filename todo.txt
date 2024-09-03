@@ -1,10 +1,10 @@
 In progess:
 [x] 404 is broken again 
-[] cart page form
+[x] cart page form
 [] Make cart page lead to checkout
 [] Create checkout page
-[] swapping from department to category leads to a small jump
-[] search box
+[x] swapping from department to category leads to a small jump
+[x] search box
 [] Setup receiving order from in the backend 
 [] Create order status page
 

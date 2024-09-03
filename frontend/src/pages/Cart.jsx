@@ -50,10 +50,10 @@ const Cart = () => {
   });
   const { handleSubmit, setValue, getValues } = form;
 
-  function onSubmit(data) {
+  const onSubmit = data => {
     calculateSubtotal(data.items);
     calculateItems(data.items);
-  }
+  };
 
   const calculateSubtotal = items => {
     let subtotal = 0;
@@ -79,6 +79,7 @@ const Cart = () => {
 
       const cartData = response.data.cartInfo;
       setCartInfo(cartData);
+      console.log(cartData);
 
       const transformedItems = cartData.map(item => ({
         productId: item.product._id,
@@ -106,15 +107,14 @@ const Cart = () => {
           return ti;
         });
 
-        const allItems = currentValues.map(ci => {
-          const updatedItem = updatedItems.find(
-            ui => ui.productId === ci.productId
-          );
-          if (updatedItem) {
-            return updatedItem;
-          }
-          return ci;
-        });
+        const allItems = currentValues
+          .filter(ci => updatedItems.some(ui => ui.productId === ci.productId))
+          .map(ci => {
+            const updatedItem = updatedItems.find(
+              ui => ui.productId === ci.productId
+            );
+            return updatedItem ? updatedItem : ci;
+          });
 
         setValue('items', allItems);
         calculateSubtotal(allItems);
@@ -141,81 +141,94 @@ const Cart = () => {
     !loading && (
       <div className="mt-12 w-screen flex flex-row justify-center">
         <div className="flex-col max-h-[600px] overflow-y-scroll force-scrollbar rounded-xl px-6 bg-slate-50 shadow-md ">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8 w-full"
-            >
-              <FormField
-                control={form.control}
-                name="items"
-                render={() => (
-                  <FormItem>
-                    <div className="mb-4 border-grey-300 border-b border-3 w-full">
-                      <div className="p-4">
-                        <FormLabel className="text-2xl flex justify-center">
-                          Cart
-                        </FormLabel>
-                        <FormDescription></FormDescription>
+          {cartInfo && cartInfo.length > 0 ? (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8 w-full"
+              >
+                <FormField
+                  control={form.control}
+                  name="items"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4 border-grey-300 border-b border-3 w-full">
+                        <div className="p-4">
+                          <FormLabel className="text-2xl flex justify-center">
+                            Cart
+                          </FormLabel>
+                          <FormDescription></FormDescription>
+                        </div>
                       </div>
-                    </div>
-                    {cartInfo.map(item => (
-                      <FormField
-                        key={item.product._id}
-                        control={form.control}
-                        name="items"
-                        render={({ field }) => (
-                          <FormItem
-                            key={item.product._id}
-                            className="flex flex-row items-center space-x-3 space-y-0 px-4"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={form
-                                  .getValues('items')
-                                  .some(i => i.productId === item.product._id)}
-                                onCheckedChange={checked => {
-                                  console.log('checked', item.product._id);
-                                  const updatedItems = checked
-                                    ? [
-                                        ...form.getValues('items'),
-                                        {
-                                          productId: item.product._id,
-                                          quantity: item.quantity,
-                                          price: item.product.price,
-                                        },
-                                      ]
-                                    : form
-                                        .getValues('items')
-                                        .filter(
-                                          i => i.productId !== item.product._id
-                                        );
+                      {cartInfo.map(item => (
+                        <FormField
+                          key={item.product._id}
+                          control={form.control}
+                          name="items"
+                          render={({ field }) => (
+                            <FormItem
+                              key={item.product._id}
+                              className="flex flex-row items-center space-x-3 space-y-0 px-4"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={form
+                                    .getValues('items')
+                                    .some(
+                                      i => i.productId === item.product._id
+                                    )}
+                                  onCheckedChange={checked => {
+                                    const updatedItems = checked
+                                      ? [
+                                          ...form.getValues('items'),
+                                          {
+                                            productId: item.product._id,
+                                            quantity: item.quantity,
+                                            price: item.product.price,
+                                          },
+                                        ]
+                                      : form
+                                          .getValues('items')
+                                          .filter(
+                                            i =>
+                                              i.productId !== item.product._id
+                                          );
 
-                                  form.setValue('items', updatedItems);
-                                  form.handleSubmit(onSubmit)(); // Trigger form submission
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal text-l">
-                              <div className="border-b border-grey-300">
-                                <CartItem
-                                  key={item.product._id}
-                                  quantity={item.quantity}
-                                  product={item.product}
-                                  onChange={handleCartChange}
+                                    form.setValue('items', updatedItems);
+                                    form.handleSubmit(onSubmit)(); // Trigger form submission
+                                  }}
                                 />
-                              </div>
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
+                              </FormControl>
+                              <FormLabel className="font-normal text-l">
+                                <div className="border-b border-grey-300">
+                                  <CartItem
+                                    key={item.product._id}
+                                    quantity={item.quantity}
+                                    product={item.product}
+                                    onChange={handleCartChange}
+                                  />
+                                </div>
+                              </FormLabel>
+                            </FormItem>
+                          )}
+                        />
+                      ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          ) : (
+            <div className="w-[600px] flex-col ">
+              <div className="border-b border-grey-400 w-full flex justify-center items-center">
+                <h2 className=" p-4 text-2xl">Cart</h2>
+              </div>
+              <div className="w-full flex justify-center items-center">
+                <h2 className="p-4 font-normal">Cart is empty</h2>
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex mx-5 bg-slate-50 h-32 w-80 flex-col p-6 rounded-xl shadow-md">
           <div className="inline-flex space-x-2">

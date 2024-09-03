@@ -291,7 +291,11 @@ app.post('/products', async (request, response) => {
     const category = request.body.category;
     const department = request.body.department;
     const sortType = request.body.sortType;
+    const item = request.body.item;
 
+    const ipr = 12;
+    console.log('change');
+    console.log('item: ', item);
     let sortCondition = {};
     switch (sortType) {
       case 'priceDesc':
@@ -311,7 +315,34 @@ app.post('/products', async (request, response) => {
         sortCondition = { createdAt: -1 };
     }
 
-    const ipr = 12;
+    if (item) {
+      try {
+        const totalProducts = await Product.countDocuments({
+          name: { $regex: item, $options: 'i' },
+        });
+
+        if ((pageid - 1) * ipr >= totalProducts) {
+          console.error('Invalid page number');
+          return response.status(400).send('Invalid page number');
+        }
+
+        const products = await Product.find({
+          name: { $regex: item, $options: 'i' },
+        })
+          .sort(sortCondition) // sort by newest
+          .skip((pageid - 1) * ipr)
+          .limit(ipr);
+
+        const totalPages = Math.ceil(totalProducts / ipr);
+
+        return response
+          .status(200)
+          .json({ products, totalPages, totalProducts });
+      } catch (error) {
+        return response.status(400).send('Error in fetching products');
+      }
+    }
+
     if (department.length > 1) {
       return response.status(400).send('Only one department allowed');
     }

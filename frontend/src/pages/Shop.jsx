@@ -25,12 +25,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/selectfull';
+import { Input } from '@/components/ui/input';
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [validPage, setValidPage] = useState(true);
+  const [searchItem, setSearchItem] = useState('');
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,6 +41,7 @@ const Shop = () => {
   const departmentParam = searchParams.get('department') || '';
   const categoryParam = searchParams.get('category') || '';
   const sortbyParam = searchParams.get('sortby') || 'new';
+  const itemQueryParam = searchParams.get('item') || '';
   const departmentArray = departmentParam ? departmentParam.split(',') : [];
   const categoryArray = categoryParam ? categoryParam.split(',') : [];
 
@@ -63,10 +66,6 @@ const Shop = () => {
     setSearchParams(newParams);
   };
 
-  function onSubmit(data) {
-    console.log(data);
-  }
-
   const fetchProducts = async () => {
     try {
       const response = await axiosInstance.post(
@@ -76,6 +75,7 @@ const Shop = () => {
           department: departmentArray,
           category: categoryArray,
           sortType: sortbyParam,
+          item: itemQueryParam,
         },
         {
           withCredentials: true,
@@ -97,38 +97,28 @@ const Shop = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [page, departmentParam, categoryParam, sortbyParam]);
+  }, [page, departmentParam, categoryParam, sortbyParam, itemQueryParam]);
   return (
     <div>
-      <div className="w-full h-7 bg-green-100 flex border-b border-gray-300 mb-5">
+      <div className="w-full h-7 bg-green-50 flex border-b border-gray-300 mb-5 items-center">
         <div className="ml-3 w-48 flex">
           <h3 className="text-sm font-light">
             {start}-{end} of {totalProducts} products
           </h3>
         </div>
 
-        <div className=" h-7 flex items-center justify-end w-full mr-3">
+        <div className=" h-7 flex w-full items-center justify-end mr-3">
           <div>
             <Select value={sortbyParam} onValueChange={handleValueChange}>
               <SelectTrigger className="w-36 h-5 text-[10px]">
                 <SelectValue placeholder="new" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem className="text-s" value="new">
-                  Newest arrivals
-                </SelectItem>
-                <SelectItem className="text-s" value="priceDesc">
-                  Price: High to Low
-                </SelectItem>
-                <SelectItem className="text-s" value="priceAsc">
-                  Price: Low to High
-                </SelectItem>
-                <SelectItem className="text-s" value="ratingDesc">
-                  Rating: High to Low
-                </SelectItem>
-                <SelectItem className="text-s" value="ratingAsc">
-                  Rating: Low to High
-                </SelectItem>
+                <SelectItem value="new">Newest arrivals</SelectItem>
+                <SelectItem value="priceDesc">Price: High to Low</SelectItem>
+                <SelectItem value="priceAsc">Price: Low to High</SelectItem>
+                <SelectItem value="ratingDesc">Rating: High to Low</SelectItem>
+                <SelectItem value="ratingAsc">Rating: Low to High</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -139,9 +129,9 @@ const Shop = () => {
         <div className="flex h-full w-full">
           {departmentParam ? <Categories /> : <Department />}
 
-          <div className="ml-12 w-full h-full">
+          <div className="ml-20 h-full">
             {!validPage ? (
-              <div className="flex justify-center items-center w-full h-[800px]">
+              <div className="flex justify-center items-center w-[1150px] h-[800px]">
                 <div>
                   <img
                     className="max-w-[300px]"

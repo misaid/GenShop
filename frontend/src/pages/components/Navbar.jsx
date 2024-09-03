@@ -4,8 +4,8 @@ import Cart from '../../assets/shoppingcart.svg';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { BiSearchAlt } from 'react-icons/bi';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -14,12 +14,12 @@ const Navbar = () => {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
-  const [SearchParams, setSearchParams] = useSearchParams();
+  const [searchItem, setSearchItem] = useState('');
 
   const handleClick = Department => {
-    // setSearchParams({ department: Department });
     navigate(`/shop?department=${Department}`);
   };
+
   const fetchUser = async () => {
     try {
       const response = await axiosInstance.get('/user', {
@@ -35,6 +35,11 @@ const Navbar = () => {
     }
   };
 
+  const handleSearch = searchitem => {
+    window.scrollTo(0, 0);
+    navigate(`/shop?item=${searchitem}`);
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -45,16 +50,16 @@ const Navbar = () => {
           <img src={pearLogo} alt="logo" className="h-10 w-10" />
         </div>
         <div className="flex items-center flex-grow justify-center">
-          <Link to="/" className=" text-black text-2xl p-5 mx-3">
+          <Link to="/" className=" text-black text-2xl p-5 ">
             <h2>Home</h2>
           </Link>
-          <Link to="/shop" className=" text-black text-2xl p-5 mx-3">
+          <Link to="/shop" className=" text-black text-2xl p-5 ">
             <h2>Shop</h2>
           </Link>
-          <Link to="/about" className=" text-black text-2xl p-5 mx-3">
+          <Link to="/about" className=" text-black text-2xl p-5 ">
             <h2>About</h2>
           </Link>
-          <Link to="/generate" className=" text-black text-2xl p-5 mx-3">
+          <Link to="/generate" className=" text-black text-2xl p-5 ">
             <h2>Generate</h2>
           </Link>
         </div>
@@ -80,68 +85,46 @@ const Navbar = () => {
           </div>
         </Link>
       </div>
-      <div className="hidden lg:block">
-        <div className="flex items-center border-b-2 border-slate-200  bg-green-200 h-10 w-full  justify-evenly">
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Electronics')}
-          >
-            Electronics
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Clothing and Accessories')}
-          >
-            Clothing and Accessories
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Home and Garden')}
-          >
-            Home and Garden
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Health and Beauty')}
-          >
-            Health and Beauty
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Toys and Games')}
-          >
-            Toys and Games
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Sports and Outdoors')}
-          >
-            Sports and Outdoors
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Automotive')}
-          >
-            Automotive
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Office Supplies')}
-          >
-            Office Supplies
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Books and Media')}
-          >
-            Books and Media
-          </h3>
-          <h3
-            className="text-l p-4 hover:cursor-pointer"
-            onClick={() => handleClick('Crafts and Hobbies')}
-          >
-            Crafts and Hobbies
-          </h3>
+
+      <div className="bg-green-200 w-full py-3 px-8 flex flex-wrap items-center justify-center">
+        <div className="hidden lg:flex flex-wrap justify-center items-center space-x-8">
+          {[
+            'Electronics',
+            'Clothing and Accessories',
+            'Home and Garden',
+            'Health and Beauty',
+            'Toys and Games',
+            'Sports and Outdoors',
+            'Automotive',
+            'Office Supplies',
+            'Books and Media',
+            'Crafts and Hobbies',
+          ].map(department => (
+            <button
+              key={department}
+              className="text-black hover:text-green-500 transition duration-300 text-md font-medium"
+              onClick={() => handleClick(department)}
+            >
+              {department}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full flex justify-end bg-green-100">
+        <div className="relative flex items-center max-w-sm">
+          <BiSearchAlt className="absolute left-3 text-gray-500 text-xl" />
+          <input
+            className="w-full py-2 pl-10 pr-4 rounded-lg border-2 border-gray-300 focus:border-green-500 focus:outline-none transition duration-200"
+            type="text"
+            placeholder="Search all items"
+            onChange={event => setSearchItem(event.target.value)}
+            onKeyDown={event => {
+              if (event.key === 'Enter') {
+                handleSearch(searchItem);
+              }
+            }}
+          />
         </div>
       </div>
     </div>
