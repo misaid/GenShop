@@ -197,7 +197,8 @@ app.post('/generate', async (request, response) => {
     console.log('Image of:', name, 'Generating');
     const imageInstruction =
       'You are an assistant that does nothing but respond to the prompt with an image of the product based on the name the image must only contain a single item and be a product image with a white background this is the product name: ';
-    const imagePrompt = imageInstruction + name;
+    const imagePrompt =
+      imageInstruction + 'name: ' + name + 'desctiption: ' + description;
     const imageCompletion = await openai.images.generate({
       model: 'dall-e-3',
       prompt: imagePrompt,
@@ -620,6 +621,7 @@ app.post('/checkout', verifyJWT, async (request, response) => {
     });
 
     console.log('this ran ', session);
+    console.log(session.session);
     return response.status(200).json(session);
   } catch (error) {
     console.log(error);

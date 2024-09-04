@@ -161,7 +161,7 @@ const Cart = () => {
 
   return (
     !loading && (
-      <div className="mt-12 w-screen flex flex-row justify-center">
+      <div className="mt-12 w-screen flex flex-row justify-center h-full">
         <div className="flex-col max-h-[600px] overflow-y-scroll force-scrollbar rounded-xl px-6 bg-slate-50 shadow-md ">
           {cartInfo && cartInfo.length > 0 ? (
             <Form {...form}>

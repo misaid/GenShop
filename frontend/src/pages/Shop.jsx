@@ -129,7 +129,7 @@ const Shop = () => {
         <div className="flex h-full w-full">
           {departmentParam ? <Categories /> : <Department />}
 
-          <div className="ml-20 h-full">
+          <div className="ml-20 xl:ml-4 h-full">
             {!validPage ? (
               <div className="flex justify-center items-center w-[1150px] h-[800px]">
                 <div>
@@ -140,7 +140,7 @@ const Shop = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1150px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:gap-2 gap-4 max-w-[1150px]">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1">
                     <Product

@@ -103,7 +103,7 @@ const Generate = () => {
     <div>
       <Toaster richColors />
 
-      <div className="flex flex-col justify-center items-center mt-12">
+      <div className="flex flex-col justify-center mb-24 items-center mt-12">
         <div className="mb-8">
           <Product product={product} key={key} />
         </div>

@@ -25,6 +25,7 @@ const ProductPage = () => {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
+  const [loading, setLoading] = useState(true);
 
   const handleValueChange = value => {
     setSelectedValue(value); // Update state with the new value
@@ -59,6 +60,7 @@ const ProductPage = () => {
       setProduct(response.data);
       // more professional way of handling stock
       setStock(Math.min(response.data.countInStock, 30));
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -71,8 +73,8 @@ const ProductPage = () => {
   return (
     <div>
       <Toaster />
-      <div className="mt-12 flex flex-row bg-slate-50 mx-48 space-x-24 rounded-xl p-5 ">
-        <div className="w-[300px] sm:w-[350px] md:w-[400px] lg:w-[450px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] m-10 flex flex-col relative">
+      <div className="mt-12 flex flex-row bg-slate-50 rounded-xl p-5 space-x-24 mx-14 ">
+        <div className="w-[300px] sm:w-[350px] md:w-[400px] lg:w-[450px] h-[300px] overflow-hidden sm:h-[350px] md:h-[400px] lg:h-[450px] flex flex-col relative ">
           {!imageLoading && (
             <div className="w-full h-full rounded-xl">
               <Skeleton className="w-full h-full rounded-xl" />
@@ -86,48 +88,51 @@ const ProductPage = () => {
             style={imageLoading ? {} : { display: 'none' }} // Corrected 'stye' to 'style'
             className="w-full h-full rounded-xl object-cover"
           />
-          {imageLoading && (
-            <h3 className="font-light mt-1 text-sm">
-              Stock: {product.countInStock}
-            </h3>
-          )}
         </div>
-        <div className="flex flex-col max-w-[600px] justify-center space-y-3">
-          <div>
-            <h2 className="text-4xl font-bold ">{product.name}</h2>
-            <StaticStar urate={product.rating} size={20} />
-            <h2 className="font-bold text-2xl">
-              <NumericFormat
-                value={product.price}
-                displayType={'text'}
-                thousandSeparator=","
-                prefix={'$'}
-                decimalScale={2}
-                fixedDecimalScale
-              />
-            </h2>
+        {!loading ? (
+          <div className="flex flex-col max-w-[600px] justify-center space-y-3">
+            <div>
+              <h2 className="text-4xl font-bold ">{product.name}</h2>
+              <StaticStar urate={product.rating} size={20} />
+              <h2 className="font-bold text-2xl">
+                <NumericFormat
+                  value={product.price}
+                  displayType={'text'}
+                  thousandSeparator=","
+                  prefix={'$'}
+                  decimalScale={2}
+                  fixedDecimalScale
+                />
+              </h2>
+              <h3 className="font-light mt-1 text-xs">
+                Stock: {product.countInStock}
+              </h3>
+            </div>
+            <p className="text-l leading-normal">{product.description}</p>
+            <form
+              onSubmit={handleSubmit}
+              className="flex items-center space-x-2"
+            >
+              <h3>Qty: </h3>
+              <Select value={selectedValue} onValueChange={handleValueChange}>
+                <SelectTrigger className="w-[60px]">
+                  <SelectValue placeholder={selectedValue} />
+                </SelectTrigger>
+                <SelectContent>
+                  {[...Array(stock)].map((_, index) => {
+                    const value = (index + 1).toString(); // Convert index to string to use as value
+                    return (
+                      <SelectItem key={value} value={value}>
+                        {value}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <Button type="submit">Cart</Button>
+            </form>
           </div>
-          <p className="text-l leading-normal">{product.description}</p>
-          <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-            <h3>Qtw: </h3>
-            <Select value={selectedValue} onValueChange={handleValueChange}>
-              <SelectTrigger className="w-[60px]">
-                <SelectValue placeholder={selectedValue} />
-              </SelectTrigger>
-              <SelectContent>
-                {[...Array(stock)].map((_, index) => {
-                  const value = (index + 1).toString(); // Convert index to string to use as value
-                  return (
-                    <SelectItem key={value} value={value}>
-                      {value}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-            <Button type="submit">Cart</Button>
-          </form>
-        </div>
+        ) : null}
       </div>
     </div>
   );

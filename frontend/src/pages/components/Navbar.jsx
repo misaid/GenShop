@@ -91,7 +91,7 @@ const Navbar = () => {
       </div>
 
       <div className="bg-green-200 w-full py-3 px-8 flex flex-wrap items-center justify-center">
-        <div className="hidden lg:flex flex-wrap justify-center items-center space-x-8">
+        <div className="hidden lg:flex flex-wrap justify-center items-center xl:space-x-4 space-x-8">
           {[
             'Electronics',
             'Clothing and Accessories',
@@ -106,7 +106,7 @@ const Navbar = () => {
           ].map(department => (
             <button
               key={department}
-              className="text-black hover:text-green-500 transition duration-300 text-md font-medium"
+              className="text-black hover:text-green-500 transition duration-300 xl:text-sm font-medium"
               onClick={() => handleClick(department)}
             >
               {department}
