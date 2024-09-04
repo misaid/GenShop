@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -210,11 +211,26 @@ app.post('/generate', async (request, response) => {
     console.log('Image generated');
 
     const imageBuffer = Buffer.from(imageB64, 'base64');
+
+    // if to intensive comment this
+    async function webpimage(buffer) {
+      try {
+        const webpImage = await sharp(buffer)
+          .resize(512, 512)
+          .toFormat('webp')
+          .toBuffer();
+        return webpImage;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const webpImage = await webpimage(imageBuffer);
     const fileName = `${uuidv4()}.png`;
     const params = {
       Bucket: 'moprojects',
       Key: `Eprj/${fileName}`,
-      Body: imageBuffer,
+      Body: webpImage,
       ContentEncoding: 'base64',
       ContentType: 'image/png',
       CacheControl: 'max-age=31536000',
