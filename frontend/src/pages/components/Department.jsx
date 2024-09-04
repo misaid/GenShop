@@ -7,7 +7,7 @@ const Department = () => {
     navigate(`/shop?department=${Department}`);
   };
   return (
-    <div className="sticky top-12 xl:w-[250px] h-[800px] w-[300px]">
+    <div className="sticky top-12 h-[800px] w-[300px]">
       <div className="max-h-[800px] w-full overflow-y-scroll overflow-x-hidden">
         <div className="flex flex-col w-full">
           <h2 className="text-2xl p-4 border-b border-black">Departments</h2>
@@ -29,7 +29,7 @@ const Department = () => {
               onClick={() => handleClick(department)}
             >
               <h3 className="text-lg">{department}</h3>
-              <span className="text-gray-500 text-2xl">{'>'}</span>
+              <span className="text-gray-500 text-2xl mx-2">{'>'}</span>
             </div>
           ))}
         </div>

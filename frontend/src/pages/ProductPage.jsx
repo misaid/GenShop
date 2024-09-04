@@ -73,7 +73,7 @@ const ProductPage = () => {
   return (
     <div>
       <Toaster />
-      <div className="mt-12 flex flex-row bg-slate-50 rounded-xl p-5 space-x-24 mx-14 ">
+      <div className="mt-12 flex flex-row bg-slate-50  max-w-[1400px] mx-auto rounded-xl p-8 space-x-24  items-center justify-center ">
         <div className="w-[300px] sm:w-[350px] md:w-[400px] lg:w-[450px] h-[300px] overflow-hidden sm:h-[350px] md:h-[400px] lg:h-[450px] flex flex-col relative ">
           {!imageLoading && (
             <div className="w-full h-full rounded-xl">
@@ -90,7 +90,7 @@ const ProductPage = () => {
           />
         </div>
         {!loading ? (
-          <div className="flex flex-col max-w-[600px] justify-center space-y-3">
+          <div className="flex flex-col max-w-[600px] justify-center space-y-3 mx-auto">
             <div>
               <h2 className="text-4xl font-bold ">{product.name}</h2>
               <StaticStar urate={product.rating} size={20} />

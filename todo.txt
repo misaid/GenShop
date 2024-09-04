@@ -12,8 +12,9 @@ todo:
 [] make sure all user built queries are using { $eq: id }
 
 bugs:
-[] if not logged in no login button
+[] grid does not respect gap setting
 [] cart page abnormally long
+
 UI:
 [] animations when generating shake card/ bar hovers in
 

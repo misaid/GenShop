@@ -212,7 +212,7 @@ app.post('/generate', async (request, response) => {
 
     const imageBuffer = Buffer.from(imageB64, 'base64');
 
-    // if to intensive comment this
+    // if too computationally intensive comment this
     async function webpimage(buffer) {
       try {
         const webpImage = await sharp(buffer)
@@ -226,13 +226,13 @@ app.post('/generate', async (request, response) => {
     }
 
     const webpImage = await webpimage(imageBuffer);
-    const fileName = `${uuidv4()}.png`;
+    const fileName = `${uuidv4()}.webp`;
     const params = {
       Bucket: 'moprojects',
       Key: `Eprj/${fileName}`,
       Body: webpImage,
       ContentEncoding: 'base64',
-      ContentType: 'image/png',
+      ContentType: 'image/webp', // Corrected to 'image/webp'
       CacheControl: 'max-age=31536000',
     };
 

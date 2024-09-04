@@ -59,7 +59,7 @@ const Categories = () => {
   }, [departmentParam]);
 
   return !loading ? (
-    <div className="sticky top-12 h-[800px] xl:w-[250px] w-[300px]">
+    <div className="sticky top-12 h-[800px] w-[300px]">
       <div className="w-full overflow-y-scroll overflow-x-hidden">
         <Form {...form}>
           <form
@@ -132,7 +132,7 @@ const Categories = () => {
     </div>
   ) : (
     // TODO:
-    <div className="w-[250px]"></div>
+    <div className="w-[300px]"></div>
   );
 };
 
