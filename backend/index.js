@@ -613,7 +613,7 @@ app.post('/checkout', verifyJWT, async (request, response) => {
     const line_items = await Promise.all(
       items.map(async item => {
         const product = await Product.findById(item.productId);
-
+        console.log(product.name);
         return {
           price_data: {
             currency: 'usd',
@@ -621,6 +621,7 @@ app.post('/checkout', verifyJWT, async (request, response) => {
               name: product.name,
               images: [product.image],
             },
+
             unit_amount: Math.round(item.price * 100),
           },
           quantity: item.quantity,
@@ -628,20 +629,46 @@ app.post('/checkout', verifyJWT, async (request, response) => {
       })
     );
 
+    const itemIds = items.map(item => item.productId).join(',');
+    const itemQuantities = items.map(item => item.quantity).join(',');
     const session = await stripeapi.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: line_items,
       mode: 'payment',
-      success_url: `http://localhost:5173/hero`,
-      cancel_url: `http://localhost:5173/home`,
+      success_url: `http://localhost:5001/success_url?session_id={CHECKOUT_SESSION_ID}&items=${itemIds}&quantities=${itemQuantities}`,
+      cancel_url: `http://localhost:5001/failure_url`,
     });
 
-    console.log('this ran ', session);
-    console.log(session.session);
     return response.status(200).json(session);
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in checkout');
+  }
+});
+
+app.get('/success_url', async (request, response) => {
+  try {
+    // either uses the url redirection unsafe or find a way to imbed metadata
+    const reqquery = request.query;
+    const checkoutSessionId = reqquery.session_id;
+    const items = reqquery.items || [];
+    const quantities = reqquery.quantities || [];
+
+    console.log(items, '\n', quantities);
+    const session = await stripeapi.checkout.sessions.retrieve(
+      checkoutSessionId,
+      {
+        expand: ['line_items'],
+      }
+    );
+    const sessionLineItems = session.line_items.data;
+    console.log(sessionLineItems);
+    if (session.payment_status === 'paid') {
+      console.log('user is paid now');
+    }
+    return response.status(200).send('Payment successful');
+  } catch (error) {
+    console.log(error);
   }
 });
 

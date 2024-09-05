@@ -1,5 +1,6 @@
 In progess:
 [] Setup receiving order from in the backend 
+  [] metadata
 [] toast for when incorrect actions are done
 [] create user My account page
   [] might have to change the current login flow/schema

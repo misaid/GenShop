@@ -52,7 +52,7 @@ const Product = ({ product }) => {
   };
 
   return (
-    <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] border border-b-gray rounded-xl overflow-hidden">
+    <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white">
       <Toaster
         toastOptions={{
           style: {
