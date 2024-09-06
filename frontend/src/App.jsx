@@ -8,12 +8,13 @@ import Login from './pages/LoginRegister.jsx';
 import Generate from './pages/Generate.jsx';
 import ProductPage from './pages/ProductPage.jsx';
 import Navbar from './pages/components/Navbar.jsx';
+import { CartProvider } from './context/CartContext';
 const App = () => {
   const location = useLocation();
   const noNavbarPaths = ['/login', '/checkout'];
   const shouldShowNavbar = !noNavbarPaths.includes(location.pathname);
   return (
-    <>
+    <CartProvider>
       {shouldShowNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Hero />} />
@@ -25,7 +26,7 @@ const App = () => {
         <Route path="/generate" element={<Generate />} />
         <Route path="/product/:id" element={<ProductPage />} />
       </Routes>
-    </>
+    </CartProvider>
   );
 };
 

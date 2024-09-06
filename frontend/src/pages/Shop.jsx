@@ -100,7 +100,7 @@ const Shop = () => {
   }, [page, departmentParam, categoryParam, sortbyParam, itemQueryParam]);
   return (
     <div>
-      <div className="w-full h-7 bg-green-50 flex border-b border-gray-300 mb-5 items-center">
+      <div className="w-full h-7  flex border-b border-gray-300 mb-5 items-center">
         <div className="ml-3 w-48 flex">
           <h3 className="text-sm font-light">
             {start}-{end} of {totalProducts} products

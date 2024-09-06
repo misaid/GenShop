@@ -1,21 +1,34 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search, ShoppingBag, Wand2, ShoppingCart, User } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import pearLogo from '../../assets/pearlogo.png';
 import Cart from '../../assets/shoppingcart.svg';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { BiSearchAlt } from 'react-icons/bi';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCart } from '@/context/CartContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { cartCount, setCartCount } = useCart();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
   const [searchItem, setSearchItem] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleClick = Department => {
     navigate(`/shop?department=${Department}`);
@@ -29,10 +42,27 @@ const Navbar = () => {
   const page = parseInt(searchParams.get('page')) || 1;
   const departmentParam = searchParams.get('department') || '';
   const categoryParam = searchParams.get('category') || '';
-  const sortbyParam = searchParams.get('sortby') || 'new';
-  const itemQueryParam = searchParams.get('item') || '';
-  const departmentArray = departmentParam ? departmentParam.split(',') : [];
-  const categoryArray = categoryParam ? categoryParam.split(',') : [];
+
+  function totalItems(cartInfo) {
+    let total = 0;
+    for (let i = 0; i < cartInfo.length; i++) {
+      total += cartInfo[i].quantity;
+    }
+    setCartCount(total);
+  }
+
+  const fetchCart = async () => {
+    try {
+      const response = await axiosInstance.get('/cart', {
+        withCredentials: true,
+      });
+
+      console.log(response.data.cartInfo.length);
+      totalItems(response.data.cartInfo);
+    } catch (error) {
+      console.log("Couldn't fetch cart");
+    }
+  };
 
   const fetchUser = async () => {
     try {
@@ -42,113 +72,121 @@ const Navbar = () => {
       setUser(response.data);
       setLoading(false);
     } catch (error) {
-      console.error(
-        'Error fetching user:',
-        error.response ? error.response.data : error.message
-      );
+      console.log("Couldn't fetch user");
     }
   };
 
-  const handleSearch = searchitem => {
+  const handleSearch = searchItem => {
+    console.log(searchItem);
     window.scrollTo(0, 0);
-    navigate(`/shop?item=${searchitem}`);
+    navigate(`/shop?item=${searchItem}`);
   };
 
   useEffect(() => {
+    fetchCart();
     fetchUser();
-  }, []);
-  return (
-    <div>
-      <div className=" lg:mb-0 h-16 bg-green-300 items-center w-full flex">
-        <div className="flex items-center ml-4 sm:ml-6 md:ml-12 lg:ml-24 min-w-max">
-          <Link to="/" className="text-black text-2xl">
-            <div className="space-x-2 items-center flex">
-              <h2 className="text-black text-3xl italic cursor-pointer bg-green-300">
-                MSAID
-              </h2>
-              <img
-                src={pearLogo}
-                alt="logo"
-                className="h-8 w-8 transform rotate-12"
-              />
-            </div>
-          </Link>
-        </div>
-        <div className="flex items-center  ml-2 h-full">
-          <Link
-            to="/shop"
-            className={`h-full px-5 text-2xl items-center flex ${currentPage === '/shop' ? 'bg-green-200' : 'text-black'}`}
-          >
-            <h2>Shop</h2>
-          </Link>
-          <Link
-            to="/generate"
-            className={`h-full px-5 text-2xl items-center flex ${currentPage === '/generate' ? 'bg-green-200' : 'text-black'}`}
-          >
-            <h2>Generate</h2>
-          </Link>
-        </div>
-        <div className="relative flex items-center max-w-[1000px] w-full ml-4">
-          <BiSearchAlt className="absolute right-4 text-gray-500 text-xl" />
-          <input
-            className="w-full py-2 pr-10 pl-4 border-2 border-gray-300 focus:border-green-500 focus:outline-none transition duration-200 rounded-2xl"
-            type="text"
-            placeholder="Search all items"
-            onChange={event => setSearchItem(event.target.value)}
-            onKeyDown={event => {
-              if (event.key === 'Enter') {
-                handleSearch(searchItem);
-              }
-            }}
-          />
-        </div>
-        <div className="flex items-center justify-end mx-6 space-x-8 min-w-max">
-          {user ? (
-            <div className="space-x-2 items-center flex">
-              <Skeleton className="w-8 h-8 rounded-full animate-none" />
-              <h2>{user}</h2>
-            </div>
-          ) : (
-            <Link to="/login" className="flex items-center">
-              <h2>Login</h2>
-            </Link>
-          )}
-          <Link to="/cart" className="flex items-center">
-            <img
-              src={Cart}
-              href="/cart"
-              alt="Cart"
-              className="h-10 w-10 hover:cursor-pointer"
-            />
-          </Link>
-        </div>{' '}
-      </div>
+  }, [location]);
 
-      <div className="bg-green-200 w-full py-3 px-8 flex flex-wrap items-center justify-center">
-        <div className="hidden lg:flex flex-wrap justify-center items-center xl:space-x-4 space-x-8">
-          {[
-            'Electronics',
-            'Clothing and Accessories',
-            'Home and Garden',
-            'Health and Beauty',
-            'Toys and Games',
-            'Sports and Outdoors',
-            'Automotive',
-            'Office Supplies',
-            'Books and Media',
-            'Crafts and Hobbies',
-          ].map(department => (
-            <button
-              key={department}
-              className={`xl:text-sm font-medium ${departmentArray.includes(department) ? 'text-green-500 hover:text-black' : 'text-black hover:text-green-500'} `}
-              onClick={() => handleClick(department)}
+  const departments = [
+    'Electronics',
+    'Clothing and Accessories',
+    'Home and Garden',
+    'Health and Beauty',
+    'Toys and Games',
+    'Sports and Outdoors',
+    'Automotive',
+    'Office Supplies',
+    'Books and Media',
+    'Crafts and Hobbies',
+  ];
+
+  return (
+    <nav className="w-full">
+      <div className="mx-auto w-full border-b">
+        <div className="flex items-center justify-between py-4 border-b px-4">
+          <Link to="/" className="text-2xl font-bold italic">
+            MSAID
+          </Link>
+          <div className="flex items-center space-x-4">
+            <Link to="/shop" className="flex items-center space-x-1">
+              <ShoppingBag className="w-5 h-5" />
+              <span className="hidden sm:inline">Shop</span>
+            </Link>
+            <Link to="/generate" className="flex items-center space-x-1">
+              <Wand2 className="w-5 h-5" />
+              <span className="hidden sm:inline">Generate</span>
+            </Link>
+            <form
+              onSubmit={event => {
+                event.preventDefault();
+                handleSearch(searchItem);
+              }}
+              className="relative hidden sm:block"
             >
-              {department}
-            </button>
-          ))}
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="pl-9 w-[200px] lg:w-[300px]"
+                value={searchItem}
+                onChange={e => setSearchItem(e.target.value)}
+              />
+            </form>
+            <Link to="/cart">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-2.5">
+                  {cartCount}
+                </Badge>
+
+                <span className="sr-only">Cart</span>
+              </Button>
+            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User className="w-5 h-5" />
+                  <span className="sr-only">User menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  {user ? (
+                    <Link className="pr-2" to="/">
+                      My Account
+                    </Link>
+                  ) : (
+                    <Link className="pr-2" to="/login">
+                      My Account
+                    </Link>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link className="pr-12  " to="/cart">
+                    Orders
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+        <div className="py-2 overflow-x-auto">
+          <ul className="flex space-x-4 justify-center whitespace-nowrap">
+            {departments.map((department, index) => (
+              <li key={index}>
+                <Button
+                  variant="ghost"
+                  className="text-sm"
+                  onClick={() => handleClick(department)}
+                >
+                  {department}
+                </Button>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
 

@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useCart } from '@/context/CartContext';
 
 /**
  * Product component used in the procuctpage componoenet
@@ -20,6 +21,7 @@ const Product = ({ product }) => {
   const { name, rating, countInStock, price, image, _id } = product;
   const [imageLoading, setImageLoading] = useState(false);
   const navigate = useNavigate();
+  const { cartCount, setCartCount } = useCart();
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -43,6 +45,7 @@ const Product = ({ product }) => {
         }
       );
       toast.success('1 ' + name + ' added to cart');
+      setCartCount(cartCount + 1);
     } catch (error) {
       console.error(
         'Error adding to cart:',
