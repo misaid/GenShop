@@ -170,7 +170,7 @@ app.post('/generate', async (request, response) => {
     const promptInstructions = `
     You are an assistant tasked with generating a JSON object that contains the following fields for a potential product:
 
-    - price (float): The cost of the product.
+    - price (float value must be less than or equal to 5000000): The cost of the product.
     - description (string, 100 words): A concise summary of the product.
     - stock (integer): The number of units available.
     - department: The department that the product belongs to. Department name cannot exist in categories. Department name must be one of "Electronics", "Clothing and Accessories", "Home and Garden", "Health and Beauty", "Toys and Games", "Sports and Outdoors", "Automotive", "Office Supplies", "Books and Media", "Crafts and Hobbies".

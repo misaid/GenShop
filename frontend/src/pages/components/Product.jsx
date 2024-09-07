@@ -33,6 +33,7 @@ const Product = ({ product }) => {
 
   const addToCart = async () => {
     try {
+      setCartCount(cartCount + 1);
       const response = await axiosInstance.post(
         `/cart`,
         {
@@ -45,7 +46,6 @@ const Product = ({ product }) => {
         }
       );
       toast.success('1 ' + name + ' added to cart');
-      setCartCount(cartCount + 1);
     } catch (error) {
       console.error(
         'Error adding to cart:',
@@ -55,7 +55,7 @@ const Product = ({ product }) => {
   };
 
   return (
-    <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white">
+    <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white shadow-md">
       <Toaster
         toastOptions={{
           style: {

@@ -85,7 +85,7 @@ const Navbar = () => {
   useEffect(() => {
     fetchCart();
     fetchUser();
-  }, [location]);
+  }, []);
 
   const departments = [
     'Electronics',
@@ -135,9 +135,11 @@ const Navbar = () => {
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="w-5 h-5" />
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-2.5">
-                  {cartCount}
-                </Badge>
+                {cartCount > 0 ? (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-2.5">
+                    {cartCount}
+                  </Badge>
+                ) : null}
 
                 <span className="sr-only">Cart</span>
               </Button>
@@ -170,7 +172,26 @@ const Navbar = () => {
             </DropdownMenu>
           </div>
         </div>
-        <div className="py-2 overflow-x-auto">
+
+        <div className="w-full">
+          <form
+            onSubmit={event => {
+              event.preventDefault();
+              handleSearch(searchItem);
+            }}
+            className="relative block sm:hidden"
+          >
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="pl-9 w-full "
+              value={searchItem}
+              onChange={e => setSearchItem(e.target.value)}
+            />
+          </form>
+        </div>
+        <div className="py-2 overflow-x-auto hidden md:block">
           <ul className="flex space-x-4 justify-center whitespace-nowrap">
             {departments.map((department, index) => (
               <li key={index}>

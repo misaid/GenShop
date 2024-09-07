@@ -3,6 +3,7 @@ import { NumericFormat } from 'react-number-format';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import CartItem from './components/CartItem';
+import { useCart } from '@/context/CartContext';
 import { Link } from 'react-router-dom';
 
 //Checkbox Form Components
@@ -39,6 +40,7 @@ const Cart = () => {
   });
 
   const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+  const { cartCount, setCartCount } = useCart();
   const [cartInfo, setCartInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [subtotal, setSubtotal] = useState(0);
@@ -74,6 +76,14 @@ const Cart = () => {
     setNumItems(count);
   };
 
+  const calculateItems2 = items => {
+    let count = 0;
+    for (let i = 0; i < items.length; i++) {
+      count += items[i].quantity;
+    }
+    setCartCount(count);
+  };
+
   const fetchCart = async () => {
     try {
       const response = await axiosInstance.get('/cart', {
@@ -89,6 +99,7 @@ const Cart = () => {
         quantity: item.quantity,
         price: item.product.price,
       }));
+      calculateItems2(transformedItems);
 
       if (firstLoad) {
         // Set initial values
