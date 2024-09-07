@@ -102,7 +102,7 @@ const Shop = () => {
     <div>
       <div className="w-full h-7  flex border-b border-gray-300 mb-5 items-center">
         <div className="ml-3 w-48 flex">
-          <h3 className="text-sm font-light">
+          <h3 className="text-sm font-light overflow-hidden ">
             {start}-{end} of {totalProducts} products
           </h3>
         </div>

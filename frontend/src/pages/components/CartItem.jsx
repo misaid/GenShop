@@ -1,5 +1,6 @@
 import { NumericFormat } from 'react-number-format';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from 'axios';
 import {
@@ -19,6 +20,7 @@ const TestCartItem = ({ productid, quantity, onChange, product }) => {
   });
   const [imageLoading, setImageLoading] = useState(false);
   const [selectedValue, setSelectedValue] = useState(String(quantity));
+  const navigate = useNavigate();
 
   const addToCart = async () => {
     try {
@@ -73,6 +75,10 @@ const TestCartItem = ({ productid, quantity, onChange, product }) => {
     event.preventDefault();
   };
 
+  const nameClick = product => {
+    navigate(`/product/${product._id}`);
+  };
+
   const handleClick = async () => {
     try {
       await axiosInstance.post(
@@ -106,12 +112,16 @@ const TestCartItem = ({ productid, quantity, onChange, product }) => {
           alt={product.name}
           onLoad={() => setImageLoading(true)}
           style={imageLoading ? {} : { display: 'none' }}
-          className="rounded w-full h-full object-cover"
+          className="rounded w-full h-full object-cover hover:cursor-pointer"
+          onClick={() => nameClick(product)}
         />
       </div>
       <div className="flex flex-col flex-grow justify-between space-y-2 md:space-y-0 md:space-x-2 md:flex-row items-center md:items-start text-center md:text-left">
         <div className="flex flex-col">
-          <h2 className="text-xl font-medium truncate w-[200px] max-w-[200px]">
+          <h2
+            className="text-xl font-medium truncate w-[200px] max-w-[200px] hover:text-gray-600 hover:cursor-pointer "
+            onClick={() => nameClick(product)}
+          >
             {product.name}
           </h2>
           <h3 className="text-lg font-semibold text-gray-700">

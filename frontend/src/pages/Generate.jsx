@@ -104,13 +104,18 @@ const Generate = () => {
       <Toaster richColors />
 
       <div className="flex flex-col justify-center mb-24 items-center mt-12">
-        <div className="mb-8">
+        <div
+          className={`mb-8 ${progressRef.current > 65 && progressRef.current < 100 ? 'animate-wiggle animate-infinite animate-duration-1000 animate-ease-linear' : ''}`}
+        >
           <Product product={product} key={key} />
         </div>
         {!firstLoad ? (
           <></>
         ) : (
-          <Progress value={progress} className="w-64 animate-float-up mb-4" />
+          <Progress
+            value={progress}
+            className="w-64 animate-in fade-in zoom-in mb-4"
+          />
         )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
