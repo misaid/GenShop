@@ -132,18 +132,35 @@ const Navbar = () => {
                 onChange={e => setSearchItem(e.target.value)}
               />
             </form>
-            <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="w-5 h-5" />
-                {cartCount > 0 ? (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-2.5">
-                    {cartCount}
-                  </Badge>
-                ) : null}
 
-                <span className="sr-only">Cart</span>
-              </Button>
-            </Link>
+            {user ? (
+              <Link to={'/cart'}>
+                <Button variant="ghost" size="icon" className="relative">
+                  <ShoppingCart className="w-5 h-5" />
+                  {cartCount > 0 ? (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-2.5">
+                      {cartCount}
+                    </Badge>
+                  ) : null}
+
+                  <span className="sr-only">Cart</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link to={'/login'}>
+                <Button variant="ghost" size="icon" className="relative">
+                  <ShoppingCart className="w-5 h-5" />
+                  {cartCount > 0 ? (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-2.5">
+                      {cartCount}
+                    </Badge>
+                  ) : null}
+
+                  <span className="sr-only">Cart</span>
+                </Button>
+              </Link>
+            )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -152,22 +169,21 @@ const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  {user ? (
-                    <Link className="pr-2" to="/">
-                      My Account
+                {user ? (
+                  <>
+                    <Link to="/">
+                      <DropdownMenuItem>My Account</DropdownMenuItem>
                     </Link>
-                  ) : (
-                    <Link className="pr-2" to="/login">
-                      My Account
+
+                    <Link to="/cart">
+                      <DropdownMenuItem>Orders</DropdownMenuItem>
                     </Link>
-                  )}
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link className="pr-12  " to="/cart">
-                    Orders
+                  </>
+                ) : (
+                  <Link to="/login">
+                    <DropdownMenuItem>Login</DropdownMenuItem>
                   </Link>
-                </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

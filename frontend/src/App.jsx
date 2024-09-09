@@ -8,7 +8,9 @@ import Login from './pages/LoginRegister.jsx';
 import Generate from './pages/Generate.jsx';
 import ProductPage from './pages/ProductPage.jsx';
 import Navbar from './pages/components/Navbar.jsx';
+import Orders from './pages/Orders.jsx';
 import { CartProvider } from './context/CartContext';
+
 const App = () => {
   const location = useLocation();
   const noNavbarPaths = ['/login', '/checkout'];
@@ -25,6 +27,8 @@ const App = () => {
         <Route path="/checkout" element={<div>Checkout</div>} />
         <Route path="/generate" element={<Generate />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="*" element={<div>404</div>} />
       </Routes>
     </CartProvider>
   );

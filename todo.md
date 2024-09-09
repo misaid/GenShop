@@ -2,13 +2,12 @@
 
 ## In progress
 
-- [ ] Setup receiving order from in the backend
-- [ ] metadata
-- [ ] toast for when incorrect actions are done
+- [x] Setup receiving order from in the backend :angry:
+  - [x] metadata
+- [-] Create order status page
+- [-] Users can rate this product
 - [ ] create user My account page
 - [ ] might have to change the current login flow/schema
-- [ ] Create order status page
-- [ ] Users can comment and rate this product
 
 ## todo
 
@@ -18,14 +17,6 @@
 
 ## bugs
 
-- [ ] undo creates a phantom element
-- [ ] grid does not respect gap setting
-- [ ] cart page abnormally long
-
 ## UI
 
-- [ ] animations when generating shake card/ bar hovers in
-
 ## Might add
-
-- [ ] Zoom in on hover over photo

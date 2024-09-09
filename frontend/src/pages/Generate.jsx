@@ -86,7 +86,6 @@ const Generate = () => {
         },
         { withCredentials: true }
       );
-      //console.log(response);
       progressRef.current = 100;
       setProgress(progressRef.current);
       setProduct(response.data.product);

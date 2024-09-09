@@ -7,10 +7,12 @@ const Department = () => {
     navigate(`/shop?department=${Department}`);
   };
   return (
-    <div className="sticky top-12 h-[800px] w-[300px]">
-      <div className="max-h-[800px] w-full overflow-y-scroll overflow-x-hidden">
+    <div className="max-h-[700px] w-[300px] bg-background shadow-md rounded-xl">
+      <div className=" w-full overflow-y-scroll overflow-x-hidden">
         <div className="flex flex-col w-full">
-          <h2 className="text-2xl p-4 border-b border-black">Departments</h2>
+          <h2 className="text-2xl font-bold p-4 border-b border-muted">
+            Departments
+          </h2>
           {[
             'Electronics',
             'Clothing and Accessories',
@@ -25,11 +27,13 @@ const Department = () => {
           ].map(department => (
             <div
               key={department}
-              className="flex justify-between items-center p-4 border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
+              className="flex justify-between items-center p-4 border-b border-muted hover:bg-muted cursor-pointer"
               onClick={() => handleClick(department)}
             >
-              <h3 className="text-lg">{department}</h3>
-              <span className="text-gray-500 text-2xl mx-2">{'>'}</span>
+              <h3 className="text-lg font-medium">{department}</h3>
+              <span className="text-muted-foreground text-2xl ml-2">
+                <div className="w-6 h-6"> &gt; </div>
+              </span>
             </div>
           ))}
         </div>

@@ -170,10 +170,10 @@ app.post('/generate', async (request, response) => {
     const promptInstructions = `
     You are an assistant tasked with generating a JSON object that contains the following fields for a potential product:
 
-    - price (float value must be less than or equal to 5000000): The cost of the product.
+    - price (float value): The cost of the product.
     - description (string, 100 words): A concise summary of the product.
     - stock (integer): The number of units available.
-    - department: The department that the product belongs to. Department name cannot exist in categories. Department name must be one of "Electronics", "Clothing and Accessories", "Home and Garden", "Health and Beauty", "Toys and Games", "Sports and Outdoors", "Automotive", "Office Supplies", "Books and Media", "Crafts and Hobbies".
+    - department: The department that the product belongs to. Department name cannot exist in categories. Department name must absolutely be one of "Electronics", "Clothing and Accessories", "Home and Garden", "Health and Beauty", "Toys and Games", "Sports and Outdoors", "Automotive", "Office Supplies", "Books and Media", "Crafts and Hobbies".
     - categories (array): The categories that the product belongs to. Title capitalization.
     - name (string): The name of the product.
 
@@ -193,6 +193,7 @@ app.post('/generate', async (request, response) => {
     const { name, price, description, stock, categories, department } =
       variables;
 
+    //cap price
     //if test comment from here
     // Create an image from variable name
     console.log('Image of:', name, 'Generating');
@@ -613,7 +614,6 @@ app.post('/checkout', verifyJWT, async (request, response) => {
     const line_items = await Promise.all(
       items.map(async item => {
         const product = await Product.findById(item.productId);
-        console.log(product.name);
         return {
           price_data: {
             currency: 'usd',
@@ -621,22 +621,30 @@ app.post('/checkout', verifyJWT, async (request, response) => {
               name: product.name,
               images: [product.image],
             },
-
-            unit_amount: Math.round(item.price * 100),
+            unit_amount: Number(item.price.toFixed(2)) * 100,
           },
           quantity: item.quantity,
         };
       })
     );
 
-    const itemIds = items.map(item => item.productId).join(',');
-    const itemQuantities = items.map(item => item.quantity).join(',');
+    const metadata = items.reduce((acc, item) => {
+      acc[item.productId] = item.quantity;
+      return acc;
+    }, {});
+
     const session = await stripeapi.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: line_items,
       mode: 'payment',
-      success_url: `http://localhost:5001/success_url?session_id={CHECKOUT_SESSION_ID}&items=${itemIds}&quantities=${itemQuantities}`,
+      success_url: `http://localhost:5001/success_url?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `http://localhost:5001/failure_url`,
+      metadata: {
+        items: JSON.stringify(metadata),
+      },
+      shipping_address_collection: {
+        allowed_countries: ['US', 'CA'], // Specify allowed countries
+      },
     });
 
     return response.status(200).json(session);
@@ -646,32 +654,119 @@ app.post('/checkout', verifyJWT, async (request, response) => {
   }
 });
 
-app.get('/success_url', async (request, response) => {
+app.get('/success_url', verifyJWT, async (request, response) => {
   try {
-    // either uses the url redirection unsafe or find a way to imbed metadata
-    const reqquery = request.query;
-    const checkoutSessionId = reqquery.session_id;
-    const items = reqquery.items || [];
-    const quantities = reqquery.quantities || [];
+    const checkoutSessionId = request.query.session_id;
 
-    console.log(items, '\n', quantities);
     const session = await stripeapi.checkout.sessions.retrieve(
       checkoutSessionId,
       {
         expand: ['line_items'],
       }
     );
-    const sessionLineItems = session.line_items.data;
-    console.log(sessionLineItems);
-    if (session.payment_status === 'paid') {
-      console.log('user is paid now');
+
+    console.log(session.payment_intent);
+    const metadata = JSON.parse(session.metadata.items);
+    const items = Object.entries(metadata).map(([productId, quantity]) => ({
+      productId,
+      quantity,
+    }));
+
+    if (metadata.processed) {
+      return response.status(200).send('Payment already processed');
     }
-    return response.status(200).send('Payment successful');
+    const shippingAddress = session.shipping_details.address;
+    const { line1, city, postal_code, country } = shippingAddress;
+    const paymentInfo = 4242;
+
+    console.log('Payment Info:', paymentInfo);
+
+    const sessionLineItems = session.line_items.data;
+
+    let updatedProducts = [];
+    try {
+      const userID = request.user.userId;
+      const user = await User.findById(userID);
+      const cart = await Cart.findById(user.cartid);
+
+      // Loop through the items in the cart and remover the quantity from the cart and the product
+
+      for (let i = 0; i < items.length; i++) {
+        const cartItem = cart.cartItem.find(
+          item => item.productId.toString() === items[i].productId
+        );
+        console.log(cartItem, items[i].quantity);
+        if (cartItem && cartItem.quantity >= items[i].quantity) {
+          const product = await Product.findById(items[i].productId);
+          if (product.countInStock < items[i].quantity) {
+            return response.status(400).send('Not enough stock');
+          } else {
+            product.countInStock -= items[i].quantity;
+            cartItem.quantity -= items[i].quantity;
+            updatedProducts.push(product);
+          }
+          cart.cartItem = cart.cartItem.filter(item => item.quantity !== 0);
+        } else {
+          return response.status(400).send('Cart item not found not enough');
+        }
+        // if all this is completed create an order item
+      }
+
+      // Create the order
+      const count = await Order.countDocuments();
+      const order = await Order.create({
+        orderNumber: count + 1,
+        userid: userID,
+        orderItems: items,
+        shippingAddress: {
+          address: line1,
+          city: city,
+          postalCode: postal_code,
+          country: country,
+        },
+        paymentInfo: paymentInfo,
+        total: session.amount_total / 100,
+        status: 'paid',
+      });
+
+      user.orderids.push(order._id);
+
+      await Promise.all(updatedProducts.map(product => product.save()));
+      await cart.save();
+      await user.save();
+      await order.save();
+    } catch (error) {
+      console.log(error);
+      return response.status(400).send('Error in payment');
+    }
+
+    metadata.processed = true;
+
+    await stripeapi.checkout.sessions.update(checkoutSessionId, {
+      metadata: {
+        items: JSON.stringify(metadata),
+      },
+    });
+    console.log('Payment successful');
+    return response.redirect('http://localhost:5173/orders');
   } catch (error) {
     console.log(error);
+    return response.status(400).send('Error in payment');
   }
 });
 
+app.get('/failure_url', (request, response) => {
+  try {
+    return response.redirect('http://localhost:5173/cart');
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in payment');
+  }
+});
+
+app.get('/orders', verifyJWT, async (request, response) => {
+  return response.status(200).send('Orders');
+});
 mongoose
   .connect(mongoDBURL)
   .then(() => {

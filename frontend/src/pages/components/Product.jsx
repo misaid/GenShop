@@ -47,6 +47,7 @@ const Product = ({ product }) => {
       );
       toast.success('1 ' + name + ' added to cart');
     } catch (error) {
+      toast.error('Error adding to cart');
       console.error(
         'Error adding to cart:',
         error.response ? error.response.data : error.message
@@ -56,15 +57,7 @@ const Product = ({ product }) => {
 
   return (
     <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white shadow-md">
-      <Toaster
-        toastOptions={{
-          style: {
-            background: '#ECFDF3',
-            color: '#008A2E',
-          },
-          className: 'class',
-        }}
-      />
+      <Toaster />
 
       <div className="px-3 flex flex-col">
         <div className="flex flex-col items-center">

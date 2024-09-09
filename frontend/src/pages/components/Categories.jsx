@@ -59,8 +59,8 @@ const Categories = () => {
   }, [departmentParam]);
 
   return !loading ? (
-    <div className="sticky top-12 h-[800px] w-[300px]">
-      <div className="w-full overflow-y-scroll overflow-x-hidden">
+    <div className="h-[800px] w-[300px]">
+      <div className="w-full overflow-y-scroll overflow-x-hidden shadow-md rounded-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
