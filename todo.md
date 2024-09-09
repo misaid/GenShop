@@ -15,7 +15,9 @@
 - [ ] polish the ui
 - [ ] make sure all user built queries are using { $eq: id }
 
-## bugs
+## Bugs
+
+- [ ] fetching from backend for orders is non functional, May be due to how i store item in the order object.
 
 ## UI
 

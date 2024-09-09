@@ -175,7 +175,7 @@ const Navbar = () => {
                       <DropdownMenuItem>My Account</DropdownMenuItem>
                     </Link>
 
-                    <Link to="/cart">
+                    <Link to="/orders">
                       <DropdownMenuItem>Orders</DropdownMenuItem>
                     </Link>
                   </>

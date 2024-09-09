@@ -764,9 +764,39 @@ app.get('/failure_url', (request, response) => {
   }
 });
 
-app.get('/orders', verifyJWT, async (request, response) => {
-  return response.status(200).send('Orders');
+app.post('/orders', verifyJWT, async (request, response) => {
+  try {
+    const pageid = request.body.page;
+    const ipr = 10;
+
+    const user = await User.findById(request.user.userId);
+    let totalOrders = await Order.find({
+      _id: { $in: user.orderids },
+    });
+    totalOrders = totalOrders.length;
+    if ((pageid - 1) * ipr >= totalOrders) {
+      console.error('Invalid page number');
+      return response.status(400).send('Invalid page number');
+    }
+
+    const orders = await Order.find({
+      _id: { $in: user.orderids },
+    })
+      .skip((pageid - 1) * ipr)
+      .limit(ipr);
+
+    //completed order items orders {  order {
+    // product {[product.productId, product.name, product.price, product.quantity, product.image, product.rating]}
+    // order {order}
+    //}}
+
+    console.log(orders);
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in fetching orders');
+  }
 });
+
 mongoose
   .connect(mongoDBURL)
   .then(() => {
