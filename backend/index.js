@@ -785,12 +785,29 @@ app.post('/orders', verifyJWT, async (request, response) => {
       .skip((pageid - 1) * ipr)
       .limit(ipr);
 
-    //completed order items orders {  order {
-    // product {[product.productId, product.name, product.price, product.quantity, product.image, product.rating]}
+    const totalPages = Math.ceil(totalOrders / ipr);
+    //completed orders items orders {  order {
+    // product {product, quantity}
     // order {order}
     //}}
 
-    console.log(orders);
+    const fullOrder = [];
+    for (let i = 0; i < orders.length; i++) {
+      const productPromises = orders[i].orderItems.map(item =>
+        Product.findById(item.productId)
+      );
+
+      const products = await Promise.all(productPromises);
+
+      const orderWithProducts = {
+        ...orders[i],
+        products: products,
+      };
+
+      fullOrder.push(orderWithProducts);
+    }
+
+    return response.status(200).json({ fullOrder, totalPages, totalOrders });
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in fetching orders');

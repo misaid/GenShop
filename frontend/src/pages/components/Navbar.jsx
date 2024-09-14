@@ -57,7 +57,6 @@ const Navbar = () => {
         withCredentials: true,
       });
 
-      console.log(response.data.cartInfo.length);
       totalItems(response.data.cartInfo);
     } catch (error) {
       console.log("Couldn't fetch cart");
