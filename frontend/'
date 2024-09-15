@@ -52,16 +52,15 @@ const Categories = () => {
   };
 
   useEffect(() => {
-    // If department changes, reset form
     if (departmentParam) {
       form.reset();
       fetchCategories();
     }
-  }, [departmentParam]);
+  }, [departmentParam, form]
 
   return !loading ? (
     <div className="h-[800px] w-[300px]">
-      <div className="w-full overflow-y-scroll overflow-x-hidden border border-grey-200 shadow-sm rounded-xl">
+      <div className="w-full overflow-y-scroll overflow-x-hidden shadow-md rounded-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

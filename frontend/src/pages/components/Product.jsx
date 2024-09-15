@@ -18,7 +18,7 @@ import { useCart } from '@/context/CartContext';
  * @returns {JSX.Element}
  *  */
 const Product = ({ product }) => {
-  const { name, rating, countInStock, price, image, _id } = product;
+  const { name, averageRating, countInStock, price, image, _id } = product;
   const [imageLoading, setImageLoading] = useState(false);
   const navigate = useNavigate();
   const { cartCount, setCartCount } = useCart();
@@ -83,7 +83,7 @@ const Product = ({ product }) => {
         ) : (
           <div className="my-1">
             <div className="h-5 w-24">
-              <StaticStar urate={rating} size={15} />
+              <StaticStar urate={averageRating} size={15} />
             </div>
           </div>
         )}

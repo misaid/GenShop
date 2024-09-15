@@ -4,10 +4,11 @@
 
 - [x] Setup receiving order from in the backend :angry:
   - [x] metadata
-- [-] Create order status page
-- [-] Users can rate this product
-- [ ] create user My account page
-- [ ] might have to change the current login flow/schema
+- [x] Create order status page
+- [x] Users can rate this product
+- [x] create user My account page
+- [x] might have to change the current login flow/schema
+- [ ] Modal popup for deleting your account must input password
 
 ## todo
 
@@ -17,7 +18,7 @@
 
 ## Bugs
 
-- [ ] fetching from backend for orders is non functional, May be due to how i store item in the order object.
+- [x] fetching from backend for orders is non functional, May be due to how i store item in the order object.
 
 ## UI
 

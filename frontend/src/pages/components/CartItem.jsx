@@ -104,7 +104,7 @@ const TestCartItem = ({ productid, quantity, onChange, product }) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full md:w-[600px] bg-slate-50 p-4 space-y-4 md:space-y-0 md:space-x-4 items-center">
+    <div className="flex flex-col md:flex-row w-full md:w-[600px] bg-white p-4 space-y-4 md:space-y-0 md:space-x-4 items-center">
       <div className="w-[150px] h-[150px] relative">
         {!imageLoading && <Skeleton className="absolute inset-0" />}
         <img

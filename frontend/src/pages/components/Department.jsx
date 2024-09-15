@@ -7,7 +7,7 @@ const Department = () => {
     navigate(`/shop?department=${Department}`);
   };
   return (
-    <div className="max-h-[700px] w-[300px] bg-background shadow-md rounded-xl">
+    <div className="max-h-[700px] w-[300px] bg-background border border-grey-200 shadow-sm rounded-xl">
       <div className=" w-full overflow-y-scroll overflow-x-hidden">
         <div className="flex flex-col w-full">
           <h2 className="text-2xl font-bold p-4 border-b border-muted">

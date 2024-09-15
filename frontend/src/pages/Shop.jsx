@@ -143,15 +143,7 @@ const Shop = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto max-w-max min-w-max ">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1 w-full">
-                    <Product
-                      product={product}
-                      name={product.name}
-                      rating={product.rating}
-                      stock={product.countInStock}
-                      price={product.price}
-                      imageURL={product.image}
-                      productId={product._id}
-                    />
+                    <Product product={product} />
                   </div>
                 ))}
               </div>

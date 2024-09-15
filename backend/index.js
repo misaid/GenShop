@@ -150,7 +150,7 @@ app.post('/login', async (request, response) => {
  * Log out the user
  */
 app.post('/logout', async (request, response) => {
-  response.clearCookie('token');
+  response.clearCookie('jwt');
   return response.status(200).send('User logged out');
 });
 
@@ -325,10 +325,10 @@ app.post('/products', async (request, response) => {
         sortCondition = { price: 1 };
         break;
       case 'ratingDesc':
-        sortCondition = { rating: -1 };
+        sortCondition = { averageRating: -1 };
         break;
       case 'ratingAsc':
-        sortCondition = { rating: 1 };
+        sortCondition = { averageRating: 1 };
         break;
       case 'new':
       default:
@@ -654,6 +654,15 @@ app.post('/checkout', verifyJWT, async (request, response) => {
   }
 });
 
+/**
+ * checkout success
+ * @return None
+ * @return {string} Payment already processed
+ * @return {string} Payment successful
+ * @return {string} Not enough stock
+ * @return {string} Cart item not found
+ * @return {string} Error in payment
+ */
 app.get('/success_url', verifyJWT, async (request, response) => {
   try {
     const checkoutSessionId = request.query.session_id;
@@ -726,7 +735,7 @@ app.get('/success_url', verifyJWT, async (request, response) => {
         },
         paymentInfo: paymentInfo,
         total: session.amount_total / 100,
-        status: 'paid',
+        status: 'Processing',
       });
 
       user.orderids.push(order._id);
@@ -755,6 +764,10 @@ app.get('/success_url', verifyJWT, async (request, response) => {
   }
 });
 
+/**
+ * Checkout failed
+ * @return None
+ */
 app.get('/failure_url', (request, response) => {
   try {
     return response.redirect('http://localhost:5173/cart');
@@ -764,6 +777,16 @@ app.get('/failure_url', (request, response) => {
   }
 });
 
+/**
+ * get user orders
+ * @param {int} page - The page number for pagination
+ * @return {json} fullOrder - The order object combined with products
+ * @return {int} totalPages - The total number of pages
+ * @return {int} totalOrders - The total number of orders
+ * @return {string} Invalid page number
+ * @return {string} Error in fetching orders
+ * @return {string} Error in fetching orders
+ */
 app.post('/orders', verifyJWT, async (request, response) => {
   try {
     const pageid = request.body.page;
@@ -782,35 +805,134 @@ app.post('/orders', verifyJWT, async (request, response) => {
     const orders = await Order.find({
       _id: { $in: user.orderids },
     })
+      .sort({ createdAt: -1 })
       .skip((pageid - 1) * ipr)
       .limit(ipr);
 
     const totalPages = Math.ceil(totalOrders / ipr);
-    //completed orders items orders {  order {
-    // product {product, quantity}
-    // order {order}
-    //}}
 
-    const fullOrder = [];
-    for (let i = 0; i < orders.length; i++) {
-      const productPromises = orders[i].orderItems.map(item =>
-        Product.findById(item.productId)
-      );
+    // Collect all product IDs
+    const productIds = orders.reduce((ids, order) => {
+      order.orderItems.forEach(item => ids.push(item.productId));
+      return ids;
+    }, []);
 
-      const products = await Promise.all(productPromises);
+    // Fetch all products at once
+    const products = await Product.find({
+      _id: { $in: productIds },
+    });
 
+    // Map products to their IDs for easy access
+    const productMap = products.reduce((map, product) => {
+      map[product._id] = product;
+      return map;
+    }, {});
+
+    const fullOrder = orders.map(order => {
+      // Replace product IDs with actual products
       const orderWithProducts = {
-        ...orders[i],
-        products: products,
+        ...order._doc,
+        products: order.orderItems.map(item => productMap[item.productId]),
       };
-
-      fullOrder.push(orderWithProducts);
-    }
+      return orderWithProducts;
+    });
 
     return response.status(200).json({ fullOrder, totalPages, totalOrders });
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in fetching orders');
+  }
+});
+
+/**
+ * get the rating of a product
+ * @param {int} page - The page number for pagination
+ * @return {json} products - The products retrieved
+ * @return {int} totalPages - The total number of pages
+ * @return {int} totalProducts - The total number of products
+ */
+app.post('/getrating', verifyJWT, async (request, response) => {
+  try {
+    const userId = request.user.userId;
+    const user = await User.findById(userId);
+    const orders = await Order.find({ userid: user._id }).sort({
+      createdAt: -1,
+    });
+
+    const pageid = request.body.page;
+    const ipr = 10;
+
+    const productids = orders.flatMap(order =>
+      order.orderItems.map(item => item.productId)
+    );
+
+    const totalProducts = await Product.countDocuments({
+      _id: { $in: productids },
+    });
+
+    if ((pageid - 1) * ipr >= totalProducts) {
+      console.error('Invalid page number');
+      return response.status(400).send('Invalid page number');
+    }
+
+    const products = await Product.find({ _id: { $in: productids } })
+      .skip((pageid - 1) * ipr)
+      .limit(ipr);
+
+    const totalPages = Math.ceil(totalProducts / ipr);
+    return response
+      .status(200)
+      .json({ products, totalPages, totalProducts, userId });
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in getting rating');
+  }
+});
+
+/**
+ * Add a rating to a product
+ * @param {string} productId
+ * @param {int} rating
+ * @return None
+ * @return {string} Rating set
+ * @return {string} Product not ever ordered
+ * @return {string} Error in setting rating
+ */
+app.post('/addrating', verifyJWT, async (request, response) => {
+  try {
+    const user = await User.findById(request.user.userId);
+    const productId = request.body.productId;
+    const rating = request.body.rating;
+    const product = await Product.findById(productId);
+
+    const orders = await Order.find({ userid: user._id });
+
+    // all products that the user has ever ordered
+    const productids = orders.flatMap(order =>
+      order.orderItems.map(item => item.productId.toString())
+    );
+
+    // If the user has never ordered the product, they can not rate it
+    if (!productids.includes(productId)) {
+      console.log('Product not ever ordered');
+      return response.status(400).send('Product not ever ordered');
+    }
+
+    if (!product.rating) {
+      product.rating = new Map();
+    }
+    product.rating.set(user._id.toString(), rating);
+
+    let sum = 0;
+    for (let rating of product.rating.values()) {
+      sum += rating;
+    }
+    product.averageRating = sum / product.rating.size;
+    await product.save();
+    return response.status(200).send('Rating set');
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in setting rating');
   }
 });
 

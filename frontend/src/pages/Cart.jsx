@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import CartItem from './components/CartItem';
 import { useCart } from '@/context/CartContext';
+import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 //Checkbox Form Components
@@ -173,7 +174,7 @@ const Cart = () => {
   return (
     !loading && (
       <div className="mt-12 w-screen flex flex-row justify-center h-full">
-        <div className="flex-col max-h-[600px] overflow-y-scroll force-scrollbar rounded-xl px-6 bg-slate-50 shadow-md ">
+        <div className="flex-col max-h-[600px] overflow-y-scroll force-scrollbar rounded-xl px-6 shadow-sm bg-white border-gray-200 border ">
           {cartInfo && cartInfo.length > 0 ? (
             <Form {...form}>
               <form
@@ -187,7 +188,7 @@ const Cart = () => {
                     <FormItem>
                       <div className="mb-4 border-grey-300 border-b border-3 w-full">
                         <div className="p-4">
-                          <FormLabel className="text-2xl flex justify-center">
+                          <FormLabel className="sticky text-2xl flex justify-center">
                             Cart
                           </FormLabel>
                           <FormDescription></FormDescription>
@@ -263,10 +264,10 @@ const Cart = () => {
             </div>
           )}
         </div>
-        <div className="flex mx-5 bg-slate-50 h-32 w-80 flex-col p-6 rounded-xl shadow-md">
-          <div className="inline-flex space-x-2">
+        <div className="flex mx-5 bg-white h-max w-80 flex-col p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="mb-4">
             <h3>Subtotal ({numItems} items):</h3>
-            <h3 className="font-semibold text-gray-700">
+            <h3 className="font-semibold text-gray-700 truncate">
               <NumericFormat
                 value={subtotal}
                 displayType={'text'}
@@ -277,11 +278,8 @@ const Cart = () => {
               />
             </h3>
           </div>
-          <div
-            onClick={makePayment}
-            className="mt-5 bg-green-300 rounded-2xl p-2 hover:cursor-pointer max-w-[195px] flex justify-center items-center"
-          >
-            <h2>Proceed to Checkout</h2>
+          <div>
+            <Button onClick={makePayment}>Proceed to Checkout</Button>
           </div>
         </div>
       </div>

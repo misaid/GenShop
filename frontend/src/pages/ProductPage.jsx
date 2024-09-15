@@ -93,7 +93,7 @@ const ProductPage = () => {
           <div className="flex flex-col max-w-[600px] justify-center space-y-3 mx-auto">
             <div>
               <h2 className="text-4xl font-bold ">{product.name}</h2>
-              <StaticStar urate={product.rating} size={20} />
+              <StaticStar urate={product.averageRating} size={20} />
               <h2 className="font-bold text-2xl">
                 <NumericFormat
                   value={product.price}

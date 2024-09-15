@@ -81,10 +81,19 @@ const Navbar = () => {
     navigate(`/shop?item=${searchItem}`);
   };
 
+  async function handleLogout() {
+    try {
+      await axiosInstance.post('/logout', {}, { withCredentials: true });
+      window.location.href = '/';
+    } catch (error) {
+      console.log("Couldn't fetch user");
+    }
+  }
+
   useEffect(() => {
     fetchCart();
     fetchUser();
-  }, []);
+  }, [departmentParam, location]);
 
   const departments = [
     'Electronics',
@@ -170,13 +179,32 @@ const Navbar = () => {
               <DropdownMenuContent align="end">
                 {user ? (
                   <>
-                    <Link to="/">
-                      <DropdownMenuItem>My Account</DropdownMenuItem>
+                    <Link to="/myaccount">
+                      <DropdownMenuItem>
+                        <div className="hover:cursor-pointer w-full h-full">
+                          My Account
+                        </div>
+                      </DropdownMenuItem>
                     </Link>
 
-                    <Link to="/orders">
-                      <DropdownMenuItem>Orders</DropdownMenuItem>
-                    </Link>
+                    <div className="hover:cursor-pointer">
+                      <Link to="/orders">
+                        <DropdownMenuItem>
+                          <div className="hover:cursor-pointer w-full h-full">
+                            Orders
+                          </div>
+                        </DropdownMenuItem>
+                      </Link>
+                    </div>
+
+                    <DropdownMenuItem>
+                      <div
+                        className="hover:cursor-pointer w-full h-full"
+                        onClick={() => handleLogout()}
+                      >
+                        Logout
+                      </div>
+                    </DropdownMenuItem>
                   </>
                 ) : (
                   <Link to="/login">

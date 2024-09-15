@@ -30,6 +30,10 @@ const productSchema = new mongoose.Schema(
       type: Array,
     },
     rating: {
+      type: Map,
+      of: Number,
+    },
+    averageRating: {
       type: Number,
       required: false,
     },
