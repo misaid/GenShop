@@ -65,7 +65,7 @@ const Orders = () => {
 
   useEffect(() => {
     fetchorders();
-  }, []);
+  }, [page]);
   return validPage ? (
     !loading ? (
       <div className="w-full flex-col">

@@ -42,6 +42,7 @@ const RatingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get('page')) || 1;
+  console.log(page);
   const [validPage, setValidPage] = useState(true);
   const fetchProducts = async () => {
     try {
@@ -79,7 +80,7 @@ const RatingPage = () => {
   const end = Math.min(totalProducts, 10 * page);
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [page]);
   return validPage ? (
     !loading ? (
       <div className="w-full h-full">

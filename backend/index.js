@@ -860,7 +860,7 @@ app.post('/getrating', verifyJWT, async (request, response) => {
     });
 
     const pageid = request.body.page;
-    const ipr = 10;
+    const ipr = 9;
 
     const productids = orders.flatMap(order =>
       order.orderItems.map(item => item.productId)

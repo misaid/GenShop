@@ -61,7 +61,7 @@ const Categories = () => {
 
   return !loading ? (
     <div className="h-[800px] w-[300px]">
-      <div className="w-full overflow-y-scroll overflow-x-hidden border border-grey-200 shadow-sm rounded-xl">
+      <div className="w-full overflow-y-scroll overflow-x-hidden border border-grey-200 shadow-sm rounded-r-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
