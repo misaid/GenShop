@@ -33,6 +33,7 @@ const Shop = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [validPage, setValidPage] = useState(true);
   const [searchItem, setSearchItem] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -87,7 +88,7 @@ const Shop = () => {
         setProducts(response.data.products);
         setTotalPages(response.data.totalPages);
         setTotalProducts(response.data.totalProducts);
-        console.log(validPage);
+        setLoading(false);
       }
     } catch (error) {
       setValidPage(false);
@@ -98,7 +99,7 @@ const Shop = () => {
   useEffect(() => {
     fetchProducts();
   }, [page, departmentParam, categoryParam, sortbyParam, itemQueryParam]);
-  return (
+  return !loading ? (
     <div>
       <div className="w-full h-7  flex border-b border-gray-300 mb-5 items-center">
         <div className="ml-3 w-48 flex">
@@ -209,7 +210,7 @@ const Shop = () => {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default Shop;

@@ -76,8 +76,9 @@ const RatingPage = () => {
     setSearchParams(newParams);
   };
 
-  const start = 10 * (page - 1) + 1;
-  const end = Math.min(totalProducts, 10 * page);
+  const ipr = 9;
+  const start = ipr * (page - 1) + 1;
+  const end = Math.min(totalProducts, ipr * page);
   useEffect(() => {
     fetchProducts();
   }, [page]);

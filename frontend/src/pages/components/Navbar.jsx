@@ -238,13 +238,11 @@ const Navbar = () => {
           <ul className="flex space-x-4 justify-center whitespace-nowrap">
             {departments.map((department, index) => (
               <li key={index}>
-                <Button
-                  variant="ghost"
-                  className="text-sm"
-                  onClick={() => handleClick(department)}
-                >
-                  {department}
-                </Button>
+                <Link to={`/shop?department=${department}`}>
+                  <Button variant="ghost" className="text-sm">
+                    {department}
+                  </Button>
+                </Link>
               </li>
             ))}
           </ul>

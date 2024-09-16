@@ -1,10 +1,10 @@
-import axios from "axios";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+import axios from 'axios';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
 // form imports
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,40 +13,50 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-// Tab imports 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+// Tab imports
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState } from 'react';
+
 const formSchema = z.object({
-  name: z.string().min(1, "Username is required"),
+  name: z.string().min(1, 'Username is required'),
   // TODO: hard to crack password with special characters
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export default function LoginForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "", password: ""
+      username: '',
+      password: '',
     },
   });
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
   const navigate = useNavigate();
+  const [passwordIncorrect, setPasswordIncorrect] = useState(false);
 
   async function onSubmit(values) {
     console.log(values.name);
     console.log(import.meta.env.VITE_APP_API_URL);
     try {
-      const response = await axiosInstance.post('/login',
+      const response = await axiosInstance.post(
+        '/login',
         {
           username: values.name,
-          password: values.password
-        }, { withCredentials: true })
+          password: values.password,
+        },
+        { withCredentials: true }
+      );
       console.log(response);
+      setPasswordIncorrect(false);
       navigate('/shop');
     } catch (error) {
+      setPasswordIncorrect(true);
       console.log(error);
     }
   }
@@ -61,7 +71,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="username" {...field} />
+                <Input placeholder="Enter your username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -74,12 +84,27 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Enter your password"
+                  {...field}
+                  onChange={e => {
+                    setPasswordIncorrect(false);
+                    field.onChange(e);
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        {passwordIncorrect && (
+          <Alert variant="destructive">
+            <AlertDescription>
+              Your password is incorrect. Please try again.
+            </AlertDescription>
+          </Alert>
+        )}
         <Button type="submit">Submit</Button>
       </form>
     </Form>

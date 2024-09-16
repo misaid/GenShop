@@ -6,16 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Login = () => {
   return (
     <div>
-      <div className="flex">
-        <div className="flex-1 w-1/2 h-screen bg-gradient-to-r from-lime-400 to-green-600">
-          <h2 className="text-3xl text-black font-bold pt-20 pl-10">
-            Login or Register for [E-commerce Placeholder Name]
-          </h2>
-          <p className="text-black text-lg pl-10 mt-5">
-            Welcome to [E-commerce Placeholder Name], the best place to buy
-            fruits online. Login or register to get started.
-          </p>
-        </div>
+      <div className="flex w-full h-[800px] justify-center items-cneter">
         <div className="flex flex-1 items-center justify-center">
           <Tabs defaultValue="login" className="w-[400px]">
             <TabsList className="">

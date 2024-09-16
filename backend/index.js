@@ -936,6 +936,57 @@ app.post('/addrating', verifyJWT, async (request, response) => {
   }
 });
 
+/**
+ * Delete the users account
+ * @param {string} password
+ * @return {string} Account deleted
+ * @ return {string} Invalid username or password
+ */
+app.post('/delete_user', verifyJWT, async (request, response) => {
+  try {
+    const password = request.body.password;
+    const user = await User.findById(request.user.userId);
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return response.status(400).send('Invalid username or password');
+    }
+
+    // Delete Cart
+    await Cart.findByIdAndDelete(user.cartid);
+
+    // Delete Rating
+    const orders = await Order.find({ userid: user._id });
+    // Find all products in orders
+    const productids = orders.flatMap(order =>
+      order.orderItems.map(item => item.productId.toString())
+    );
+    const products = await Product.find({ _id: { $in: productids } });
+
+    // for all products remove rating and recalculate averageRating
+    products.forEach(async product => {
+      product.rating.delete(user._id.toString());
+      let sum = 0;
+      for (let rating of product.rating.values()) {
+        sum += rating;
+      }
+      product.averageRating = sum / product.rating.size;
+      await product.save();
+    });
+
+    // Delete Orders
+    await Order.deleteMany({ userid: user._id });
+
+    // Delete User
+    await User.findByIdAndDelete(user._id);
+    return response.status(200).send('Account deleted');
+  } catch (error) {
+    console.log(error);
+    return response
+      .status(400)
+      .send('Error in deleting account. Check if password is correct');
+  }
+});
+
 mongoose
   .connect(mongoDBURL)
   .then(() => {

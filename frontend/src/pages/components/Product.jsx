@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '@/context/CartContext';
+import { Link } from 'react-router-dom';
 
 /**
  * Product component used in the procuctpage componoenet
@@ -66,14 +67,15 @@ const Product = ({ product }) => {
               <Skeleton className="w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] h-[200px] sm:h-[225px] md:h-[250px] lg:h-[275px] rounded-t-xl m-0 absolute" />
             )}
             <div className="  w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] h-[200px] sm:h-[225px] md:h-[250px] lg:h-[275px] rounded-t-xl ">
-              <img
-                className="hover:cursor-pointer object-cover"
-                src={image}
-                alt="product"
-                onLoad={() => setImageLoading(true)}
-                style={imageLoading ? {} : { display: 'none' }}
-                onClick={() => productClicked()}
-              />
+              <Link to={`/product/${_id}`}>
+                <img
+                  className="hover:cursor-pointer object-cover"
+                  src={image}
+                  alt="product"
+                  onLoad={() => setImageLoading(true)}
+                  style={imageLoading ? {} : { display: 'none' }}
+                />
+              </Link>
             </div>
           </div>
         </div>
@@ -89,33 +91,31 @@ const Product = ({ product }) => {
         )}
 
         <div className="flex flex-col flex-grow">
-          <h2
-            className="font-bold text-xl hover:cursor-pointer"
-            onClick={() => productClicked()}
-          >
-            {!price ? (
-              <Skeleton className="w-1/4 h-5 my-1 rounded-xl" />
-            ) : (
-              <NumericFormat
-                value={price}
-                displayType={'text'}
-                thousandSeparator=","
-                prefix={'$'}
-                decimalScale={2}
-                fixedDecimalScale
-              />
-            )}
-          </h2>
+          <Link to={`/product/${_id}`}>
+            <h2 className="font-bold text-xl hover:cursor-pointer">
+              {!price ? (
+                <Skeleton className="w-1/4 h-5 my-1 rounded-xl" />
+              ) : (
+                <NumericFormat
+                  value={price}
+                  displayType={'text'}
+                  thousandSeparator=","
+                  prefix={'$'}
+                  decimalScale={2}
+                  fixedDecimalScale
+                />
+              )}
+            </h2>
+          </Link>
 
           {!name ? (
             <Skeleton className="w-1/2 h-6 rounded-xl mb-2 " />
           ) : (
-            <h3
-              className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block truncate"
-              onClick={() => productClicked()}
-            >
-              {name}
-            </h3>
+            <Link to={`/product/${_id}`}>
+              <h3 className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block truncate">
+                {name}
+              </h3>
+            </Link>
           )}
 
           {!countInStock ? (
