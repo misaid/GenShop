@@ -101,7 +101,7 @@ export default function LoginForm() {
         {passwordIncorrect && (
           <Alert variant="destructive">
             <AlertDescription>
-              Your password is incorrect. Please try again.
+              Your password or username is incorrect. Please try again.
             </AlertDescription>
           </Alert>
         )}
