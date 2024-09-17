@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/selectfull';
 import { Input } from '@/components/ui/input';
+import { Search, RefreshCw } from 'lucide-react';
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -83,14 +84,13 @@ const Shop = () => {
         }
       );
 
-      if (response.status === 200) {
-        setValidPage(true);
-        setProducts(response.data.products);
-        setTotalPages(response.data.totalPages);
-        setTotalProducts(response.data.totalProducts);
-        setLoading(false);
-      }
+      setValidPage(true);
+      setProducts(response.data.products);
+      setTotalPages(response.data.totalPages);
+      setTotalProducts(response.data.totalProducts);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       setValidPage(false);
       console.log(error);
     }
@@ -101,14 +101,14 @@ const Shop = () => {
   }, [page, departmentParam, categoryParam, sortbyParam, itemQueryParam]);
   return !loading ? (
     <div>
-      <div className="w-full h-7  flex border-b border-gray-300 mb-5 items-center">
+      <div className="w-full h-7 flex border-b border-gray-300 mb-5 items-center">
         <div className="ml-3 w-48 flex">
-          <h3 className="text-sm font-light overflow-hidden ">
+          <h3 className="text-sm font-light overflow-hidden">
             {start}-{end} of {totalProducts} products
           </h3>
         </div>
 
-        <div className=" h-7 flex w-full items-center justify-end mr-3">
+        <div className="h-7 flex w-full items-center justify-end mr-3">
           <div>
             <Select value={sortbyParam} onValueChange={handleValueChange}>
               <SelectTrigger className="w-36 h-5 text-[10px]">
@@ -129,18 +129,8 @@ const Shop = () => {
       <div>
         <div className="flex h-full w-full">
           {departmentParam ? <Categories /> : <Department />}
-
           <div className="ml-20 xl:ml-4 h-full w-full">
-            {!validPage ? (
-              <div className="flex justify-center items-center h-[800px]">
-                <div>
-                  <img
-                    className="max-w-[300px]"
-                    src="https://moprojects.s3.us-east-2.amazonaws.com/Eprj/404-error.svg"
-                  />
-                </div>
-              </div>
-            ) : (
+            {validPage ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto max-w-max min-w-max ">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1 w-full">
@@ -148,8 +138,23 @@ const Shop = () => {
                   </div>
                 ))}
               </div>
+            ) : (
+              <div className="w-full h-[600px] flex items-center justify-center">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                    <Search className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                    No Results Found
+                  </h2>
+                  <p className="text-gray-600 mb-6 max-w-sm">
+                    We couldn't find any items matching your search. Try
+                    adjusting your query or clearing the search.
+                  </p>
+                </div>
+              </div>
             )}
-            <div className="my-8 ">
+            <div className="my-8">
               <Pagination>
                 <PaginationContent>
                   {page > 1 && (

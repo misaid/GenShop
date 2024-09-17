@@ -17,4 +17,6 @@
 
 - [ ] polish the ui
 
+- [x] make check for valid page only in the grid component
+
 ## Might add

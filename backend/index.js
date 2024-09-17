@@ -51,7 +51,7 @@ app.get('/', (request, response) => {
   return response.status(234).send('MSAID');
 });
 
-app.get('/verifyjwt', verifyJWT, (request, response) => {
+app.post('/verifyjwt', verifyJWT, (request, response) => {
   try {
     return response.status(200).json(request.user);
   } catch (error) {

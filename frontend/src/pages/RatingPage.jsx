@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom';
+import { Search, RefreshCw } from 'lucide-react';
 
 const RatingPage = () => {
   const axiosInstance = axios.create({
@@ -59,6 +60,7 @@ const RatingPage = () => {
       setTotalProducts(response.data.totalProducts);
       setTotalPages(response.data.totalPages);
       setUserId(response.data.userId);
+      setValidPage(true);
       setLoading(false);
     } catch (error) {
       setValidPage(false);
@@ -87,7 +89,7 @@ const RatingPage = () => {
       <div className="w-full h-full">
         <div className="w-full flex border-b border-gray-300 mb-6 py-2 px-4">
           <h3 className="text-sm text-gray-700 font-medium">
-            {start}-{end} of {totalProducts} orders
+            {start}-{end} of {totalProducts} products
           </h3>
         </div>
         <div className="text-center mb-6">
@@ -122,9 +124,8 @@ const RatingPage = () => {
                     <div className="flex flex-col w-full items-center justify-center">
                       <img
                         src={product.image}
-                        alt={product.name}
                         onClick={() => handleClick(product._id)}
-                        className="w-32 h-32 object-cover border border-gray-300 rounded-lg mb-4 hover:cursor-pointer"
+                        className="w-32 h-32 object-cover bg-gray-300 border border-gray-300 rounded-lg mb-4 hover:cursor-pointer"
                       />
                       <Star urate={userRating} productId={product._id} />
                     </div>
@@ -199,7 +200,83 @@ const RatingPage = () => {
       </div>
     ) : null
   ) : (
-    <div>Failure</div>
+    <div className="w-full h-[800px] flex-col">
+      <div className="w-full  flex ">
+        <div className=" flex-col w-full  justify-center items-center">
+          <div className="w-full h-[600px] flex items-center justify-center">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <Search className="h-8 w-8 text-gray-400" />
+              </div>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                No Results Found
+              </h2>
+              <p className="text-gray-600 mb-6 max-w-sm">
+                We couldn't find any items matching your search. Try adjusting
+                your query or clearing the search.
+              </p>
+            </div>
+          </div>
+          <div className="my-8 ">
+            <Pagination>
+              <PaginationContent>
+                {page > 1 && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page - 1)}>
+                      <PaginationPrevious />
+                    </button>
+                  </PaginationItem>
+                )}
+
+                {page - 1 > 0 && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page - 1)}>
+                      <PaginationLink>{page - 1}</PaginationLink>
+                    </button>
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <button onClick={() => handlePageChange(page)}>
+                    <PaginationLink isActive>{page}</PaginationLink>
+                  </button>
+                </PaginationItem>
+
+                {page + 1 <= totalPages && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page + 1)}>
+                      <PaginationLink>{page + 1}</PaginationLink>
+                    </button>
+                  </PaginationItem>
+                )}
+
+                {page + 2 <= totalPages && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {page + 2 <= totalPages && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(totalPages)}>
+                      <PaginationLink>{totalPages}</PaginationLink>
+                    </button>
+                  </PaginationItem>
+                )}
+
+                {page < totalPages && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page + 1)}>
+                      <PaginationNext />
+                    </button>
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

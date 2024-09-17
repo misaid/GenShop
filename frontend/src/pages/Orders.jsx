@@ -14,6 +14,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
+import { Search, RefreshCw } from 'lucide-react';
 
 const Orders = () => {
   const [fullOrder, setOrderItem] = useState([]);
@@ -24,6 +25,7 @@ const Orders = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get('page')) || 1;
+  console.log(page);
   const [validPage, setValidPage] = useState(true);
 
   const axiosInstance = axios.create({
@@ -53,6 +55,7 @@ const Orders = () => {
       setTotalPages(response.data.totalPages);
       setOrderItem(response.data.fullOrder);
       console.log(response.data.fullOrder);
+      setValidPage(true);
       setLoading(false);
     } catch (error) {
       setValidPage(false);
@@ -66,6 +69,7 @@ const Orders = () => {
   useEffect(() => {
     fetchorders();
   }, [page]);
+
   return validPage ? (
     !loading ? (
       <div className="w-full flex-col">
@@ -142,12 +146,81 @@ const Orders = () => {
       </div>
     ) : null
   ) : (
-    <div className="flex justify-center items-center h-[800px]">
-      <div>
-        <img
-          className="max-w-[300px]"
-          src="https://moprojects.s3.us-east-2.amazonaws.com/Eprj/404-error.svg"
-        />
+    <div className="w-full h-[800px] flex-col">
+      <div className="w-full  flex ">
+        <div className=" flex-col w-full  justify-center items-center">
+          <div className="w-full h-[600px] flex items-center justify-center">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <Search className="h-8 w-8 text-gray-400" />
+              </div>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                No Results Found
+              </h2>
+              <p className="text-gray-600 mb-6 max-w-sm">
+                We couldn't find any items matching your search. Try adjusting
+                your query or clearing the search.
+              </p>
+            </div>
+          </div>
+          <div className="my-8 ">
+            <Pagination>
+              <PaginationContent>
+                {page > 1 && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page - 1)}>
+                      <PaginationPrevious />
+                    </button>
+                  </PaginationItem>
+                )}
+
+                {page - 1 > 0 && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page - 1)}>
+                      <PaginationLink>{page - 1}</PaginationLink>
+                    </button>
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <button onClick={() => handlePageChange(page)}>
+                    <PaginationLink isActive>{page}</PaginationLink>
+                  </button>
+                </PaginationItem>
+
+                {page + 1 <= totalPages && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page + 1)}>
+                      <PaginationLink>{page + 1}</PaginationLink>
+                    </button>
+                  </PaginationItem>
+                )}
+
+                {page + 2 <= totalPages && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {page + 2 <= totalPages && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(totalPages)}>
+                      <PaginationLink>{totalPages}</PaginationLink>
+                    </button>
+                  </PaginationItem>
+                )}
+
+                {page < totalPages && (
+                  <PaginationItem>
+                    <button onClick={() => handlePageChange(page + 1)}>
+                      <PaginationNext />
+                    </button>
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -111,11 +111,9 @@ const Product = ({ product }) => {
           {!name ? (
             <Skeleton className="w-1/2 h-6 rounded-xl mb-2 " />
           ) : (
-            <Link to={`/product/${_id}`}>
-              <h3 className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block truncate">
-                {name}
-              </h3>
-            </Link>
+            <h3 className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block truncate">
+              <Link to={`/product/${_id}`}>{name}</Link>
+            </h3>
           )}
 
           {!countInStock ? (
