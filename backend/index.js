@@ -624,7 +624,7 @@ app.post('/checkout', verifyJWT, async (request, response) => {
               name: product.name,
               images: [product.image],
             },
-            unit_amount: Number(item.price.toFixed(2)) * 100,
+            unit_amount: Math.round(item.price * 100),
           },
           quantity: item.quantity,
         };
