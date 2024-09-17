@@ -25,6 +25,7 @@ const PORT = process.env.PORT || 5001;
 const mongoDBURL = process.env.mongoDBURL;
 const secretKey = process.env.secretKey;
 const DOMAIN = process.env.domain || 'http://localhost:5001';
+const SHOP_URL = process.env.SHOP_URL || 'http://localhost:5173';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const openai = new OpenAI(OPENAI_API_KEY);
 const stripekey = process.env.STRIPE_SECRET_KEY;
@@ -41,7 +42,9 @@ const s3 = new AWS.S3({
 // });
 const stripeapi = new stripe(stripekey);
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
+app.use(cors({ origin: SHOP_URL, credentials: true }));
+
 app.use(cookieParser());
 // app.use(limiter);
 app.use(express.json());
@@ -637,8 +640,8 @@ app.post('/checkout', verifyJWT, async (request, response) => {
       payment_method_types: ['card'],
       line_items: line_items,
       mode: 'payment',
-      success_url: `http://localhost:5001/success_url?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5001/failure_url`,
+      success_url: DOMAIN+`/success_url?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: DOMAIN+ `/failure_url`,
       metadata: {
         items: JSON.stringify(metadata),
       },
@@ -757,7 +760,7 @@ app.get('/success_url', verifyJWT, async (request, response) => {
       },
     });
     console.log('Payment successful');
-    return response.redirect('http://localhost:5173/orders');
+    return response.redirect(SHOP_URL+'/orders');
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in payment');
@@ -770,7 +773,7 @@ app.get('/success_url', verifyJWT, async (request, response) => {
  */
 app.get('/failure_url', (request, response) => {
   try {
-    return response.redirect('http://localhost:5173/cart');
+    return response.redirect(SHOP_URL+'/cart');
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in payment');
