@@ -68,7 +68,7 @@ const Hero = () => {
             <div className="absolute inset-0 rounded-full"></div>
             <img
               src={images[currentImageIndex]}
-              className="max-w-[600px] object-cover rounded-lg animate-fade transform hover:scale-105 transition-transform duration-300"
+              className="max-w-[400px] object-cover rounded-lg animate-fade transform hover:scale-105 transition-transform duration-300"
             />
           </div>
         </div>
