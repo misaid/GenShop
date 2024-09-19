@@ -57,16 +57,16 @@ const Product = ({ product }) => {
   };
 
   return (
-    <div className="h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white shadow-md">
+    <div className="h-[300px] psm:h-[350px] pmd:h-[400px] plg:h-[450px] w-[200px] psm:w-[225px] pmd:w-[250px] plg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white shadow-md">
       <Toaster />
 
       <div className="px-3 flex flex-col">
         <div className="flex flex-col items-center">
           <div className="">
             {!imageLoading && (
-              <Skeleton className="w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] h-[200px] sm:h-[225px] md:h-[250px] lg:h-[275px] rounded-t-xl m-0 absolute" />
+              <Skeleton className="w-[200px] psm:w-[225px] pmd:w-[250px] plg:w-[275px] h-[200px] psm:h-[225px] pmd:h-[250px] plg:h-[275px] rounded-t-xl m-0 absolute" />
             )}
-            <div className="  w-[200px] sm:w-[225px] md:w-[250px] lg:w-[275px] h-[200px] sm:h-[225px] md:h-[250px] lg:h-[275px] rounded-t-xl ">
+            <div className="w-[200px] psm:w-[225px] pmd:w-[250px] plg:w-[275px] h-[200px] psm:h-[225px] pmd:h-[250px] plg:h-[275px] rounded-t-xl ">
               <Link to={`/product/${_id}`}>
                 <img
                   className="hover:cursor-pointer object-cover"
@@ -117,9 +117,11 @@ const Product = ({ product }) => {
           )}
 
           {!countInStock ? (
-            <Skeleton className="w-1/4 h-4  rounded-xl" />
+            <Skeleton className="w-1/4 h-4 hidden  plg:block rounded-xl" />
           ) : (
-            <h4 className="text-xs font-thin">Stock left: {countInStock}</h4>
+            <h4 className="text-xs font-thin hidden  plg:block">
+              Stock left: {countInStock}
+            </h4>
           )}
         </div>
         {!name ? (

@@ -129,9 +129,9 @@ const Shop = () => {
       <div>
         <div className="flex h-full w-full">
           {departmentParam ? <Categories /> : <Department />}
-          <div className="ml-20 xl:ml-4 h-full w-full">
+          <div className="mx-4 h-full w-full">
             {validPage ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto max-w-max min-w-max ">
+              <div className="grid grid-cols-3 mmd:grid-cols-3 mlg:grid-cols-4 gap-4 mx-auto max-w-max min-w-max ">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1 w-full">
                     <Product product={product} />

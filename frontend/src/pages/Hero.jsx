@@ -4,6 +4,7 @@ import Pear from '../assets/pear.png';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Hero = () => {
     navigate('/shop');
   };
   // const images = [Apple, Arasaka, Chalice, Eldenring, Basketball, GPU];
+  const [imageLoading, setImageLoading] = useState(false);
   const images = [
     'https://moprojects.s3.us-east-2.amazonaws.com/Eprj/1913c2ea-e558-435b-8617-422d667097ef.png',
     'https://moprojects.s3.us-east-2.amazonaws.com/Eprj/02497106-9b4f-463e-81d5-8b317a294d28.png',
@@ -30,10 +32,10 @@ const Hero = () => {
   return (
     <div
       style={{ minHeight: 'calc(100vh - 200px)' }}
-      className="bg-white flex items-center"
+      className="bg-white flex items-center mt-4"
     >
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+        <div className="flex flex-col md:flex-row  items-center justify-between gap-12">
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-4xl md:text-6xl font-bold text-black mb-6">
               AI-Crafted Innovations
@@ -65,10 +67,16 @@ const Hero = () => {
             </div>
           </div>
           <div className="flex-1 relative">
-            <div className="absolute inset-0 rounded-full"></div>
+            <div className="absolute inset-0 rounded-full h-full w-full"></div>
+
+            {!imageLoading && (
+              <Skeleton className="w-[350px] h-[350px] lg:w-[600px] lg:h-[600px] rounded-lg" />
+            )}
             <img
               src={images[currentImageIndex]}
-              className="max-w-[600px] object-cover rounded-lg animate-fade transform hover:scale-105 transition-transform duration-300"
+              className="w-[350px] h-[350px] lg:w-[600px] lg:h-[600px] object-cover rounded-lg animate-fade transform hover:scale-105 transition-transform duration-300"
+              onLoad={() => setImageLoading(true)}
+              style={imageLoading ? {} : { display: 'none' }}
             />
           </div>
         </div>
