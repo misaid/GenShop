@@ -640,8 +640,8 @@ app.post('/checkout', verifyJWT, async (request, response) => {
       payment_method_types: ['card'],
       line_items: line_items,
       mode: 'payment',
-      success_url: DOMAIN+`/success_url?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: DOMAIN+ `/failure_url`,
+      success_url: DOMAIN + `/success_url?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: DOMAIN + `/failure_url`,
       metadata: {
         items: JSON.stringify(metadata),
       },
@@ -760,7 +760,7 @@ app.get('/success_url', verifyJWT, async (request, response) => {
       },
     });
     console.log('Payment successful');
-    return response.redirect(SHOP_URL+'/orders');
+    return response.redirect(SHOP_URL + '/orders');
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in payment');
@@ -773,7 +773,7 @@ app.get('/success_url', verifyJWT, async (request, response) => {
  */
 app.get('/failure_url', (request, response) => {
   try {
-    return response.redirect(SHOP_URL+'/cart');
+    return response.redirect(SHOP_URL + '/cart');
   } catch (error) {
     console.log(error);
     return response.status(400).send('Error in payment');
