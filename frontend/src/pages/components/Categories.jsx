@@ -2,33 +2,31 @@ import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-//Checkbox Form Components
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const form = useForm();
+  const [loading, setLoading] = useState(true);
+  const [selectedFilters, setSelectedFilters] = useState([]);
+
+  const departmentParam = searchParams.get('department') || '';
+  const defaultCategories = searchParams.get('category') || '';
+
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
 
-  const departmentParam = searchParams.get('department') || '';
-  const [loading, setLoading] = useState(true);
+  const handleFilterChange = filterId => {
+    setSelectedFilters(prev => {
+      const newFilters = prev.includes(filterId)
+        ? prev.filter(id => id !== filterId)
+        : [...prev, filterId];
+      return newFilters;
+    });
+  };
 
   const fetchCategories = async () => {
     try {
@@ -42,97 +40,68 @@ const Categories = () => {
     }
   };
 
-  const onSubmit = data => {
-    console.log(data.categories);
+  const handleApplyFilters = () => {
     window.scrollTo(0, 0);
     const newParams = new URLSearchParams(searchParams);
+
     newParams.delete('page');
-    newParams.set('category', data.categories.join(','));
+    newParams.delete('item');
+
+    if (selectedFilters.length > 0) {
+      newParams.set('category', selectedFilters.join(','));
+    } else {
+      newParams.delete('category');
+    }
     setSearchParams(newParams);
   };
 
   useEffect(() => {
     // If department changes, reset form
+    setSelectedFilters(
+      defaultCategories ? defaultCategories.split(',').filter(Boolean) : []
+    );
     if (departmentParam) {
-      form.reset();
       fetchCategories();
     }
-  }, [departmentParam]);
+  }, [departmentParam, defaultCategories]);
 
   return !loading ? (
     <div className="h-[800px] w-[300px]">
       <div className="w-full overflow-y-scroll overflow-x-hidden border border-grey-200 shadow-sm rounded-r-xl">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 w-full"
-          >
-            <FormField
-              control={form.control}
-              name="categories"
-              render={() => (
-                <FormItem>
-                  <div className="mb-4 border-grey-300 border-b border-3 w-full">
-                    <div className="p-4">
-                      <FormLabel className="text-2xl">
-                        {departmentParam}
-                      </FormLabel>
-                      <FormDescription>
-                        Select one or more categories to query from the list
-                        below.
-                      </FormDescription>
-                    </div>
-                  </div>
-                  {categories.map(category => (
-                    <FormField
-                      key={category.categoryName}
-                      control={form.control}
-                      name="categories"
-                      render={({ field }) => (
-                        <FormItem
-                          key={category.categoryName}
-                          className="flex flex-row items-start space-x-3 space-y-0 px-4"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field?.value?.includes(
-                                category.categoryName
-                              )}
-                              onCheckedChange={checked => {
-                                console.log('checked', category.categoryName);
-                                return checked
-                                  ? field?.onChange([
-                                      ...(field.value || []),
-                                      category.categoryName,
-                                    ])
-                                  : field?.onChange(
-                                      field?.value?.filter(
-                                        value => value !== category.categoryName
-                                      )
-                                    );
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal text-l">
-                            {category.categoryName} ({category.len})
-                          </FormLabel>
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="p-4 border-grey-300 border-t border-3">
-              <Button type="submit">Submit</Button>
+        <div className="w-full h-full border-b border-grey-200 p-4">
+          <h2 className="font-medium text-2xl ">{departmentParam}</h2>
+          <h3 className="text-muted-foreground text-sm">
+            Select one or more categories to query from the list below.
+          </h3>
+        </div>
+        <div className="w-full h-full p-4 flex-row space-y-2">
+          {categories.map(category => (
+            <div
+              key={category.categoryName}
+              className="flex flex-row items-center space-x-3 text-sm"
+            >
+              <Checkbox
+                id={category.categoryName}
+                checked={selectedFilters.includes(category.categoryName)}
+                onCheckedChange={() =>
+                  handleFilterChange(category.categoryName)
+                }
+              />
+              <Label
+                htmlFor={category.categoryName}
+                className="font-normal text-black"
+              >
+                {category.categoryName} ({category.len})
+              </Label>
             </div>
-          </form>
-        </Form>
+          ))}
+        </div>
+        <div className="p-4 border-grey-300 border-t border-3">
+          <Button onClick={handleApplyFilters}>Submit</Button>
+        </div>
       </div>
     </div>
   ) : (
-    // TODO:
     <div className="w-[300px]"></div>
   );
 };
