@@ -96,8 +96,17 @@ const Categories = () => {
             </div>
           ))}
         </div>
-        <div className="p-4 border-grey-300 border-t border-3">
+
+        <div className="p-4 border-grey-300 border-t border-3 flex justify-between">
           <Button onClick={handleApplyFilters}>Submit</Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSelectedFilters([]);
+            }}
+          >
+            Clear All
+          </Button>
         </div>
       </div>
     </div>
