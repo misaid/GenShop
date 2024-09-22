@@ -41,6 +41,7 @@ const MobileDropdownCategories = () => {
 
   const [selectedDept, setSelectedDept] = useState(departmentParam);
   const handleDeptChange = Dept => {
+    fetchCategories(Dept);
     setSelectedDept(Dept);
   };
 
@@ -90,10 +91,10 @@ const MobileDropdownCategories = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (dept) => {
     try {
       const response = await axiosInstance.get(
-        `/categories/${departmentParam}`
+        `/categories/${dept}`
       );
       setCategories(response.data);
       setLoading(false);
@@ -146,7 +147,7 @@ const MobileDropdownCategories = () => {
     setSelectedFilters(
       defaultCategories ? defaultCategories.split(',').filter(Boolean) : []
     );
-    fetchCategories();
+    fetchCategories(departmentParam);
   }, [departmentParam, defaultCategories]);
 
   return loading ? null : (
@@ -180,7 +181,6 @@ const MobileDropdownCategories = () => {
           {/* If you change the department, new categories must be fetched so categories must dissapear */}
           <Accordion type="single" collapsible className="w-full">
             {departmentParam &&
-              (selectedDept === '' || selectedDept == departmentParam) &&
               filterCategories.map(category => (
                 <AccordionItem value={category.id} key={category.id}>
                   <AccordionTrigger>{category.label}</AccordionTrigger>
