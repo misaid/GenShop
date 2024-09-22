@@ -176,8 +176,11 @@ const MobileDropdownCategories = () => {
               </div>
             ))}
           </div>
+
+          {/* If you change the department, new categories must be fetched so categories must dissapear */}
           <Accordion type="single" collapsible className="w-full">
             {departmentParam &&
+              (selectedDept === '' || selectedDept == departmentParam) &&
               filterCategories.map(category => (
                 <AccordionItem value={category.id} key={category.id}>
                   <AccordionTrigger>{category.label}</AccordionTrigger>
@@ -204,6 +207,7 @@ const MobileDropdownCategories = () => {
                   </AccordionContent>
                 </AccordionItem>
               ))}
+
             <AccordionItem value="Departments">
               <AccordionTrigger>Departments</AccordionTrigger>
               <AccordionContent>
