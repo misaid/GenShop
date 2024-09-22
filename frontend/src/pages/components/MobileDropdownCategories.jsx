@@ -41,6 +41,7 @@ const MobileDropdownCategories = () => {
 
   const [selectedDept, setSelectedDept] = useState(departmentParam);
   const handleDeptChange = Dept => {
+    setSelectedFilters([]);
     fetchCategories(Dept);
     setSelectedDept(Dept);
   };
@@ -92,7 +93,6 @@ const MobileDropdownCategories = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = async dept => {
-    setSelectedFilters([]);
     try {
       const response = await axiosInstance.get(`/categories/${dept}`);
       setCategories(response.data);
