@@ -138,13 +138,13 @@ const Shop = () => {
 
       <div>
         <div className="flex h-full w-full">
-          <div className="w-full h-full hidden sidebargone:block">
+          <div className="w-full flex-1 h-full hidden sidebargone:block">
             {departmentParam ? <Categories /> : <Department />}
           </div>
 
-          <div className="h-full w-full sidebargone:mx-4 flex-col items-center ">
+          <div className="flex h-full w-full sidebargone:mx-4 flex-col items-center">
             {validPage ? (
-              <div className="grid grid-cols-2 threeto2:grid-cols-3 fourto3:grid-cols-4  md:gap-x-4 gap-y-4 gap-x-2 mx-auto max-w-max min-w-max ">
+              <div className="grid grid-cols-2 threeto2:grid-cols-3 fourto3:grid-cols-4 md:gap-x-4 gap-y-4 gap-x-2  max-w-max min-w-max ">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1 w-full">
                     <Product product={product} />
