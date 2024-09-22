@@ -6,9 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Login = () => {
   return (
     <div>
-      <div className="flex w-full h-[800px] justify-center items-cneter">
+      <div className="flex w-full h-[400px] md:h-[800px] justify-center items-cneter">
         <div className="flex flex-1 items-center justify-center">
-          <Tabs defaultValue="login" className="w-[400px]">
+          <Tabs defaultValue="login" className=" w-[300px] mobile:w-[400px]">
             <TabsList className="">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>

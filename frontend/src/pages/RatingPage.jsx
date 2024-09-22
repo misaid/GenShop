@@ -27,6 +27,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom';
 import { Search, RefreshCw } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const RatingPage = () => {
   const axiosInstance = axios.create({
@@ -41,6 +42,7 @@ const RatingPage = () => {
   const [userId, setUserId] = useState('');
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [imageLoading, setImageloading] = useState(false);
 
   const page = parseInt(searchParams.get('page')) || 1;
   console.log(page);
@@ -122,11 +124,21 @@ const RatingPage = () => {
                   <Separator className="my-4" />
                   <CardContent>
                     <div className="flex flex-col w-full items-center justify-center">
-                      <img
-                        src={product.image}
-                        onClick={() => handleClick(product._id)}
-                        className="w-32 h-32 object-cover bg-gray-300 border border-gray-300 rounded-lg mb-4 hover:cursor-pointer"
-                      />
+                      <div className="mb-4 w-32 h-32 overflow-hidden flex-col relative ">
+                        {!imageLoading && (
+                          <div className="w-full h-full rounded-xl">
+                            <Skeleton className="w-full h-full rounded-xl" />
+                            <h3 className="font-light mt-1 text-sm">&nbsp;</h3>
+                          </div>
+                        )}
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          onLoad={() => setImageloading(true)}
+                          style={imageLoading ? {} : { display: 'none' }} // Corrected 'stye' to 'style'
+                          className="w-full h-full rounded-xl object-cover"
+                        />
+                      </div>
                       <Star urate={userRating} productId={product._id} />
                     </div>
                   </CardContent>

@@ -25,6 +25,9 @@ module.exports = {
         sidebargone: '1185px',
         fourto3: '1470px',
         mobile: '536px',
+        pplchange: '960px',
+        mdpplchange: '600px',
+        smpplchange: '400px',
       },
       colors: {
         border: 'hsl(var(--border))',
