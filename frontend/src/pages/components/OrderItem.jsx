@@ -67,7 +67,8 @@ const OrderItem = ({ order }) => {
                     {product ? product.name : item.name}
                   </span>
                   {' - $'}
-                  {(product ? product.price : item.price) * item.quantity}
+                  {(product ? product.price : item.price) *
+                    item.quantity.toFixed(2)}
                 </p>
               );
             })}
