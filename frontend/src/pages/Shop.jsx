@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/selectfull';
 import { Input } from '@/components/ui/input';
 import { Search, RefreshCw } from 'lucide-react';
+import MobileDropdownCategories from './components/MobileDropdownCategories';
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -101,15 +102,18 @@ const Shop = () => {
   }, [page, departmentParam, categoryParam, sortbyParam, itemQueryParam]);
   return !loading ? (
     <div>
-      <div className="w-full h-7 flex border-b border-gray-300 mb-5 items-center">
+      <div className="w-full h-12 flex border-b border-gray-300 mb-5 items-center">
         <div className="ml-3 w-48 flex">
-          <h3 className="text-sm font-light overflow-hidden">
-            {start}-{end} of {totalProducts} products
+          <h3 className="text-sm font-light overflow-hidden text-muted-foreground">
+            <span className="hidden sm:block">
+              {start}-{end} of{' '}
+            </span>
+            {totalProducts} products
           </h3>
         </div>
 
-        <div className="h-7 flex w-full items-center justify-end mr-3">
-          <div>
+        <div className="w-full h-full hidden sm:block">
+          <div className="h-7 flex w-full items-center justify-end mr-3 ">
             <Select value={sortbyParam} onValueChange={handleValueChange}>
               <SelectTrigger className="w-36 h-5 text-[10px]">
                 <SelectValue placeholder="new" />
@@ -124,11 +128,20 @@ const Shop = () => {
             </Select>
           </div>
         </div>
+
+        <div className="w-full justify-end flex sm:hidden mr-3">
+          <div className="w-24">
+            <MobileDropdownCategories />
+          </div>
+        </div>
       </div>
 
       <div>
         <div className="flex h-full w-full">
-          {departmentParam ? <Categories /> : <Department />}
+          <div className="w-full h-full hidden sm:block">
+            {departmentParam ? <Categories /> : <Department />}
+          </div>
+
           <div className="mx-4 h-full w-full">
             {validPage ? (
               <div className="grid grid-cols-3 mmd:grid-cols-3 mlg:grid-cols-4 gap-4 mx-auto max-w-max min-w-max ">

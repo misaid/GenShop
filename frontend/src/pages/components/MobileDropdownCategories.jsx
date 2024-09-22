@@ -39,22 +39,40 @@ const MobileDropdownCategories = () => {
     setSelectedOption(optionId);
   };
 
+  const [selectedDept, setSelectedDept] = useState(departmentParam);
+  const handleDeptChange = Dept => {
+    setSelectedDept(Dept);
+  };
+
   const [selectedFilters, setSelectedFilters] = useState('');
   const handleFilterChange = filterId => {
     setSelectedFilters(prev => {
       const newFilters = prev.includes(filterId)
         ? prev.filter(id => id !== filterId)
         : [...prev, filterId];
-      console.log('Filter changes:', newFilters);
       return newFilters;
     });
   };
+
   const filterOptions = [
     { id: 'new', label: 'New Arrivals' },
     { id: 'priceDesc', label: 'Price: High to Low' },
     { id: 'priceAsc', label: 'Price: Low to High' },
     { id: 'ratingDesc', label: 'Rating: High to Low' },
     { id: 'ratingAsc', label: 'Rating: Low to High' },
+  ];
+
+  const departments = [
+    'Electronics',
+    'Clothing and Accessories',
+    'Home and Garden',
+    'Health and Beauty',
+    'Toys and Games',
+    'Sports and Outdoors',
+    'Automotive',
+    'Office Supplies',
+    'Books and Media',
+    'Crafts and Hobbies',
   ];
 
   const filterCategories = [
@@ -70,8 +88,6 @@ const MobileDropdownCategories = () => {
     },
   ];
 
-  console.log('Selected Filters:', filterCategories);
-
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
@@ -82,6 +98,7 @@ const MobileDropdownCategories = () => {
       setCategories(response.data);
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -101,6 +118,14 @@ const MobileDropdownCategories = () => {
       newParams.delete('sortby');
     }
 
+    if (selectedDept) {
+      newParams.delete('category');
+      newParams.set('department', selectedDept);
+      newParams.delete('page');
+    } else {
+      newParams.delete('department');
+    }
+
     if (selectedFilters.length > 0) {
       newParams.set('category', selectedFilters.join(','));
       newParams.delete('page');
@@ -113,11 +138,13 @@ const MobileDropdownCategories = () => {
 
   useEffect(() => {
     // If params change reset form
-    setSelectedFilters(defaultCategories.split(','));
+    setSelectedFilters(
+      defaultCategories ? defaultCategories.split(',').filter(Boolean) : []
+    );
     fetchCategories();
   }, [departmentParam, defaultCategories]);
 
-  return (
+  return loading ? null : (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-full sm:w-auto">
@@ -144,13 +171,13 @@ const MobileDropdownCategories = () => {
               </div>
             ))}
           </div>
-          {departmentParam && (
-            <Accordion type="multiple" className="w-full">
-              {filterCategories.map(category => (
+          <Accordion type="single" collapsible className="w-full">
+            {departmentParam &&
+              filterCategories.map(category => (
                 <AccordionItem value={category.id} key={category.id}>
                   <AccordionTrigger>{category.label}</AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 overflow-auto max-h-60">
                       {category.subcategories.map(subcategory => (
                         <div
                           key={subcategory.id}
@@ -172,8 +199,24 @@ const MobileDropdownCategories = () => {
                   </AccordionContent>
                 </AccordionItem>
               ))}
-            </Accordion>
-          )}
+            <AccordionItem value="Departments">
+              <AccordionTrigger>Departments</AccordionTrigger>
+              <AccordionContent>
+                <div className="grid gap-2">
+                  {departments.map(dept => (
+                    <div key={dept} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={dept}
+                        checked={selectedDept === dept}
+                        onCheckedChange={() => handleDeptChange(dept)}
+                      />
+                      <Label htmlFor={dept}>{dept}</Label>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           <div className="flex justify-between">
             <Button
@@ -181,7 +224,8 @@ const MobileDropdownCategories = () => {
               onClick={() => {
                 setSelectedFilters([]);
                 setCategoriesArray([]);
-                // setOpen(false);
+                setSelectedDept('');
+                setSelectedOption('new');
               }}
             >
               Clear All
