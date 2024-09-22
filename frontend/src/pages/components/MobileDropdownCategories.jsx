@@ -91,11 +91,10 @@ const MobileDropdownCategories = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const fetchCategories = async (dept) => {
+  const fetchCategories = async dept => {
+    setSelectedFilters([]);
     try {
-      const response = await axiosInstance.get(
-        `/categories/${dept}`
-      );
+      const response = await axiosInstance.get(`/categories/${dept}`);
       setCategories(response.data);
       setLoading(false);
     } catch (error) {
@@ -115,13 +114,7 @@ const MobileDropdownCategories = () => {
     newParams.delete('page');
     newParams.delete('item');
 
-    if (selectedDept != departmentParam) {
-      newParams.delete('category');
-      newParams.delete('sortby');
-      newParams.set('department', selectedDept);
-      setSearchParams(newParams);
-      return;
-    } else if (selectedDept) {
+    if (selectedDept) {
       newParams.set('department', selectedDept);
     } else {
       newParams.delete('department');
