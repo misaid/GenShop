@@ -85,7 +85,6 @@ app.get('/user', verifyJWT, async (request, response) => {
 app.post('/register', async (request, response) => {
   //console.log(request.body);
   const { username, password } = request.body;
-  console.log(username, password);
   if (!username || !password) {
     return response.status(400).send('Usename and password are required');
   }

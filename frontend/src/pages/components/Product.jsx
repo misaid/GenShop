@@ -57,16 +57,16 @@ const Product = ({ product }) => {
   };
 
   return (
-    <div className="h-[300px] psm:h-[350px] pmd:h-[400px] plg:h-[450px] w-[200px] psm:w-[225px] pmd:w-[250px] plg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white shadow-md">
+    <div className="h-[300px] mobile:h-[400px] plg:h-[450px] w-[188px] mobile:w-[250px] plg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white shadow-md">
       <Toaster />
 
       <div className="px-3 flex flex-col">
         <div className="flex flex-col items-center">
           <div className="">
             {!imageLoading && (
-              <Skeleton className="w-[200px] psm:w-[225px] pmd:w-[250px] plg:w-[275px] h-[200px] psm:h-[225px] pmd:h-[250px] plg:h-[275px] rounded-t-xl m-0 absolute" />
+              <Skeleton className="w-[188px] mobile:w-[250px] plg:w-[275px] h-[188px] mobile:h-[250px] plg:h-[275px] rounded-t-xl m-0 absolute" />
             )}
-            <div className="w-[200px] psm:w-[225px] pmd:w-[250px] plg:w-[275px] h-[200px] psm:h-[225px] pmd:h-[250px] plg:h-[275px] rounded-t-xl ">
+            <div className="w-[188px] mobile:w-[250px] plg:w-[275px] h-[188px] mobile:h-[250px] plg:h-[275px] rounded-t-xl ">
               <Link to={`/product/${_id}`}>
                 <img
                   className="hover:cursor-pointer object-cover"
@@ -83,18 +83,16 @@ const Product = ({ product }) => {
         {!name ? (
           <Skeleton className="w-24 h-5 mb-1 mt-2 rounded-xl" />
         ) : (
-          <div className="my-1">
-            <div className="h-5 w-24">
-              <StaticStar urate={averageRating} size={15} />
-            </div>
+          <div className="h-5 my-1">
+            <StaticStar urate={averageRating} size={15} />
           </div>
         )}
 
         <div className="flex flex-col flex-grow">
           <Link to={`/product/${_id}`}>
-            <h2 className="font-bold text-xl hover:cursor-pointer">
+            <h2 className="font-bold text-md mobile:text-xl hover:cursor-pointer truncate">
               {!price ? (
-                <Skeleton className="w-1/4 h-5 my-1 rounded-xl" />
+                <Skeleton className="w-1/4 h-4 mobile:h-5 my-1 rounded-xl" />
               ) : (
                 <NumericFormat
                   value={price}
@@ -109,15 +107,15 @@ const Product = ({ product }) => {
           </Link>
 
           {!name ? (
-            <Skeleton className="w-1/2 h-6 rounded-xl mb-2 " />
+            <Skeleton className="w-1/2 h-4 mobile:h-6 rounded-xl mobile:mb-2 " />
           ) : (
-            <h3 className="font-semibold text-l h-6 mb-3 hover:text-slate-600 hover:cursor-pointer inline-block truncate">
+            <h3 className="font-semibold text-sm mobile:text-l h-6 mobile:mb-3 hover:text-slate-600 hover:cursor-pointer inline-block truncate">
               <Link to={`/product/${_id}`}>{name}</Link>
             </h3>
           )}
 
           {!countInStock ? (
-            <Skeleton className="w-1/4 h-4 hidden  plg:block rounded-xl" />
+            <Skeleton className="w-1/4 h-4 hidden plg:block rounded-xl" />
           ) : (
             <h4 className="text-xs font-thin hidden  plg:block">
               Stock left: {countInStock}
@@ -125,12 +123,12 @@ const Product = ({ product }) => {
           )}
         </div>
         {!name ? (
-          <div className="flex justify-center items-center  w-full my-2 hover:cursor-pointer select-none">
-            <Skeleton className="w-full h-8  rounded-xl" />
+          <div className="flex justify-center items-center w-full my-2 hover:cursor-pointer select-none">
+            <Skeleton className="w-full mobile:h-8 h-6  rounded-xl" />
           </div>
         ) : (
           <div
-            className="flex justify-center items-center border border-black rounded-xl w-full my-2 hover:cursor-pointer select-none"
+            className="flex justify-center items-center border border-black rounded-xl w-full my-1 mobile:my-2 h-6 mobile:h-full hover:cursor-pointer select-none"
             onClick={() => addToCart()}
           >
             <h2 className="text-2xl mx-1">+</h2>

@@ -111,24 +111,29 @@ const MobileDropdownCategories = () => {
 
     const newParams = new URLSearchParams(searchParams);
 
-    if (selectedOption) {
-      newParams.set('sortby', selectedOption);
-      newParams.delete('page');
-    } else {
-      newParams.delete('sortby');
-    }
+    newParams.delete('page');
+    newParams.delete('item');
 
-    if (selectedDept) {
+    if (selectedDept != departmentParam) {
       newParams.delete('category');
+      newParams.delete('sortby');
       newParams.set('department', selectedDept);
-      newParams.delete('page');
+      setSearchParams(newParams);
+      return;
+    } else if (selectedDept) {
+      newParams.set('department', selectedDept);
     } else {
       newParams.delete('department');
     }
 
+    if (selectedOption) {
+      newParams.set('sortby', selectedOption);
+    } else {
+      newParams.delete('sortby');
+    }
+
     if (selectedFilters.length > 0) {
       newParams.set('category', selectedFilters.join(','));
-      newParams.delete('page');
     } else {
       newParams.delete('category');
     }

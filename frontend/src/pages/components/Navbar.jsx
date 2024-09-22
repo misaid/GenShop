@@ -129,7 +129,7 @@ const Navbar = () => {
                 event.preventDefault();
                 handleSearch(searchItem);
               }}
-              className="relative hidden sm:block"
+              className="relative hidden md:block"
             >
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
@@ -222,7 +222,7 @@ const Navbar = () => {
               event.preventDefault();
               handleSearch(searchItem);
             }}
-            className="relative block sm:hidden"
+            className="relative block md:hidden"
           >
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input

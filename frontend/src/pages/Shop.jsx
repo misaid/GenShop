@@ -102,17 +102,17 @@ const Shop = () => {
   }, [page, departmentParam, categoryParam, sortbyParam, itemQueryParam]);
   return !loading ? (
     <div>
-      <div className="w-full h-12 flex border-b border-gray-300 mb-5 items-center">
-        <div className="ml-3 w-48 flex">
-          <h3 className="text-sm font-light overflow-hidden text-muted-foreground">
-            <span className="hidden sm:block">
-              {start}-{end} of{' '}
+      <div className="w-full sidebargone:h-7 h-12 flex border-b border-gray-300 mb-5 items-center">
+        <div className="ml-3 w-full sticky sm:static flex">
+          <h3 className="text-sm font-light text-muted-foreground flex">
+            <span className="hidden sm:block mr-1">
+              {start}-{end} of
             </span>
             {totalProducts} products
           </h3>
         </div>
 
-        <div className="w-full h-full hidden sm:block">
+        <div className="w-full h-full hidden sidebargone:block">
           <div className="h-7 flex w-full items-center justify-end mr-3 ">
             <Select value={sortbyParam} onValueChange={handleValueChange}>
               <SelectTrigger className="w-36 h-5 text-[10px]">
@@ -129,8 +129,8 @@ const Shop = () => {
           </div>
         </div>
 
-        <div className="w-full justify-end flex sm:hidden mr-3">
-          <div className="w-24">
+        <div className="w-full justify-end flex sidebargone:hidden mr-3">
+          <div className="w-max">
             <MobileDropdownCategories />
           </div>
         </div>
@@ -138,13 +138,13 @@ const Shop = () => {
 
       <div>
         <div className="flex h-full w-full">
-          <div className="w-full h-full hidden sm:block">
+          <div className="w-full h-full hidden sidebargone:block">
             {departmentParam ? <Categories /> : <Department />}
           </div>
 
-          <div className="mx-4 h-full w-full">
+          <div className="h-full w-full sidebargone:mx-4 flex-col items-center ">
             {validPage ? (
-              <div className="grid grid-cols-3 mmd:grid-cols-3 mlg:grid-cols-4 gap-4 mx-auto max-w-max min-w-max ">
+              <div className="grid grid-cols-2 threeto2:grid-cols-3 fourto3:grid-cols-4  md:gap-x-4 gap-y-4 gap-x-2 mx-auto max-w-max min-w-max ">
                 {products.map(product => (
                   <div key={product._id} className="col-span-1 w-full">
                     <Product product={product} />

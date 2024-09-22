@@ -57,67 +57,69 @@ export default function Component() {
   }
 
   return (
-    <div className="w-full h-full mt-12 flex items-center justify-center">
-      <Toaster richColors />
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>My Account</CardTitle>
-          <CardDescription>
-            Manage your account settings and preferences
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={() => {
-              navigate('/rating');
-            }}
-          >
-            <StarIcon className="mr-2 h-4 w-4" />
-            Ratings
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100"
-              >
-                <TrashIcon className="mr-2 h-4 w-4" />
-                Delete Account
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="mt-4">
-                <Input
-                  placeholder="Type your password to confirm"
-                  type="password"
-                  value={confirmText}
-                  onChange={e => setConfirmText(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              <AlertDialogFooter className="mt-4">
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  disabled={confirmText.length < 8}
-                  className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+    <div className=" h-full md:mt-12 mt-4 flex items-center justify-center">
+      <div className="lg:w-full w-[300px]">
+        <Toaster richColors />
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>My Account</CardTitle>
+            <CardDescription>
+              Manage your account settings and preferences
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => {
+                navigate('/rating');
+              }}
+            >
+              <StarIcon className="mr-2 h-4 w-4" />
+              Ratings
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100"
                 >
+                  <TrashIcon className="mr-2 h-4 w-4" />
                   Delete Account
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </CardContent>
-      </Card>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your account and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="mt-4">
+                  <Input
+                    placeholder="Type your password to confirm"
+                    type="password"
+                    value={confirmText}
+                    onChange={e => setConfirmText(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <AlertDialogFooter className="mt-4">
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={confirmText.length < 8}
+                    className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+                  >
+                    Delete Account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
