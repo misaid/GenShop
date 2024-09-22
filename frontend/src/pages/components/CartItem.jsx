@@ -141,7 +141,12 @@ const TestCartItem = ({ productid, quantity, onChange, product }) => {
             <SelectTrigger className="w-[60px]">
               <SelectValue placeholder={selectedValue} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent
+              ref={ref =>
+                // temporary workaround from https://github.com/shadcn-ui/ui/issues/1220
+                ref?.addEventListener('touchend', e => e.preventDefault())
+              }
+            >
               {[...Array(Math.min(product.countInStock, 30))].map(
                 (_, index) => {
                   const value = (index + 1).toString();
