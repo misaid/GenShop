@@ -15,7 +15,7 @@ const verifyJWT = (request, response, next) => {
     const jwt = request.cookies.jwt;
 
     if (!jwt) {
-      console.log('No token');
+      // console.log('No token');
       return response
         .status(403)
         .send('A token is required for authentication');

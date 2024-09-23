@@ -11,6 +11,7 @@ import OpenAI from 'openai';
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import stripe from 'stripe';
+import mongoSanitize from 'express-mongo-sanitize';
 // models
 import User from './models/user.js';
 import Cart from './models/cart.js';
@@ -44,13 +45,12 @@ const stripeapi = new stripe(stripekey);
 const app = express();
 
 app.use(cors({ origin: SHOP_URL, credentials: true }));
-
+app.use(mongoSanitize());
 app.use(cookieParser());
 // app.use(limiter);
 app.use(express.json());
 
 app.get('/', (request, response) => {
-  console.log(request);
   return response.status(234).send('MSAID');
 });
 
@@ -676,7 +676,6 @@ app.get('/success_url', verifyJWT, async (request, response) => {
       }
     );
 
-    console.log(session.payment_intent);
     const metadata = JSON.parse(session.metadata.items);
     const items = Object.entries(metadata).map(([productId, quantity]) => ({
       productId,
@@ -689,8 +688,6 @@ app.get('/success_url', verifyJWT, async (request, response) => {
     const shippingAddress = session.shipping_details.address;
     const { line1, city, postal_code, country } = shippingAddress;
     const paymentInfo = 4242;
-
-    console.log('Payment Info:', paymentInfo);
 
     const sessionLineItems = session.line_items.data;
 
@@ -706,7 +703,7 @@ app.get('/success_url', verifyJWT, async (request, response) => {
         const cartItem = cart.cartItem.find(
           item => item.productId.toString() === items[i].productId
         );
-        console.log(cartItem, items[i].quantity);
+        // console.log(cartItem, items[i].quantity);
         if (cartItem && cartItem.quantity >= items[i].quantity) {
           const product = await Product.findById(items[i].productId);
           if (product.countInStock < items[i].quantity) {
