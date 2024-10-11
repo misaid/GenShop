@@ -1,8 +1,10 @@
-import React from 'react';
+// External imports
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-// Dropdown Form
+import { SlidersHorizontal } from 'lucide-react';
+
+// Internal imports
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -17,9 +19,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { SlidersHorizontal } from 'lucide-react';
 
-const MobileDropdownCategories = () => {
+/**
+ * The mobile dropdown categories component
+ * This component is a mobile dropdown made to filter products by category
+ * Replaces the Categories component in the shop page when mobile size
+ * @returns {JSX.Element} - MobileDropdownCategories
+ */
+export default function MobileDropdownCategories() {
   const [categories, setCategories] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -238,6 +245,4 @@ const MobileDropdownCategories = () => {
       </PopoverContent>
     </Popover>
   );
-};
-
-export default MobileDropdownCategories;
+}

@@ -1,31 +1,32 @@
-import React from 'react';
+// External Import
 import { Routes, Route, useLocation, BrowserRouter } from 'react-router-dom';
-import Hero from './pages/Hero.jsx';
-import Shop from './pages/Shop.jsx';
-import About from './pages/About.jsx';
-import Cart from './pages/Cart.jsx';
-import Login from './pages/LoginRegister.jsx';
-import Generate from './pages/Generate.jsx';
-import ProductPage from './pages/ProductPage.jsx';
-import Navbar from './pages/components/Navbar.jsx';
-import Orders from './pages/Orders.jsx';
+// Internal Import
+import {
+  Hero,
+  Shop,
+  Cart,
+  Login,
+  Generate,
+  ProductPage,
+  Orders,
+  MyAccount,
+  RatingPage,
+} from './pages';
 import { CartProvider } from './context/CartContext';
-import MyAccount from './pages/MyAccount.jsx';
-import RatingPage from './pages/RatingPage.jsx';
 import PrivateRoutes from './routes/PrivateRoutes.jsx';
-import NotFound from './pages/components/NotFound.jsx';
+import { Navbar, NotFound } from './pages/components';
 
-const App = () => {
+export default function App() {
   return (
     <CartProvider>
       <RoutesWrapper />
     </CartProvider>
   );
-};
+}
 
 const RoutesWrapper = () => {
   const location = useLocation();
-  const noNavbarPaths = ['/mothegoat', '/checkout'];
+  const noNavbarPaths = ['/checkout'];
   const shouldShowNavbar = !noNavbarPaths.includes(location.pathname);
 
   return (
@@ -40,7 +41,6 @@ const RoutesWrapper = () => {
         </Route>
         <Route path="/" element={<Hero />} />
         <Route path="/shop" element={<Shop />} />
-        <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/generate" element={<Generate />} />
         <Route path="/product/:id" element={<ProductPage />} />
@@ -49,5 +49,3 @@ const RoutesWrapper = () => {
     </>
   );
 };
-
-export default App;

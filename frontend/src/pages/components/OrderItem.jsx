@@ -1,3 +1,8 @@
+// External imports
+import { PackageIcon, TruckIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+// Internal imports
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,10 +13,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { PackageIcon, TruckIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
-const OrderItem = ({ order }) => {
+/**
+ * The order item component used in the orders page
+ * @param {object} order - The order object
+ * @returns {JSX.Element} - The order item component
+ */
+export default function OrderItem({ order }) {
   const navigate = useNavigate();
   const statusColor = {
     Processing: 'bg-yellow-500',
@@ -83,6 +91,4 @@ const OrderItem = ({ order }) => {
       </CardFooter>
     </Card>
   );
-};
-
-export default OrderItem;
+}

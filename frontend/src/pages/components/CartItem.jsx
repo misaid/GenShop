@@ -1,8 +1,12 @@
-import { NumericFormat } from 'react-number-format';
+// External imports
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Skeleton } from '@/components/ui/skeleton';
 import axios from 'axios';
+import { NumericFormat } from 'react-number-format';
+import { toast } from 'sonner';
+
+// Internal imports
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -12,9 +16,16 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
-import { toast } from 'sonner';
 
-const TestCartItem = ({ productid, quantity, onChange, product }) => {
+/**
+ * CartItem component used in the cart page
+ * @param {string} productid - Product id
+ * @param {number} quantity - Quantity of product
+ * @param {function} onChange - Function to call when cart is
+ * @param {object} product - Product object
+ * @returns {JSX.Element} - CartItem component
+ */
+export default function CartItem({ productid, quantity, onChange, product }) {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -168,6 +179,4 @@ const TestCartItem = ({ productid, quantity, onChange, product }) => {
       <Toaster />
     </div>
   );
-};
-
-export default TestCartItem;
+}

@@ -1,5 +1,14 @@
-import { Toaster } from '@/components/ui/sonner';
+// External imports
+import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { StarIcon, TrashIcon } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Internal imports
+import { Toaster } from '@/components/ui/sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -7,9 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { StarIcon, TrashIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 // Alert dialog
 import {
   AlertDialog,
@@ -22,12 +28,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
 
-import { useState } from 'react';
-import axios from 'axios';
-
-export default function Component() {
+/**
+ * The MyAccount page component.
+ * This page contatins navigation to the ratings page and a button to delete the account.
+ * @returns {JSX.Element} - The MyAccount page component.
+ */
+export default function MyAccount() {
   const navigate = useNavigate();
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,

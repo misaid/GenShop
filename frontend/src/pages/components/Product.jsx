@@ -1,24 +1,22 @@
-import { Toaster } from '@/components/ui/sonner';
-import { toast } from 'sonner';
-import { NumericFormat } from 'react-number-format';
-import StaticStar from './StaticStar';
-import { Skeleton } from '@/components/ui/skeleton';
+// External imports
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import { NumericFormat } from 'react-number-format';
+import { toast } from 'sonner';
+
+// Internal imports
+import { Toaster } from '@/components/ui/sonner';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/context/CartContext';
-import { Link } from 'react-router-dom';
+import { StaticStar } from '@/pages/components';
 
 /**
  * Product component used in the procuctpage componoenet
- * @param {string} name - Product name
- * @param {number} rating - Product
- * @param {number} stock - Product stock
- * @param {string} imageURL - Product image
- * @param {string} productId - Product id
+ * @param {object} product - Product object
  * @returns {JSX.Element}
- *  */
-const Product = ({ product }) => {
+ */
+export default function Product({ product }) {
   const { name, averageRating, countInStock, price, image, _id } = product;
   const [imageLoading, setImageLoading] = useState(false);
   const navigate = useNavigate();
@@ -138,6 +136,4 @@ const Product = ({ product }) => {
       </div>
     </div>
   );
-};
-
-export default Product;
+}

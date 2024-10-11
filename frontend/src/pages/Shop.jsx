@@ -1,12 +1,19 @@
+// External imports
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useSearchParams } from 'react-router-dom';
-//Page Components
-import Product from './components/Product';
-import Categories from './components/Categories';
-import Department from './components/Department';
-//Pagination Components
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Search, RefreshCw } from 'lucide-react';
+
+// Internal imports
+// Page Components
+import {
+  Product,
+  Categories,
+  Department,
+  MobileDropdownCategories,
+} from './components';
+
+// Pagination Components
 import {
   Pagination,
   PaginationContent,
@@ -17,7 +24,8 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
-//Select Components
+
+// Select Components
 import {
   Select,
   SelectContent,
@@ -26,10 +34,13 @@ import {
   SelectValue,
 } from '@/components/ui/selectfull';
 import { Input } from '@/components/ui/input';
-import { Search, RefreshCw } from 'lucide-react';
-import MobileDropdownCategories from './components/MobileDropdownCategories';
 
-const Shop = () => {
+/**
+ * This is the shop page
+ * This page will fetch and display all the products
+ * @returns {JSX.Element} - The shop page
+ */
+export default function Shop() {
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -229,6 +240,4 @@ const Shop = () => {
       </div>
     </div>
   ) : null;
-};
-
-export default Shop;
+}

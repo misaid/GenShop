@@ -1,9 +1,11 @@
+// External imports
 import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Search, RefreshCw } from 'lucide-react';
 
-//pagination
+// Internal imports
 import {
   Pagination,
   PaginationContent,
@@ -14,8 +16,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
-import Star from './components/Star';
-// Card
+import { Star } from './components';
 import {
   Card,
   CardContent,
@@ -25,11 +26,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useNavigate } from 'react-router-dom';
-import { Search, RefreshCw } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const RatingPage = () => {
+/**
+ * The rating page
+ * On this page users can leave ratings for products that they have purchased
+ * @returns {JSX.Element} - The rating page JSX Element
+ */
+export default function RatingPage() {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -290,6 +294,4 @@ const RatingPage = () => {
       </div>
     </div>
   );
-};
-
-export default RatingPage;
+}

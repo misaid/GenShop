@@ -1,9 +1,13 @@
+// External imports
 import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import OrderItem from './components/OrderItem';
-//pagination
+import { Search, RefreshCw } from 'lucide-react';
+
+//Internal imports
+import { OrderItem } from './components';
+// Pagination
 import {
   Pagination,
   PaginationContent,
@@ -13,10 +17,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Button } from '@/components/ui/button';
-import { Search, RefreshCw } from 'lucide-react';
 
-const Orders = () => {
+/**
+ * The orders page
+ * This page will fetch all the orders from the backend
+ * and display them in a paginated manner
+ * @returns {JSX.Element} - JSX Element
+ */
+export default function Orders() {
   const [fullOrder, setOrderItem] = useState([]);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -224,6 +232,4 @@ const Orders = () => {
       </div>
     </div>
   );
-};
-
-export default Orders;
+}

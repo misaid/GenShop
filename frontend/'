@@ -20,11 +20,6 @@ import {
 import { StaticStar } from './components';
 import { Skeleton } from '@/components/ui/skeleton';
 
-/**
- * The product page
- * This page will fetch and dispay single product
- * @returns {JSX.Element} - JSX Element
- */
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState({});

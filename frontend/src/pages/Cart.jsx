@@ -1,17 +1,15 @@
-import React from 'react';
-import { NumericFormat } from 'react-number-format';
+// External imports
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import CartItem from './components/CartItem';
-import { useCart } from '@/context/CartContext';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-
-//Checkbox Form Components
+import { NumericFormat } from 'react-number-format';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { loadStripe } from '@stripe/stripe-js';
 
+// Internal imports
+import { useCart } from '@/context/CartContext';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
@@ -22,8 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-//stripe
-import { loadStripe } from '@stripe/stripe-js';
+import { CartItem } from './components';
 
 const FormSchema = z.object({
   items: z.array(
@@ -35,7 +32,12 @@ const FormSchema = z.object({
   ),
 });
 
-const Cart = () => {
+/**
+ * The cart page component
+ * this page shows the user all cart items
+ * @returns {JSX.Element} - The cart page component
+ */
+export default function Cart() {
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -285,6 +287,4 @@ const Cart = () => {
       </div>
     )
   );
-};
-
-export default Cart;
+}

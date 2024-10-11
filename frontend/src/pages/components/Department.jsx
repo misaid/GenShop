@@ -1,11 +1,18 @@
+// External imports
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-const Department = () => {
+
+/**
+ * Department component used in the shop page
+ * This component is a sidebar used to filter products by department
+ * @returns {JSX.Element} - Department
+ * */
+export default function Department() {
   const navigate = useNavigate();
   const handleClick = Department => {
-    // setSearchParams({ department: Department });
     navigate(`/shop?department=${Department}`);
   };
+
   return (
     <div className="max-h-[706px] w-[300px] bg-background border border-grey-200 shadow-sm rounded-r-xl">
       <div className=" w-full overflow-y-scroll overflow-x-hidden">
@@ -40,6 +47,4 @@ const Department = () => {
       </div>
     </div>
   );
-};
-
-export default Department;
+}

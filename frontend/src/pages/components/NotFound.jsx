@@ -1,8 +1,14 @@
+// External imports
 import { Link } from 'react-router-dom';
 import { Home } from 'lucide-react';
 
+// Internal imports
 import { Button } from '@/components/ui/button';
 
+/**
+ * The 404 page component
+ * @returns {JSX.Element} - The 404 page component
+ */
 export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[800px] px-4">

@@ -1,12 +1,14 @@
-import { Toaster } from '@/components/ui/sonner';
-import { toast } from 'sonner';
+// External imports
 import axios from 'axios';
 import { useState, useRef } from 'react';
-//zod
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-//form
+
+// Internal imports
+import { Toaster } from '@/components/ui/sonner';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -19,10 +21,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
-import Product from './components/Product';
+import { Product } from './components';
 
-const Generate = () => {
+/**
+ * Generate page component
+ * this page allows the user to generate a product using a prompt
+ * @returns {JSX.Element} - Generate page component
+ */
+export default function Generate() {
   const [product, setProduct] = useState([]);
   const [firstLoad, setFirstLoad] = useState(false);
   const [key, setKey] = useState(0);
@@ -137,5 +143,4 @@ const Generate = () => {
       </div>
     </div>
   );
-};
-export default Generate;
+}

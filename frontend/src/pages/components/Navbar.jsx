@@ -1,8 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+// External imports
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import {
+  Link,
+  useLocation,
+  useSearchParams,
+  useNavigate,
+} from 'react-router-dom';
+import { BiSearchAlt } from 'react-icons/bi';
+import { Search, ShoppingBag, Wand2, ShoppingCart, User } from 'lucide-react';
+
+// Internal imports
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, ShoppingBag, Wand2, ShoppingCart, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,16 +20,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import pearLogo from '../../assets/pearlogo.png';
-import Cart from '../../assets/shoppingcart.svg';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
-import { BiSearchAlt } from 'react-icons/bi';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/context/CartContext';
+import pearLogo from '../../assets/pearlogo.png';
+import Cart from '../../assets/shoppingcart.svg';
 
-const Navbar = () => {
+/**
+ * The navbar component
+ * @returns { JSX.Element } - The navbar component
+ */
+export default function Navbar() {
   const navigate = useNavigate();
   const { cartCount, setCartCount } = useCart();
   const [loading, setLoading] = useState(true);
@@ -250,6 +260,4 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

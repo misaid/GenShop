@@ -1,9 +1,12 @@
+// External imports
 import axios from 'axios';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
-// form imports
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useState } from 'react';
+
+// Internal imports
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -15,10 +18,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-// Tab imports
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useState } from 'react';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Username is required'),
@@ -26,6 +27,10 @@ const formSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
+/**
+ * The login form component that is used as a tab in the login/register page
+ * @returns {JSX.Element} - The login form component.
+ * */
 export default function LoginForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),

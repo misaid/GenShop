@@ -1,17 +1,21 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Pear from '../assets/pear.png';
-import { Button } from '@/components/ui/button';
+// External imports
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+
+// Internal imports
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const Hero = () => {
+/**
+ * The hero component
+ * This is the sites landing page
+ * @returns {JSX.Element} - The hero component
+ */
+export default function Hero() {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate('/shop');
   };
-  // const images = [Apple, Arasaka, Chalice, Eldenring, Basketball, GPU];
   const [imageLoading, setImageLoading] = useState(false);
   const images = [
     'https://moprojects.s3.us-east-2.amazonaws.com/Eprj/1913c2ea-e558-435b-8617-422d667097ef.png',
@@ -83,6 +87,4 @@ const Hero = () => {
       </div>
     </div>
   );
-};
-
-export default Hero;
+}

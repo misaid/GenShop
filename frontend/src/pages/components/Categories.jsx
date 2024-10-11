@@ -1,12 +1,20 @@
+// External imports
 import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
+// Interal imports
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-const Categories = () => {
+/**
+ * Categories component used in the shop page
+ * This component is a sidebar used to filter products by category
+ * @returns {JSX.Element} - Categories
+ */
+export default function Categories() {
   const [categories, setCategories] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -113,6 +121,4 @@ const Categories = () => {
   ) : (
     <div className="w-[300px]"></div>
   );
-};
-
-export default Categories;
+}

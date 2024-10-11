@@ -1,3 +1,4 @@
+// External imports
 import sharp from 'sharp';
 import express from 'express';
 import dotenv from 'dotenv';
@@ -12,15 +13,20 @@ import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import stripe from 'stripe';
 import mongoSanitize from 'express-mongo-sanitize';
-// models
-import User from './models/user.js';
-import Cart from './models/cart.js';
-import Comment from './models/comment.js';
-import Order from './models/order.js';
-import Product from './models/product.js';
-import { Category, Department } from './models/department.js';
+
+// Internal imports
+import {
+  User,
+  Cart,
+  Comment,
+  Order,
+  Product,
+  Category,
+  Department,
+} from './models/index.js';
 import verifyJWT from './middleware/verifyJWT.js';
-// env variables
+
+// Environment variables
 dotenv.config();
 const PORT = process.env.PORT || 5001;
 const mongoDBURL = process.env.mongoDBURL;
@@ -37,7 +43,7 @@ const s3 = new AWS.S3({
   region: process.env.AWS_REGION,
 });
 
-// var limiter = rateLimit({
+// const limiter = rateLimit({
 //   windowMs: 15 * 60 * 1000, // 15 minutes
 //   limit: 400, // max 100 requests per windowMs
 // });
@@ -54,6 +60,10 @@ app.get('/', (request, response) => {
   return response.status(234).send('MSAID');
 });
 
+/**
+ * Verify the user and return the user
+ * @return {json} user
+ */
 app.post('/verifyjwt', verifyJWT, (request, response) => {
   try {
     return response.status(200).json(request.user);
@@ -75,7 +85,6 @@ app.get('/user', verifyJWT, async (request, response) => {
   }
 });
 
-// TODO: make username case insensitive
 /**
  * Register a user
  * @param {string} username

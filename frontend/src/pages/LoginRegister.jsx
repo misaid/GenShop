@@ -1,9 +1,16 @@
+// External imports
 import React from 'react';
-import LoginForm from './components/LoginForm';
-import RegisterForm from './components/RegisterForm';
+
+//Internal imports
+import { LoginForm, RegisterForm } from './components';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const Login = () => {
+/**
+ * The login and register page
+ * This page contatins two tabs, one for login and one for registration
+ * @returns {JSX.Element} - The login page
+ */
+export default function Login() {
   return (
     <div>
       <div className="flex w-full h-[600px] md:h-[800px] justify-center items-cneter">
@@ -26,6 +33,4 @@ const Login = () => {
       </div>
     </div>
   );
-};
-
-export default Login;
+}

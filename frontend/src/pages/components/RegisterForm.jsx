@@ -1,7 +1,12 @@
+// External imports
 import axios from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+
+// Internal imports
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -13,8 +18,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 /**
@@ -39,7 +42,9 @@ const formSchema = z
   });
 
 /**
+ * The register form component.
  * Creates and returns the register form component.
+ * @returns {JSX.Element} - The register form component.
  * */
 export default function RegisterForm() {
   const form = useForm({
