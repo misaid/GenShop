@@ -131,7 +131,11 @@ export default function Generate() {
                 <FormItem>
                   <FormLabel>Prompt for product</FormLabel>
                   <FormControl>
-                    <Input placeholder="Solid Gold Apple" {...field} />
+                    <Input
+                      className="text-base"
+                      placeholder="Solid Gold Apple"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
