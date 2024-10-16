@@ -102,6 +102,7 @@ export default function RegisterForm() {
               <FormLabel>Username</FormLabel>
               <FormControl>
                 <Input
+                  className="text-base"
                   placeholder="Create a username"
                   {...field}
                   onChange={e => {
