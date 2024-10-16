@@ -129,6 +129,7 @@ export default function RegisterForm() {
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input
+                  className="text-base"
                   type="password"
                   placeholder="Create a password"
                   {...field}
@@ -146,6 +147,7 @@ export default function RegisterForm() {
               <FormLabel>Confirm password</FormLabel>
               <FormControl>
                 <Input
+                  className="text-base"
                   type="password"
                   placeholder="Confirm your password"
                   {...field}

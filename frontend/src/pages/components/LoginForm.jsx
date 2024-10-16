@@ -76,7 +76,11 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your username" {...field} />
+                <Input
+                  className="text-base"
+                  placeholder="Enter your username"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,6 +96,7 @@ export default function LoginForm() {
                 <Input
                   type="password"
                   placeholder="Enter your password"
+                  className="text-base"
                   {...field}
                   onChange={e => {
                     setPasswordIncorrect(false);

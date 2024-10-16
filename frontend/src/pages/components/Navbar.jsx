@@ -238,7 +238,7 @@ export default function Navbar() {
             <Input
               type="search"
               placeholder="Search..."
-              className="pl-9 w-full "
+              className="pl-9 w-full text-base"
               value={searchItem}
               onChange={e => setSearchItem(e.target.value)}
             />
