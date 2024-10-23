@@ -487,73 +487,93 @@ app.get('/product/:id', async (request, response) => {
 app.post('/cart', verifyJWT, async (request, response) => {
   try {
     const userID = request.user.userId;
+    const { productId, quantity: qty, flag } = request.body;
+    const quantity = parseInt(qty, 10);
 
-    // Fetch user and cart in parallel
-    const [user, cartWithProduct] = await Promise.all([
+    // Fetch user and product in parallel
+    const [user, product] = await Promise.all([
       User.findById(userID).select('cartid'),
-      Cart.findOne({ 'cartItem.productId': request.body.productId }),
+      Product.findById(productId).select('countInStock'),
     ]);
 
     if (!user) {
       return response.status(400).send('User not found');
     }
 
-    const cartID = user.cartid;
-    const { productId, quantity: qty, flag } = request.body;
-    const quantity = parseInt(qty, 10);
-
-    // Fetch product and cart in parallel
-    const [product, userCart] = await Promise.all([
-      Product.findById(productId).select('countInStock'),
-      Cart.findById(cartID),
-    ]);
-
     if (!product) {
       return response.status(400).send('Product not found');
     }
 
+    const cartID = user.cartid;
     const stock = product.countInStock;
-    const cartItem = userCart.cartItem.find(
-      item => item.productId.toString() === productId
-    );
+
+    let update;
+    let options = { new: true, runValidators: true };
 
     if (flag === 'add') {
-      if (cartItem) {
-        if (cartItem.quantity + quantity <= stock) {
-          cartItem.quantity += quantity;
-        } else {
-          return response.status(400).send('Not enough stock');
-        }
-      } else {
-        if (quantity <= stock) {
-          userCart.cartItem.push({ productId, quantity });
-        } else {
-          return response.status(400).send('Not enough stock');
-        }
-      }
+      update = {
+        $inc: {
+          'cartItem.$[elem].quantity': quantity,
+        },
+      };
+      options.arrayFilters = [{ 'elem.productId': productId }];
     } else if (flag === 'set') {
-      if (cartItem) {
-        cartItem.quantity = quantity;
-      } else {
-        return response.status(400).send('Item not in cart');
-      }
+      update = {
+        $set: {
+          'cartItem.$[elem].quantity': quantity,
+        },
+      };
+      options.arrayFilters = [{ 'elem.productId': productId }];
     } else if (flag === 'delete') {
-      if (cartItem) {
-        userCart.cartItem = userCart.cartItem.filter(
-          item => item.productId.toString() !== productId
-        );
-      } else {
-        return response.status(400).send('Item not in cart');
-      }
+      update = {
+        $pull: {
+          cartItem: { productId: productId },
+        },
+      };
     } else {
       return response.status(400).send('Invalid flag');
     }
 
-    await userCart.save();
+    let updatedCart = await Cart.findOneAndUpdate(
+      { _id: cartID, 'cartItem.productId': productId },
+      update,
+      options
+    );
+
+    if (!updatedCart && flag === 'add') {
+      // If the item doesn't exist in the cart, add it
+      updatedCart = await Cart.findByIdAndUpdate(
+        cartID,
+        {
+          $push: {
+            cartItem: { productId, quantity },
+          },
+        },
+        { new: true, runValidators: true }
+      );
+    } else if (!updatedCart) {
+      return response.status(400).send('Item not in cart');
+    }
+
+    // Check stock after update
+    const updatedItem = updatedCart.cartItem.find(
+      item => item.productId.toString() === productId
+    );
+
+    if (updatedItem && updatedItem.quantity > stock) {
+      // If the quantity exceeds stock, set it to the maximum available
+      updatedCart = await Cart.findOneAndUpdate(
+        { _id: cartID, 'cartItem.productId': productId },
+        { $set: { 'cartItem.$.quantity': stock } },
+        { new: true, runValidators: true }
+      );
+      return response.status(200).send('Cart updated to maximum available stock');
+    }
+
     return response.status(200).send('Cart has been changed');
   } catch (error) {
     console.log(error);
-    return response.status(500).send('Error in adding item to cart');
+    return response.status(500).send('Error in modifying cart');
   }
 });
 
@@ -1031,3 +1051,4 @@ mongoose
   .catch(error => {
     console.log(error);
   });
+
