@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { StaticStar } from './components';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCart } from '@/context/CartContext';
 
 /**
  * The product page
@@ -31,6 +32,8 @@ export default function ProductPage() {
   const [selectedValue, setSelectedValue] = useState('1'); // Default value is "1"
   const [stock, setStock] = useState('');
   const [imageLoading, setImageloading] = useState(false);
+  const { cartCount, setCartCount } = useCart();
+
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_API_URL,
   });
@@ -55,6 +58,7 @@ export default function ProductPage() {
           withCredentials: true,
         }
       );
+      setCartCount(cartCount + parseInt(selectedValue, 10));
       toast.success(selectedValue + ' ' + product.name + ' added to cart');
     } catch (error) {
       console.error(
