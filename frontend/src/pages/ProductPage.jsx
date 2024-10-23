@@ -58,7 +58,9 @@ export default function ProductPage() {
           withCredentials: true,
         }
       );
-      setCartCount(cartCount + parseInt(selectedValue, 10));
+      setCartCount(
+        prevCartCount => prevCartCount + parseInt(selectedValue, 10)
+      );
       toast.success(selectedValue + ' ' + product.name + ' added to cart');
     } catch (error) {
       console.error(

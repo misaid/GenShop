@@ -487,20 +487,37 @@ app.get('/product/:id', async (request, response) => {
 app.post('/cart', verifyJWT, async (request, response) => {
   try {
     const userID = request.user.userId;
-    const user = await User.findById(userID);
+
+    // Fetch user and cart in parallel
+    const [user, cartWithProduct] = await Promise.all([
+      User.findById(userID).select('cartid'),
+      Cart.findOne({ 'cartItem.productId': request.body.productId }),
+    ]);
+
+    if (!user) {
+      return response.status(400).send('User not found');
+    }
+
     const cartID = user.cartid;
+    const { productId, quantity: qty, flag } = request.body;
+    const quantity = parseInt(qty, 10);
 
-    let { productId, quantity, flag } = request.body;
-    quantity = parseInt(quantity, 10);
+    // Fetch product and cart in parallel
+    const [product, userCart] = await Promise.all([
+      Product.findById(productId).select('countInStock'),
+      Cart.findById(cartID),
+    ]);
 
-    const cart = await Cart.findById(cartID);
-    const product = await Product.findById(productId);
+    if (!product) {
+      return response.status(400).send('Product not found');
+    }
+
     const stock = product.countInStock;
+    const cartItem = userCart.cartItem.find(
+      item => item.productId.toString() === productId
+    );
 
     if (flag === 'add') {
-      const cartItem = cart.cartItem.find(
-        item => item.productId.toString() === productId
-      );
       if (cartItem) {
         if (cartItem.quantity + quantity <= stock) {
           cartItem.quantity += quantity;
@@ -509,40 +526,34 @@ app.post('/cart', verifyJWT, async (request, response) => {
         }
       } else {
         if (quantity <= stock) {
-          cart.cartItem.push({ productId, quantity });
+          userCart.cartItem.push({ productId, quantity });
         } else {
           return response.status(400).send('Not enough stock');
         }
       }
-    }
-    if (flag === 'set') {
-      const cartItem = cart.cartItem.find(
-        item => item.productId.toString() === productId
-      );
+    } else if (flag === 'set') {
       if (cartItem) {
         cartItem.quantity = quantity;
       } else {
         return response.status(400).send('Item not in cart');
       }
-    }
-    if (flag === 'delete') {
-      const cartItem = cart.cartItem.find(
-        item => item.productId.toString() === productId
-      );
+    } else if (flag === 'delete') {
       if (cartItem) {
-        cart.cartItem = cart.cartItem.filter(
+        userCart.cartItem = userCart.cartItem.filter(
           item => item.productId.toString() !== productId
         );
       } else {
         return response.status(400).send('Item not in cart');
       }
+    } else {
+      return response.status(400).send('Invalid flag');
     }
 
-    await cart.save();
-    return response.status(200).send('cart has been changed');
+    await userCart.save();
+    return response.status(200).send('Cart has been changed');
   } catch (error) {
     console.log(error);
-    return response.status(400).send('Error in adding item to cart');
+    return response.status(500).send('Error in adding item to cart');
   }
 });
 

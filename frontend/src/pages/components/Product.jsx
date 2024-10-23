@@ -43,7 +43,7 @@ export default function Product({ product }) {
           withCredentials: true,
         }
       );
-      setCartCount(cartCount + 1);
+      setCartCount(prevCartCount => prevCartCount + 1);
       toast.success('1 ' + name + ' added to cart');
     } catch (error) {
       toast.error('Error adding to cart');
