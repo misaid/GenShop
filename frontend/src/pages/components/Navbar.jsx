@@ -245,7 +245,7 @@ export default function Navbar() {
           </form>
         </div>
         <div className="py-2 overflow-x-auto hidden md:block">
-          <ul className="flex space-x-4 justify-center whitespace-nowrap">
+          <ul className="flex space-x-4 whitespace-nowrap">
             {departments.map((department, index) => (
               <li key={index}>
                 <Link to={`/shop?department=${department}`}>
