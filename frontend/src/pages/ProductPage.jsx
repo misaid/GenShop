@@ -63,6 +63,10 @@ export default function ProductPage() {
       );
       toast.success(selectedValue + ' ' + product.name + ' added to cart');
     } catch (error) {
+      if (error.response.status === 401 || error.response.status === 403) {
+        toast.error('Please login to add to cart');
+        return;
+      }
       console.error(
         'Error adding to cart:',
         error.response ? error.response.data : error.message

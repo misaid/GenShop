@@ -46,9 +46,8 @@ export default function Product({ product }) {
       setCartCount(prevCartCount => prevCartCount + 1);
       toast.success('1 ' + name + ' added to cart');
     } catch (error) {
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        navigate('/login');
-        console.log('Unauthorized');
+      if (error.response.status === 401 || error.response.status === 403) {
+        toast.error('Please login to add to cart');
         return;
       }
       toast.error('Error adding to cart');

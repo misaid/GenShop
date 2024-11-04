@@ -122,8 +122,8 @@ export default function Navbar() {
     <nav className="w-full">
       <div className="mx-auto w-full border-b">
         <div className="flex items-center justify-between py-4 border-b px-4">
-          <Link to="/" className="text-2xl font-bold italic">
-            MSAID
+          <Link to="/" className="text-2xl font-bold italic tracking-tight">
+            GenShop
           </Link>
           <div className="flex items-center space-x-4">
             <Link to="/shop" className="flex items-center space-x-1">
