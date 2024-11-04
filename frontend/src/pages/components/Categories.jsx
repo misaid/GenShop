@@ -75,7 +75,7 @@ export default function Categories() {
 
   return !loading ? (
     <div className="h-[800px] w-[300px]">
-      <div className="w-full overflow-y-scroll overflow-x-hidden border border-grey-200 shadow-sm rounded-r-xl">
+      <div className="w-full overflow-y-auto overflow-x-hidden border border-grey-200 shadow-sm rounded-r-xl">
         <div className="w-full h-full border-b border-grey-200 p-4">
           <h2 className="font-medium text-2xl ">{departmentParam}</h2>
           <h3 className="text-muted-foreground text-sm">

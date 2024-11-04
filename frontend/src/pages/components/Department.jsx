@@ -15,7 +15,7 @@ export default function Department() {
 
   return (
     <div className="max-h-[706px] w-[300px] bg-background border border-grey-200 shadow-sm rounded-r-xl">
-      <div className=" w-full overflow-y-scroll overflow-x-hidden">
+      <div className=" w-full overflow-y-auto overflow-x-hidden">
         <div className="flex flex-col w-full">
           <h2 className="text-2xl font-bold p-4 border-b border-muted">
             Departments
