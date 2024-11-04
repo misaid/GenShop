@@ -113,7 +113,7 @@ export default function Shop() {
   }, [page, departmentParam, categoryParam, sortbyParam, itemQueryParam]);
   return !loading ? (
     <div>
-      <div className="w-full sidebargone:h-7 h-12 flex border-b border-gray-300 mb-5 items-center">
+      <div className="w-full sidebargone:h-7 h-12 flex border-b mb-5 items-center">
         <div className="ml-3 w-full sticky sm:static flex">
           <h3 className="text-sm font-light text-muted-foreground flex">
             <span className="hidden sm:block mr-1">

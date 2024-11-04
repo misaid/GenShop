@@ -17,7 +17,7 @@ export default function Department() {
     <div className="max-h-[706px] w-[300px] bg-background border border-grey-200 shadow-sm rounded-r-xl">
       <div className=" w-full overflow-y-auto overflow-x-hidden">
         <div className="flex flex-col w-full">
-          <h2 className="text-2xl font-bold p-4 border-b border-muted">
+          <h2 className="text-2xl font-bold p-4 border-b border-grey-200">
             Departments
           </h2>
           {[
@@ -34,7 +34,7 @@ export default function Department() {
           ].map(department => (
             <div
               key={department}
-              className="flex justify-between items-center p-4 border-b border-muted hover:bg-muted cursor-pointer"
+              className="flex justify-between items-center p-4 border-b border-grey-200 hover:bg-muted cursor-pointer"
               onClick={() => handleClick(department)}
             >
               <h3 className="text-lg font-medium">{department}</h3>
