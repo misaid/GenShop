@@ -207,6 +207,16 @@ export default function Navbar() {
                       </Link>
                     </div>
 
+                    {user === 'admin' ? (
+                      <Link to="/moderate">
+                        <DropdownMenuItem>
+                          <div className="hover:cursor-pointer w-full h-full">
+                            Moderate
+                          </div>
+                        </DropdownMenuItem>
+                      </Link>
+                    ) : null}
+
                     <DropdownMenuItem>
                       <div
                         className="hover:cursor-pointer w-full h-full"

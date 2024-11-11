@@ -1,11 +1,10 @@
-// External imports
-import React from 'react';
+// External Imports
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search, RefreshCw } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
-// Internal imports
+// Internal Imports
+import { Product } from './components';
 import {
   Pagination,
   PaginationContent,
@@ -15,51 +14,48 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { CheckIcon, Search, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Star } from './components';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 
 /**
- * The rating page
- * On this page users can leave ratings for products that they have purchased
- * @returns {JSX.Element} - The rating page JSX Element
+ * The Moderate page component
+ * This page handles the moderation of all new products
+ * Only the admin user can moderate the products
+ * @returns {JSX.Element} - The Moderate page component
  */
-export default function RatingPage() {
-  const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_APP_API_URL,
-  });
-  const navigate = useNavigate();
+export default function Moderate() {
   const [products, setProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [yourRating, setYourRating] = useState(0);
-  const [userId, setUserId] = useState('');
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [imageLoading, setImageloading] = useState(false);
-
-  const page = parseInt(searchParams.get('page')) || 1;
-  console.log(page);
   const [validPage, setValidPage] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get('page')) || 1;
+
+  const axiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_APP_API_URL,
+  });
 
   /**
-   * Fetch products from the server
-   * uses credentials to ensure the user is logged in and has purchased the item
+   * Handles the page change
+   * @param {number} page - The page number
    */
-  const fetchProducts = async () => {
+  function handlePageChange(page) {
+    window.scrollTo(0, 0);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', page);
+    setSearchParams(newParams);
+  }
+
+  /**
+   * Fetches the products
+   */
+  async function fetchProducts() {
     try {
-      const response = await axiosInstance.post(
-        '/getrating',
+      const response = await axiosInstance.get(
+        `/moderate`,
         {
           page: page,
         },
@@ -67,101 +63,96 @@ export default function RatingPage() {
           withCredentials: true,
         }
       );
+
       setProducts(response.data.products);
-      setTotalProducts(response.data.totalProducts);
+      console.log('Products:', response.data.products);
       setTotalPages(response.data.totalPages);
-      setUserId(response.data.userId);
+      setTotalProducts(response.data.totalProducts);
       setValidPage(true);
       setLoading(false);
     } catch (error) {
       setValidPage(false);
-      console.log(error);
+      setLoading(false);
+      console.log('Error fetching products:', error);
     }
-  };
-
-  function handleClick(id) {
-    navigate(`/product/${id}`);
   }
-  const handlePageChange = page => {
-    window.scrollTo(0, 0);
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set('page', page);
-    setSearchParams(newParams);
-  };
 
-  const ipr = 9;
-  const start = ipr * (page - 1) + 1;
-  const end = Math.min(totalProducts, ipr * page);
+  /**
+   * Deletes a product
+   * @param {string} id - The product id
+   */
+  async function deleteProduct(id) {
+    try {
+      const response = await axiosInstance.post(
+        `/deleteProduct/${id}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      console.log('Product deleted:', response);
+      fetchProducts();
+      toast.success('Product deleted');
+    } catch (error) {
+      toast.error('Must be admin to delete product');
+    }
+  }
+
+  /**
+   * Approves a product
+   * @param {string} id - The product id
+   */
+  async function approveProduct(id) {
+    try {
+      console.log('Approving product:', id);
+      const response = await axiosInstance.post(
+        `/moderate/${id}`,
+        {
+          flag: 'approve',
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log('Product approved:', response);
+      fetchProducts();
+      toast.success('Product approved');
+    } catch (error) {
+      toast.error('Must be admin to approve product');
+    }
+  }
+
   useEffect(() => {
     fetchProducts();
   }, [page]);
+
   return validPage ? (
     !loading ? (
-      <div className="w-full h-full">
-        <div className="w-full flex border-b border-gray-300 mb-6 py-2 px-4">
-          <h3 className="text-sm text-gray-700 font-medium">
-            {start}-{end} of {totalProducts} products
-          </h3>
+      <div className="w-full h-full space-y-8 mt-10">
+        <Toaster />
+        <div className="w-full flex flex-col items-center h-full justify-center space-y-4">
+          {products.map(product => (
+            <div
+              key={product._id}
+              className="w-full max-w-[350px] flex flex-col items-center justify-center space-y-1"
+            >
+              <Product product={product} />
+              <div className="flex flex-row justify-between w-[188px] mobile:w-[250px] plg:w-[275px] border border-b-gray rounded-xl overflow-hidden bg-white shadow-md">
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteProduct(product._id)}
+                >
+                  <Trash2 />
+                </Button>
+                <Button variant="" onClick={() => approveProduct(product._id)}>
+                  <CheckIcon />
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-900">Rating Page</h2>
-        </div>
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto p-6">
-            {products.map(product => {
-              const userRating =
-                (product.rating && product.rating[userId.toString()]) || 0;
-              return (
-                <Card key={product._id}>
-                  <CardHeader>
-                    <CardTitle
-                      className="hover:text-gray-600 hover:cursor-pointer truncate h-10"
-                      onClick={() => handleClick(product._id)}
-                    >
-                      {product.name}
-                    </CardTitle>
 
-                    <CardDescription className="h-1">
-                      {userRating ? (
-                        <h2>Change your rating</h2>
-                      ) : (
-                        <h2>Add a rating</h2>
-                      )}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <Separator className="my-4" />
-                  <CardContent>
-                    <div className="flex flex-col w-full items-center justify-center">
-                      <div className="mb-4 w-32 h-32 overflow-hidden flex-col relative ">
-                        {!imageLoading && (
-                          <div className="w-full h-full rounded-xl">
-                            <Skeleton className="w-full h-full rounded-xl" />
-                            <h3 className="font-light mt-1 text-sm">&nbsp;</h3>
-                          </div>
-                        )}
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          onLoad={() => setImageloading(true)}
-                          style={imageLoading ? {} : { display: 'none' }} // Corrected 'stye' to 'style'
-                          className="w-full h-full rounded-xl object-cover"
-                        />
-                      </div>
-                      <Star urate={userRating} productId={product._id} />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="font-light text-sm text-muted-foreground">
-                      Average Rating: {product.averageRating}
-                    </p>
-                  </CardFooter>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-        <div className="my-8 ">
+        <div className="my-8">
           <Pagination>
             <PaginationContent>
               {page > 1 && (

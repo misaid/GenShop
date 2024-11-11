@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Product } from './components';
-
+import Confetti from '@/components/ui/confetti';
 /**
  * Generate page component
  * this page allows the user to generate a product using a prompt
@@ -35,6 +35,7 @@ export default function Generate() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const progressRef = useRef(0);
+  const confettiRef = useRef(null);
   const FormSchema = z.object({
     prompt: z.string().min(2, {
       message: 'Prompt must be at least 2 characters.',
@@ -113,6 +114,15 @@ export default function Generate() {
           className={`mb-8 ${progressRef.current > 65 && progressRef.current < 100 ? 'animate-wiggle animate-infinite animate-duration-1000 animate-ease-linear' : ''}`}
         >
           <Product product={product} key={key} />
+          {progressRef.current === 100 && (
+            <Confetti
+              ref={confettiRef}
+              className="absolute left-0 top-0 z-0 size-full"
+              onMouseEnter={() => {
+                confettiRef.current?.fire({});
+              }}
+            />
+          )}
         </div>
         {!firstLoad ? (
           <></>

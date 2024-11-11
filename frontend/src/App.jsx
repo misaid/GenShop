@@ -11,6 +11,7 @@ import {
   Orders,
   MyAccount,
   RatingPage,
+  Moderate,
 } from './pages';
 import { CartProvider } from './context/CartContext';
 import PrivateRoutes from './routes/PrivateRoutes.jsx';
@@ -44,6 +45,7 @@ const RoutesWrapper = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/generate" element={<Generate />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/moderate" element={<Moderate />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

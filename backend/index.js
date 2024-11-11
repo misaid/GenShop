@@ -269,6 +269,7 @@ app.post('/generate', async (request, response) => {
       description: description,
       department: department,
       categories: categories,
+      flag: 'unmoderated',
     };
     const product = await Product.create(new_product);
 
@@ -317,7 +318,6 @@ app.post('/generate', async (request, response) => {
  */
 app.post('/products', async (request, response) => {
   try {
-    // console.log('one request');
     const pageid = request.body.page;
     const category = request.body.category;
     const department = request.body.department;
@@ -325,8 +325,11 @@ app.post('/products', async (request, response) => {
     const item = request.body.item;
 
     const ipr = 12;
-    // console.log('change');
-    // console.log('item: ', item);
+
+    let baseCondition = {
+      $or: [{ flag: { $exists: false } }, { flag: 'moderated' }],
+    };
+
     let sortCondition = {};
     switch (sortType) {
       case 'priceDesc':
@@ -349,6 +352,7 @@ app.post('/products', async (request, response) => {
     if (item) {
       try {
         const totalProducts = await Product.countDocuments({
+          ...baseCondition,
           name: { $regex: item, $options: 'i' },
         });
 
@@ -358,9 +362,10 @@ app.post('/products', async (request, response) => {
         }
 
         const products = await Product.find({
+          ...baseCondition,
           name: { $regex: item, $options: 'i' },
         })
-          .sort(sortCondition) // sort by newest
+          .sort(sortCondition)
           .skip((pageid - 1) * ipr)
           .limit(ipr);
 
@@ -379,35 +384,34 @@ app.post('/products', async (request, response) => {
     }
 
     if (category.length == 0 && department.length == 0) {
-      const totalProducts = await Product.countDocuments();
-      // Checking if the page is valid
+      const totalProducts = await Product.countDocuments(baseCondition);
       if ((pageid - 1) * ipr > Math.ceil(totalProducts)) {
         console.error('Invalid page number');
         return response.status(400).send('Invalid page number');
       }
-      const products = await Product.find()
-        .sort(sortCondition) // sort by newest
+      const products = await Product.find(baseCondition)
+        .sort(sortCondition)
         .skip((pageid - 1) * ipr)
         .limit(ipr);
       const totalPages = Math.ceil(totalProducts / ipr);
       return response.status(200).json({ products, totalPages, totalProducts });
     } else {
-      // console.log('Department:', department);
-      // console.log('Category:', category);
       const departmentDoc = await Department.findOne({
         departmentName: department,
       });
       const productsInDepartment = await Product.find({
+        ...baseCondition,
         _id: { $in: departmentDoc.products },
       });
-      // Department and no categories
+
       if (category.length < 1) {
         const totalProducts = productsInDepartment.length;
 
         const products = await Product.find({
+          ...baseCondition,
           _id: { $in: departmentDoc.products },
         })
-          .sort(sortCondition) // sort by newest
+          .sort(sortCondition)
           .skip((pageid - 1) * ipr)
           .limit(ipr);
 
@@ -420,16 +424,13 @@ app.post('/products', async (request, response) => {
           .status(200)
           .json({ products, totalPages, totalProducts });
       } else {
-        // Obtain all matching cateogries from department
         const categoryDocs = await Category.find({
           _id: { $in: departmentDoc.categories },
           categoryName: { $in: category },
         });
 
-        // Obtain all product ids
         const allProductIds = categoryDocs.map(category => category.products);
 
-        // Find the intersection of all product IDs arrays
         const commonProductIds = allProductIds.reduce((a, b) =>
           a.filter(c => b.includes(c))
         );
@@ -440,11 +441,11 @@ app.post('/products', async (request, response) => {
           return response.status(400).send('Invalid page number');
         }
 
-        // Find all products that are in the categories from the department
         const productsInCategories = await Product.find({
+          ...baseCondition,
           _id: { $in: commonProductIds },
         })
-          .sort(sortCondition) // sort by newest
+          .sort(sortCondition)
           .skip((pageid - 1) * ipr)
           .limit(ipr);
 
@@ -567,7 +568,9 @@ app.post('/cart', verifyJWT, async (request, response) => {
         { $set: { 'cartItem.$.quantity': stock } },
         { new: true, runValidators: true }
       );
-      return response.status(200).send('Cart updated to maximum available stock');
+      return response
+        .status(200)
+        .send('Cart updated to maximum available stock');
     }
 
     return response.status(200).send('Cart has been changed');
@@ -1026,6 +1029,86 @@ app.post('/delete_user', verifyJWT, async (request, response) => {
   }
 });
 
+/**
+ * Get all products that are unmoderated
+ * @param {int} page - The page number for pagination
+ * @return {json} products - The products retrieved
+ * @return {string} Error in fetching products
+ */
+app.get('/moderate', async (request, response) => {
+  try {
+    const pageid = request.body.page;
+    const ipr = 10;
+    const products = await Product.find({ flag: 'unmoderated' })
+      .sort({ createdAt: -1 })
+      .skip((pageid - 1) * ipr)
+      .limit(ipr);
+    const totalProducts = await Product.countDocuments({ flag: 'unmoderated' });
+    const totalPages = Math.ceil(totalProducts / ipr);
+    return response.status(200).json({ products, totalPages, totalProducts });
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in fetching products');
+  }
+});
+
+/**
+ * Moderate a product
+ * @param {string} id
+ * @return {string} Product moderated
+ * @return {string} Unauthorized
+ * @return {string} Error in moderating product
+ */
+app.post('/moderate/:id', verifyJWT, async (request, response) => {
+  try {
+    if (request.user.userId !== '66bfb22938dc7c78dbe5445d') {
+      return response.status(401).send('Unauthorized');
+    }
+    const productId = request.params.id;
+    await Product.findByIdAndUpdate(productId, { flag: 'moderated' });
+    console.log('Product moderated');
+    return response.status(200).send('Product moderated');
+  } catch (error) {
+    return response.status(400).send('Error in moderating product');
+  }
+});
+
+/**
+ * Delete a product
+ * @param {string} id
+ * @return {string} Product deleted
+ * @return {string} Unauthorized
+ * @return {string} Error in deleting product
+ */
+app.post('/deleteProduct/:id', verifyJWT, async (request, response) => {
+  try {
+    console.log(request.user.userId);
+    if (request.user.userId !== '66bfb22938dc7c78dbe5445d') {
+      return response.status(401).send('Unauthorized');
+    }
+    const productId = request.params.id;
+
+    await Category.updateMany(
+      { products: productId },
+      { $pull: { products: productId } }
+    );
+
+    await Department.updateMany(
+      { products: productId },
+      { $pull: { products: productId } }
+    );
+
+    await Product.findByIdAndDelete(productId);
+
+    console.log('Product deleted', productId);
+
+    return response.status(200).send('Product deleted');
+  } catch (error) {
+    console.log(error);
+    return response.status(400).send('Error in deleting product');
+  }
+});
+
 mongoose
   .connect(mongoDBURL)
   .then(() => {
@@ -1051,4 +1134,3 @@ mongoose
   .catch(error => {
     console.log(error);
   });
-

@@ -7,3 +7,4 @@ export { default as Orders } from './Orders.jsx';
 export { default as ProductPage } from './ProductPage.jsx';
 export { default as RatingPage } from './RatingPage.jsx';
 export { default as Shop } from './Shop.jsx';
+export { default as Moderate } from './Moderate.jsx';
