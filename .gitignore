@@ -4,6 +4,6 @@
 /backend/package-lock.json
 /frontend/package-lock.json
 /frontend/node_modules
-.vscode
 ecosytem.config.js
+.vscode
 .prettierrc.json
