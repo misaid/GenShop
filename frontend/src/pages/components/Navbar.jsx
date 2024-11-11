@@ -7,7 +7,6 @@ import {
   useSearchParams,
   useNavigate,
 } from 'react-router-dom';
-import { BiSearchAlt } from 'react-icons/bi';
 import { Search, ShoppingBag, Wand2, ShoppingCart, User } from 'lucide-react';
 
 // Internal imports
@@ -20,10 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/context/CartContext';
-import pearLogo from '../../assets/pearlogo.png';
-import Cart from '../../assets/shoppingcart.svg';
 
 /**
  * The navbar component
@@ -126,14 +122,28 @@ export default function Navbar() {
             GenShop
           </Link>
           <div className="flex items-center space-x-4">
-            <Link to="/shop" className="flex items-center space-x-1">
-              <ShoppingBag className="w-5 h-5" />
-              <span className="hidden sm:inline">Shop</span>
+            <Link to="/shop" className="flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative w-full space-x-1 p-2.5"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                <span className="hidden sm:inline text-base">Shop</span>
+              </Button>
             </Link>
-            <Link to="/generate" className="flex items-center space-x-1">
-              <Wand2 className="w-5 h-5" />
-              <span className="hidden sm:inline">Generate</span>
+
+            <Link to="/generate" className="flex items-center ">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative w-full space-x-1 p-2.5"
+              >
+                <Wand2 className="w-5 h-5" />
+                <span className="hidden sm:inline text-base">Generate</span>
+              </Button>
             </Link>
+
             <form
               onSubmit={event => {
                 event.preventDefault();
