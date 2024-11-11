@@ -23,6 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Product } from './components';
 import Confetti from '@/components/ui/confetti';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 /**
  * Generate page component
  * this page allows the user to generate a product using a prompt
@@ -109,16 +110,16 @@ export default function Generate() {
     <div>
       <Toaster richColors />
 
-      <div className="flex flex-col justify-center mb-24 items-center mt-12">
+      <div className="flex flex-col justify-center space-y-4 items-center mt-12">
         <div
-          className={`mb-8 ${progressRef.current > 65 && progressRef.current < 100 ? 'animate-wiggle animate-infinite animate-duration-1000 animate-ease-linear' : ''}`}
+          className={`${progressRef.current > 65 && progressRef.current < 100 ? 'animate-wiggle animate-infinite animate-duration-1000 animate-ease-linear' : ''}`}
         >
           <Product product={product} key={key} />
           {progressRef.current === 100 && (
             <Confetti
               ref={confettiRef}
-              className="absolute left-0 top-0 z-0 size-full"
-              onMouseEnter={() => {
+              className="absolute left-0 top-0 z-[-50] size-full"
+              onRender={() => {
                 confettiRef.current?.fire({});
               }}
             />
@@ -131,6 +132,16 @@ export default function Generate() {
             value={progress}
             className="w-64 animate-in fade-in zoom-in mb-4"
           />
+        )}
+
+        {progressRef.current === 100 && (
+          <Alert className="flex flex-row justify-between w-[188px] mobile:w-[250px] plg:w-[275px] animate-fade animate-once animate-ease-linear">
+            <AlertDescription>
+              🎉 Your product has been successfully generated! Once reviewed by
+              a moderator, it will be live on the website and visible to other
+              users.
+            </AlertDescription>
+          </Alert>
         )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
