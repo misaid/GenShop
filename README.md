@@ -3,7 +3,7 @@
 GenShop is an interactive eCommerce platform where users can create unique products using generative AI. It combines cutting-edge technology to provide secure access, streamlined payments, and moderation for AI-generated products.
 
 ## Features
-### Seemless Shopping Experience:
+### Seamless Shopping Experience:
 * Users are able to search, filter, cart, and checkout products.
 
 ### AI Product Creation:
