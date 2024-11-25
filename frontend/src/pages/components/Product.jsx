@@ -1,15 +1,17 @@
 // External imports
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'sonner';
+import { ShoppingCart } from 'lucide-react';
 
 // Internal imports
 import { Toaster } from '@/components/ui/sonner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/context/CartContext';
 import { StaticStar } from '@/pages/components';
+import { Button } from '@/components/ui/button';
 
 /**
  * Product component used in the procuctpage componoenet
@@ -129,12 +131,15 @@ export default function Product({ product }) {
             <Skeleton className="w-full mobile:h-8 h-6  rounded-xl" />
           </div>
         ) : (
-          <div
-            className="flex justify-center items-center border border-black rounded-xl w-full my-1 mobile:my-2 h-6 mobile:h-full hover:cursor-pointer select-none"
-            onClick={() => addToCart()}
-          >
-            <h2 className="text-2xl mx-1">+</h2>
-            <h3 className="text-sm">Cart</h3>
+          <div className="w-full h-full flex items-center">
+            <Button
+              variant="outline"
+              className="flex justify-center items-center w-full rounded-2xl mobile:my-2 h-7 mobile:h-10 hover:shadow-lg transition-all duration-200 select-none"
+              onClick={() => addToCart()}
+            >
+              <ShoppingCart className="w-4 h-4 mr-2 text-gray-700 mobile:w-5 moblie:h-5 " />
+              <span className="text-sm font-medium">Add to Cart</span>
+            </Button>
           </div>
         )}
       </div>
