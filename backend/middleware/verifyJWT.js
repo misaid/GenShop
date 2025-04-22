@@ -21,7 +21,7 @@ const verifyJWT = (request, response, next) => {
         .send('A token is required for authentication');
     }
     try {
-      const decoded = jsonwebtoken.verify(jwt, process.env.secretKey);
+      const decoded = jsonwebtoken.verify(jwt, process.env.SECRET_KEY);
       request.user = decoded;
     } catch (error) {
       return response.status(401).send('Invalid Token');

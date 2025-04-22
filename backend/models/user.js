@@ -27,6 +27,10 @@ const userSchema = mongoose.Schema(
         ref: 'Order',
       },
     ],
+    staff: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

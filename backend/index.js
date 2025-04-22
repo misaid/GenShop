@@ -29,8 +29,8 @@ import verifyJWT from './middleware/verifyJWT.js';
 // Environment variables
 dotenv.config();
 const PORT = process.env.PORT || 5001;
-const mongoDBURL = process.env.mongoDBURL;
-const secretKey = process.env.secretKey;
+const MONGO_URI = process.env.MONGO_URI;
+const SECRET_KEY = process.env.SECRET_KEY;
 const DOMAIN = process.env.domain || 'http://localhost:5001';
 const SHOP_URL = process.env.SHOP_URL || 'http://localhost:5173';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -50,7 +50,17 @@ const s3 = new AWS.S3({
 const stripeapi = new stripe(stripekey);
 const app = express();
 
-app.use(cors({ origin: SHOP_URL, credentials: true }));
+app.use(
+  cors({
+    origin: [
+      SHOP_URL,
+      'http://127.0.0.1:5173',
+      'http://localhost:3000',
+      'http://frontend:3000',
+    ],
+    credentials: true,
+  })
+);
 app.use(mongoSanitize());
 app.use(cookieParser());
 // app.use(limiter);
@@ -109,7 +119,7 @@ app.post('/register', async (request, response) => {
     };
     const user = await User.create(new_user);
     //console.log(user);
-    const token = jwt.sign({ userId: user._id }, secretKey);
+    const token = jwt.sign({ userId: user._id }, SECRET_KEY);
     response.cookie('jwt', token, {
       httpOnly: true,
       secure: true,
@@ -144,7 +154,7 @@ app.post('/login', async (request, response) => {
     if (!validPassword) {
       return response.status(400).send('Invalid username or password');
     }
-    const token = jwt.sign({ userId: user._id }, secretKey);
+    const token = jwt.sign({ userId: user._id }, SECRET_KEY);
     response.cookie('jwt', token, {
       httpOnly: true,
       secure: true,
@@ -1061,7 +1071,8 @@ app.get('/moderate', async (request, response) => {
  */
 app.post('/moderate/:id', verifyJWT, async (request, response) => {
   try {
-    if (request.user.userId !== '66bfb22938dc7c78dbe5445d') {
+    const user = await User.findById(request.user.userId);
+    if (!user.staff) {
       return response.status(401).send('Unauthorized');
     }
     const productId = request.params.id;
@@ -1082,8 +1093,8 @@ app.post('/moderate/:id', verifyJWT, async (request, response) => {
  */
 app.post('/deleteProduct/:id', verifyJWT, async (request, response) => {
   try {
-    console.log(request.user.userId);
-    if (request.user.userId !== '66bfb22938dc7c78dbe5445d') {
+    const user = await User.findById(request.user.userId);
+    if (!user.staff) {
       return response.status(401).send('Unauthorized');
     }
     const productId = request.params.id;
@@ -1110,27 +1121,62 @@ app.post('/deleteProduct/:id', verifyJWT, async (request, response) => {
 });
 
 mongoose
-  .connect(mongoDBURL)
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000, // 5 second timeout
+    retryWrites: true,
+  })
   .then(() => {
     console.clear();
-    let date = new Date();
-    let hours = date.getHours() % 12;
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
+
+    const formatTime = num => num.toString().padStart(2, '0');
+    const date = new Date();
+    const hours = formatTime(date.getHours() % 12 || 12);
+    const minutes = formatTime(date.getMinutes());
+    const seconds = formatTime(date.getSeconds());
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+
     console.log(
-      '\n*****************************************\n' +
-        'Time is ' +
-        hours +
-        ':' +
-        minutes +
-        ':' +
-        seconds +
-        '\nApp is connected to database'
+      '\n' +
+        '*'.repeat(45) +
+        '\n' +
+        `⏰ Time: ${hours}:${minutes}:${seconds} ${ampm}\n` +
+        `🔗 Database: Connected Successfully\n` +
+        `📍 URI: ${MONGO_URI.replace(/:[^:]*@/, ':****@')}\n` +
+        `🌐 Host: ${mongoose.connection.host}\n` +
+        `📦 Database: ${mongoose.connection.name}\n` +
+        '*'.repeat(45) +
+        '\n'
     );
+
     app.listen(PORT, () => {
-      console.log(`App is listening to port: ${PORT}`);
+      console.log(`🚀 Server running on port: ${PORT}`);
     });
   })
   .catch(error => {
-    console.log(error);
+    // Comprehensive error logging
+    console.error('❌ Database Connection Failed');
+    console.error('Error Details:');
+    console.error('Name:', error.name);
+    console.error('Message:', error.message);
+    console.error('URI:', MONGO_URI);
+
+    if (error.name === 'MongoNetworkError') {
+      console.error('Network error. Check connection string and network.');
+    }
+
+    process.exit(1);
   });
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('🚨 Lost MongoDB connection');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('🔁 Reconnected to MongoDB');
+});
+
+mongoose.connection.on('error', err => {
+  console.error('MongoDB connection error:', err);
+});
