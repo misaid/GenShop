@@ -37,6 +37,7 @@ services:
       - MONGO_INITDB_DATABASE=eco
     networks:
       - app-network
+    restart: unless-stopped
 
 networks:
   app-network:
