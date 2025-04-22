@@ -49,7 +49,6 @@ STRIPE_SECRET_KEY=
 ### 2. Build and Run the Docker Containers
 
 ```
-
 docker compose build
 docker compose up
 ```
