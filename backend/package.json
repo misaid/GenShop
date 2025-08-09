@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test vitest run",
+    "test:cov": "cross-env NODE_ENV=test vitest run --coverage",
     "test:watch": "cross-env NODE_ENV=test vitest",
     "start": "node index.js",
     "dev": "nodemon index.js"
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@vitest/ui": "^2.0.5",
+    "@vitest/coverage-v8": "^2.1.9",
     "cross-env": "^7.0.3",
     "mongodb-memory-server": "^9.0.0",
     "supertest": "^7.0.0",

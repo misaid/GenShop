@@ -31,7 +31,8 @@ dotenv.config();
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
 const SECRET_KEY = process.env.SECRET_KEY; // avoid using this in handlers during tests
-const DOMAIN = process.env.DOMAIN || process.env.domain || 'http://localhost:5001';
+const DOMAIN =
+  process.env.DOMAIN || process.env.domain || 'http://localhost:5001';
 const SHOP_URL = process.env.SHOP_URL || 'http://localhost:5173';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
@@ -1014,16 +1015,28 @@ app.post('/delete_user', verifyJWT, async (request, response) => {
     );
     const products = await Product.find({ _id: { $in: productids } });
 
-    // for all products remove rating and recalculate averageRating
-    products.forEach(async product => {
-      product.rating.delete(user._id.toString());
-      let sum = 0;
-      for (let rating of product.rating.values()) {
-        sum += rating;
+    // for all products remove rating and recalculate averageRating safely
+    for (const product of products) {
+      try {
+        if (product.rating) {
+          product.rating.delete(user._id.toString());
+          let sum = 0;
+          for (const rating of product.rating.values()) {
+            sum += rating;
+          }
+          const ratingCount = product.rating.size || 0;
+          product.averageRating = ratingCount > 0 ? sum / ratingCount : 0;
+        } else {
+          product.averageRating = 0;
+        }
+        await product.save();
+      } catch (err) {
+        console.log(
+          'Error updating product rating during account deletion:',
+          err
+        );
       }
-      product.averageRating = sum / product.rating.size;
-      await product.save();
-    });
+    }
 
     // Delete Orders
     await Order.deleteMany({ userid: user._id });
