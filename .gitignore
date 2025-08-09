@@ -7,3 +7,7 @@
 ecosytem.config.js
 .vscode
 .prettierrc.json
+
+# Test coverage
+/backend/coverage
+/frontend/coverage
