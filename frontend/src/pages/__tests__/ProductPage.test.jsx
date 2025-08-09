@@ -42,7 +42,9 @@ describe('ProductPage', () => {
 
     renderPage(product);
 
-    expect(await screen.findByText('Test Product')).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText('Test Product')).toBeInTheDocument()
+    );
     const button = screen.getByRole('button', { name: 'Cart' });
     fireEvent.click(button);
     await waitFor(() => {
