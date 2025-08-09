@@ -1,8 +1,7 @@
 /assets
 .env
 /backend/node_modules
-/backend/package-lock.json
-/frontend/package-lock.json
+#! Do not ignore lockfiles; they are needed for deterministic installs and CI caching
 /frontend/node_modules
 ecosytem.config.js
 .vscode

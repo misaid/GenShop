@@ -12,9 +12,7 @@ dist/
 # Ignore logs
 logs/
 
-# Ignore dependency lock files
-package-lock.json
-yarn.lock
+# Keep lockfiles tracked for deterministic installs and CI caching
 
 # Ignore IDE and editor files
 .vscode/
