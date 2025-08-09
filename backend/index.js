@@ -30,11 +30,11 @@ import verifyJWT from './middleware/verifyJWT.js';
 dotenv.config();
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
-const SECRET_KEY = process.env.SECRET_KEY;
-const DOMAIN = process.env.domain || 'http://localhost:5001';
+const SECRET_KEY = process.env.SECRET_KEY; // avoid using this in handlers during tests
+const DOMAIN = process.env.DOMAIN || process.env.domain || 'http://localhost:5001';
 const SHOP_URL = process.env.SHOP_URL || 'http://localhost:5173';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const openai = new OpenAI(OPENAI_API_KEY);
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 const stripekey = process.env.STRIPE_SECRET_KEY;
 
 const s3 = new AWS.S3({
@@ -48,7 +48,7 @@ const s3 = new AWS.S3({
 //   limit: 400, // max 100 requests per windowMs
 // });
 const stripeapi = new stripe(stripekey);
-const app = express();
+export const app = express();
 
 app.use(
   cors({
@@ -119,11 +119,11 @@ app.post('/register', async (request, response) => {
     };
     const user = await User.create(new_user);
     //console.log(user);
-    const token = jwt.sign({ userId: user._id }, SECRET_KEY);
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
     response.cookie('jwt', token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV !== 'test',
+      sameSite: process.env.NODE_ENV !== 'test' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
     return response.status(201).send('User created');
@@ -154,16 +154,16 @@ app.post('/login', async (request, response) => {
     if (!validPassword) {
       return response.status(400).send('Invalid username or password');
     }
-    const token = jwt.sign({ userId: user._id }, SECRET_KEY);
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
     response.cookie('jwt', token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV !== 'test',
+      sameSite: process.env.NODE_ENV !== 'test' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
     return response.status(200).send('User logged in');
   } catch (error) {
-    consle.log(error);
+    console.log(error);
   }
 });
 
@@ -1047,7 +1047,7 @@ app.post('/delete_user', verifyJWT, async (request, response) => {
  */
 app.get('/moderate', async (request, response) => {
   try {
-    const pageid = request.body.page;
+    const pageid = Number(request.query.page || 1);
     const ipr = 10;
     const products = await Product.find({ flag: 'unmoderated' })
       .sort({ createdAt: -1 })
@@ -1120,63 +1120,68 @@ app.post('/deleteProduct/:id', verifyJWT, async (request, response) => {
   }
 });
 
-mongoose
-  .connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000, // 5 second timeout
-    retryWrites: true,
-  })
-  .then(() => {
-    console.clear();
+// Only connect and start the server outside of test environment
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // 5 second timeout
+      retryWrites: true,
+    })
+    .then(() => {
+      console.clear();
 
-    const formatTime = num => num.toString().padStart(2, '0');
-    const date = new Date();
-    const hours = formatTime(date.getHours() % 12 || 12);
-    const minutes = formatTime(date.getMinutes());
-    const seconds = formatTime(date.getSeconds());
-    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+      const formatTime = num => num.toString().padStart(2, '0');
+      const date = new Date();
+      const hours = formatTime(date.getHours() % 12 || 12);
+      const minutes = formatTime(date.getMinutes());
+      const seconds = formatTime(date.getSeconds());
+      const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
 
-    console.log(
-      '\n' +
-        '*'.repeat(45) +
+      console.log(
         '\n' +
-        `⏰ Time: ${hours}:${minutes}:${seconds} ${ampm}\n` +
-        `🔗 Database: Connected Successfully\n` +
-        `📍 URI: ${MONGO_URI.replace(/:[^:]*@/, ':****@')}\n` +
-        `🌐 Host: ${mongoose.connection.host}\n` +
-        `📦 Database: ${mongoose.connection.name}\n` +
-        '*'.repeat(45) +
-        '\n'
-    );
+          '*'.repeat(45) +
+          '\n' +
+          `⏰ Time: ${hours}:${minutes}:${seconds} ${ampm}\n` +
+          `🔗 Database: Connected Successfully\n` +
+          `📍 URI: ${MONGO_URI.replace(/:[^:]*@/, ':****@')}\n` +
+          `🌐 Host: ${mongoose.connection.host}\n` +
+          `📦 Database: ${mongoose.connection.name}\n` +
+          '*'.repeat(45) +
+          '\n'
+      );
 
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port: ${PORT}`);
+      app.listen(PORT, () => {
+        console.log(`🚀 Server running on port: ${PORT}`);
+      });
+    })
+    .catch(error => {
+      // Comprehensive error logging
+      console.error('❌ Database Connection Failed');
+      console.error('Error Details:');
+      console.error('Name:', error.name);
+      console.error('Message:', error.message);
+      console.error('URI:', MONGO_URI);
+
+      if (error.name === 'MongoNetworkError') {
+        console.error('Network error. Check connection string and network.');
+      }
+
+      process.exit(1);
     });
-  })
-  .catch(error => {
-    // Comprehensive error logging
-    console.error('❌ Database Connection Failed');
-    console.error('Error Details:');
-    console.error('Name:', error.name);
-    console.error('Message:', error.message);
-    console.error('URI:', MONGO_URI);
 
-    if (error.name === 'MongoNetworkError') {
-      console.error('Network error. Check connection string and network.');
-    }
-
-    process.exit(1);
+  mongoose.connection.on('disconnected', () => {
+    console.warn('🚨 Lost MongoDB connection');
   });
 
-mongoose.connection.on('disconnected', () => {
-  console.warn('🚨 Lost MongoDB connection');
-});
+  mongoose.connection.on('reconnected', () => {
+    console.log('🔁 Reconnected to MongoDB');
+  });
 
-mongoose.connection.on('reconnected', () => {
-  console.log('🔁 Reconnected to MongoDB');
-});
+  mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', err);
+  });
+}
 
-mongoose.connection.on('error', err => {
-  console.error('MongoDB connection error:', err);
-});
+export default app;

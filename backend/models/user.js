@@ -38,4 +38,5 @@ const userSchema = mongoose.Schema(
 );
 
 const User = mongoose.model('EcoUser', userSchema);
+export const UserModel = User;
 export default User;

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env NODE_ENV=test vitest run",
+    "test:watch": "cross-env NODE_ENV=test vitest",
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
@@ -27,5 +28,12 @@
     "openai": "^4.52.7",
     "sharp": "^0.33.5",
     "stripe": "^16.9.0"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^2.0.5",
+    "cross-env": "^7.0.3",
+    "mongodb-memory-server": "^9.0.0",
+    "supertest": "^7.0.0",
+    "vitest": "^2.0.5"
   }
 }
