@@ -1,3 +1,5 @@
+![GenShop screenshot](assets/genshop.png)
+
 # GenShop
 
 GenShop is an interactive eCommerce platform where users can create unique products using generative AI. It combines cutting-edge technology to provide secure access, streamlined payments, and moderation for AI-generated products.
