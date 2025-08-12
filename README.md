@@ -1,4 +1,4 @@
-![GenShop screenshot](assets/genshop.png)
+![GenShop screenshot](assets/genshop.webp)
 
 # GenShop
 
